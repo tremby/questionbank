@@ -25,8 +25,30 @@ import org.qtitools.qti.value.Cardinality;
 import org.qtitools.qti.value.IntegerValue;
 import org.qtitools.qti.validation.ValidationResult;
 
+import java.io.*;
+
 public class Validate {
 	public static void main(String[] args) {
+		// exit if we don't have exactly one argument
+		if (args.length != 1) {
+			System.err.println("Expected one argument: QTI file to validate");
+			System.exit(255);
+		}
+
+		String xml = "";
+		try {
+			xml = fileContents(args[0]);
+		} catch (FileNotFoundException e) {
+			System.err.println("File \"" + args[0] + "\" not found");
+			System.exit(2);
+		} catch (IOException e) {
+			System.err.println("Error reading file \"" + args[0] + "\"");
+			System.exit(3);
+		}
+
+		System.err.println(xml);
+		System.exit(0);
+
 		// create an assessment item
 		AssessmentItem assessmentItem = new AssessmentItem("my-test-item", "Jon's demonstration item", false, false);
 
@@ -45,6 +67,18 @@ public class Validate {
 		}
 
 		System.exit(0);
+	}
+
+	static private String fileContents(String filename) throws FileNotFoundException, IOException {
+		String lineSep = System.getProperty("line.separator");
+		BufferedReader br = new BufferedReader(new FileReader(filename));
+		String nextLine = "";
+		StringBuffer sb = new StringBuffer();
+		while ((nextLine = br.readLine()) != null) {
+			sb.append(nextLine);
+			sb.append(lineSep);
+		}
+		return sb.toString();
 	}
 }
 
