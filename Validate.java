@@ -23,19 +23,28 @@ import org.qtitools.qti.node.shared.declaration.DefaultValue;
 import org.qtitools.qti.value.BaseType;
 import org.qtitools.qti.value.Cardinality;
 import org.qtitools.qti.value.IntegerValue;
+import org.qtitools.qti.validation.ValidationResult;
 
 public class Validate {
 	public static void main(String[] args) {
-		//create an assessment item
+		// create an assessment item
 		AssessmentItem assessmentItem = new AssessmentItem("my-test-item", "Jon's demonstration item", false, false);
 
-		//If there are any errors, then print a validation report, otherwise print the item as xml
-		if (assessmentItem.validate().getAllItems().size() == 0) 
-		{
-			System.out.println(assessmentItem.toXmlString());
-		} else {
-			System.out.println(assessmentItem.validate());
+		// debug: output the item to stderr
+		System.err.println(assessmentItem.toXmlString());
+
+		// validate
+		ValidationResult validationResult = assessmentItem.validate();
+
+		// output all errors and warnings
+		System.out.println(validationResult.getAllItems());
+
+		// if there are errors exit with error code
+		if (validationResult.getErrors().size() > 0) {
+			System.exit(1);
 		}
+
+		System.exit(0);
 	}
 }
 
