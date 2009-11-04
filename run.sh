@@ -1,3 +1,3 @@
 #!/bin/bash
 . ./classpath.sh
-java Validate
+exec java Validate
