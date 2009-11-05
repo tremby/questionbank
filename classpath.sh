@@ -1,8 +1,7 @@
 #!/bin/bash
 CLASSPATH="."
-CLASSPATH="$CLASSPATH:$(find /usr/share/java -type f -name "slf4j*" | tr "\n" ":")"
-CLASSPATH="$CLASSPATH:/usr/share/java/commons-logging.jar"
-for JAR in $(find . -iname "*.jar"); do
+CLASSPATH="$CLASSPATH:/usr/share/java/slf4j-api-1.5.2.jar:/usr/share/java/slf4j-simple-1.5.2.jar"
+for JAR in $(find lib -iname "*.jar"); do
 	CLASSPATH="$CLASSPATH:$JAR"
 done
 export CLASSPATH
