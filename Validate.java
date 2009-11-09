@@ -1,31 +1,17 @@
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.qtitools.qti.node.content.ItemBody;
-import org.qtitools.qti.node.content.basic.TextRun;
-import org.qtitools.qti.node.content.xhtml.text.Div;
-import org.qtitools.qti.node.content.xhtml.text.P;
-import org.qtitools.qti.node.expression.general.BaseValue;
-import org.qtitools.qti.node.expression.general.Variable;
-import org.qtitools.qti.node.expression.operator.Gte;
-import org.qtitools.qti.node.item.AssessmentItem;
-import org.qtitools.qti.node.item.interaction.SliderInteraction;
-import org.qtitools.qti.node.item.response.declaration.ResponseDeclaration;
-import org.qtitools.qti.node.item.response.processing.ResponseCondition;
-import org.qtitools.qti.node.item.response.processing.ResponseIf;
-import org.qtitools.qti.node.item.response.processing.ResponseProcessing;
-import org.qtitools.qti.node.item.response.processing.SetOutcomeValue;
-import org.qtitools.qti.node.outcome.declaration.OutcomeDeclaration;
-import org.qtitools.qti.node.shared.FieldValue;
-import org.qtitools.qti.node.shared.declaration.DefaultValue;
-import org.qtitools.qti.value.BaseType;
-import org.qtitools.qti.value.Cardinality;
-import org.qtitools.qti.value.IntegerValue;
-import org.qtitools.qti.validation.ValidationResult;
+/*	Commandline QTI validator
+ *	Written in 2009 November by Bart Nagel (bjn@ecs.soton.ac.uk)
+ *	Proper University of Southampton copyright notice coming soon
+ */
 
 import java.io.*;
+import java.util.List;
+
+import org.qtitools.qti.node.item.AssessmentItem;
+import org.qtitools.qti.validation.ValidationResult;
+import org.qtitools.qti.validation.ValidationItem;
+import org.qtitools.qti.exception.QTIParseException;
+
+import org.xml.sax.SAXParseException;
 
 public class Validate {
 	public static void main(String[] args) {
@@ -46,20 +32,37 @@ public class Validate {
 			System.exit(3);
 		}
 
-		System.err.println(xml);
-		System.exit(0);
+		// load XML into an assessment item
+		AssessmentItem assessmentItem = new AssessmentItem();
 
-		// create an assessment item
-		AssessmentItem assessmentItem = new AssessmentItem("my-test-item", "Jon's demonstration item", false, false);
-
-		// debug: output the item to stderr
-		System.err.println(assessmentItem.toXmlString());
+		try {
+			assessmentItem.load(xml);
+		} catch(QTIParseException e) {
+			if (e.getCause() instanceof SAXParseException) {
+				System.out.println(
+					"Error\t"
+					+ ((SAXParseException) e.getCause()).getMessage() + "\t"
+					+ ((SAXParseException) e.getCause()).getLineNumber() + ":" + ((SAXParseException) e.getCause()).getColumnNumber()
+				);
+				System.exit(4);
+			} else {
+				System.out.println("Error\t" + e.toString());
+				System.exit(254);
+			}
+		}
 
 		// validate
 		ValidationResult validationResult = assessmentItem.validate();
 
 		// output all errors and warnings
-		System.out.println(validationResult.getAllItems());
+		for (int i = 0; i < validationResult.getAllItems().size(); i++) {
+			ValidationItem item = validationResult.getAllItems().get(i);
+			System.out.println(
+				item.getType() + "\t"
+				+ item.getMessage() + "\t"
+				+ item.getNode().getFullName()
+			);
+		}
 
 		// if there are errors exit with error code
 		if (validationResult.getErrors().size() > 0) {
@@ -69,6 +72,7 @@ public class Validate {
 		System.exit(0);
 	}
 
+	// read a file into a string
 	static private String fileContents(String filename) throws FileNotFoundException, IOException {
 		String lineSep = System.getProperty("line.separator");
 		BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -81,4 +85,3 @@ public class Validate {
 		return sb.toString();
 	}
 }
-
