@@ -1,1 +1,2 @@
+validate
 -	figure out why Sax is outputting its error messages to stderr and stop it
