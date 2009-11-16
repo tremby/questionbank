@@ -3,8 +3,13 @@
 // constants
 require_once "include/constants.php";
 
+// class autoloader
+function __autoload($classname) {
+	require_once "classes/$classname.class.php";
+}
+
 // set up include path
-ini_set("incnlude_path", ".:" . SITEROOT_LOCAL . "include");
+ini_set("include_path", ".:" . SITEROOT_LOCAL . "include");
 
 // common functions
 require_once "include/functions.php";
