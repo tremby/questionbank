@@ -15,26 +15,37 @@ import org.xml.sax.SAXParseException;
 
 public class Validate {
 	public static void main(String[] args) {
-		// exit if we don't have exactly one argument
-		if (args.length != 1) {
-			System.err.println("Expected one argument: QTI file to validate");
-			System.exit(255);
-		}
-
 		String xml = "";
-		try {
-			xml = fileContents(args[0]);
-		} catch (FileNotFoundException e) {
-			System.err.println("File \"" + args[0] + "\" not found");
-			System.exit(2);
-		} catch (IOException e) {
-			System.err.println("Error reading file \"" + args[0] + "\"");
-			System.exit(3);
+
+		if (args.length == 0) {
+			// read from stdin
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+				String s;
+				while ((s = in.readLine()) != null)
+					xml += s;
+			} catch (IOException e) {
+				System.err.println("Error reading from stdin");
+				System.exit(5);
+			}
+		} else if (args.length == 1) {
+			// read from file
+			try {
+				xml = fileContents(args[0]);
+			} catch (FileNotFoundException e) {
+				System.err.println("File \"" + args[0] + "\" not found");
+				System.exit(2);
+			} catch (IOException e) {
+				System.err.println("Error reading file \"" + args[0] + "\"");
+				System.exit(3);
+			}
+		} else {
+			System.err.println("Expected zero arguments to read from stdin or one filename argument to read from file");
+			System.exit(255);
 		}
 
 		// load XML into an assessment item
 		AssessmentItem assessmentItem = new AssessmentItem();
-
 		try {
 			assessmentItem.load(xml);
 		} catch(QTIParseException e) {
