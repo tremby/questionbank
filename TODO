@@ -1,2 +1,9 @@
 validate
 -	figure out why Sax is outputting its error messages to stderr and stop it
+webtool
+-	better client and server side error checking
+-	feedback
+-	other question types
+	-	question matrix
+	-	EMI
+	-	fill in the gaps
