@@ -3,14 +3,17 @@
 if (isset($_POST["submit"])) {
 	// TODO: error checking
 
-	header("Content-Type: text/plain");
+	$errors = array();
+	$warnings = array();
+	$messages = array();
 
 	$ai = new SimpleXMLElement('
 		<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
-		adaptive="false" timeDependent="false"/>
+		xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"/>
 	');
+	$ai->addAttribute("adaptive", "false");
+	$ai->addAttribute("timeDependent", "false");
 	$ai->addAttribute("identifier", "mcr_" . md5(uniqid()));
 	$ai->addAttribute("title", $_POST["title"]);
 
@@ -35,18 +38,29 @@ if (isset($_POST["submit"])) {
 	$od->defaultValue->addChild("value", "0");
 
 	$ib = $ai->addChild("itemBody");
+
+	// get stimulus and add to the XML tree
 	if (isset($_POST["stimulus"]) && !empty($_POST["stimulus"])) {
+		// if stimulus doesn't start with a tag, wrap it in a div
+		$_POST["stimulus"] = trim($_POST["stimulus"]);
+		if ($_POST["stimulus"][0] != "<")
+			$_POST["stimulus"] = "<div>" . $_POST["stimulus"] . "</div>";
+
+		// parse it as XML
+		// The stimulus must be valid XML at this point. Even if it is, and even 
+		// if it's also valid XHTML, it may still not be valid QTI since QTI 
+		// only allows a subset of XHTML. So we collect errors here.
 		libxml_use_internal_errors(true);
-		$stimulus = simplexml_load_string("<div>" . $_POST["stimulus"] . "</div>");
-		if (!$stimulus) {
-			echo "Stimulus is not valid XML\n";
+		$stimulus = simplexml_load_string($_POST["stimulus"]);
+		if ($stimulus === false) {
+			$errors[] = "Stimulus is not valid XML. It must not only be valid XML but valid QTI, which accepts a subset of XHTML. Details on specific issues follow:";
 			foreach (libxml_get_errors() as $error)
-				echo "line " . $error->line . ", column " . $error->column . ": " . $error->message;
+				$errors[] = "Stimulus line " . $error->line . ", column " . $error->column . ": " . $error->message;
 			libxml_clear_errors();
-			exit;
+		} else {
+			simplexml_append($ib, $stimulus);
 		}
 		libxml_use_internal_errors(false);
-		simplexml_append($ib, $stimulus);
 	}
 
 	$ci = $ib->addChild("choiceInteraction");
@@ -86,9 +100,96 @@ if (isset($_POST["submit"])) {
 	$sov->addAttribute("identifier", "SCORE");
 	$sov->addChild("baseValue", "0")->addAttribute("baseType", "integer");
 
-	header("Content-Type: text/xml");
-	echo $ai->asXML();
-	exit;
+	if (empty($errors)) {
+		// validate the QTI
+		$pipes = null;
+		$validate = proc_open("./run.sh", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, SITEROOT_LOCAL . "validate");
+		if (!is_resource($validate))
+			$errors[] = "Failed to start validator";
+		else {
+			// give QTI on stdin and close the pipe
+			fwrite($pipes[0], $ai->asXML());
+			fclose($pipes[0]);
+
+			// get contents of stdout and stderr
+			$stdout = trim(stream_get_contents($pipes[1]));
+			fclose($pipes[1]);
+			$stderr = trim(stream_get_contents($pipes[2]));
+			fclose($pipes[2]);
+
+			$exitcode = proc_close($validate);
+
+			if (!empty($stderr))
+				$errors = array_merge($errors, explode("\n", $stderr));
+			if (!empty($stdout)) {
+				$stdout = explode("\n", $stdout);
+				foreach ($stdout as $message) {
+					$parts = explode("\t", $message);
+					switch ($parts[0]) {
+						case "Error":
+							$errors[] = "Validator error: {$parts[1]} ({$parts[2]})";
+							break;
+						case "Warning":
+							$warnings[] = "Validator warning: {$parts[1]} ({$parts[2]})";
+							break;
+						default:
+							$messages[] = "Validator message: {$parts[1]} ({$parts[2]})";
+					}
+				}
+			}
+
+			if (empty($errors) && $exitcode != 0)
+				$errors[] = "Validator exited with code $exitcode";
+		}
+	}
+
+	if (empty($errors)) {
+		$thingstosay = array();
+		if (!empty($warnings)) $thingstosay[] = "warnings";
+		if (!empty($messages)) $thingstosay[] = "messages";
+
+		include "htmlheader.php";
+		?>
+
+		<h2>New QTI item complete</h2>
+		<p>The new item has been successfully validated<?php if (!empty($thingstosay)) { ?> with the following <?php echo implode(" and ", $thingstosay); ?>:<?php } ?></p>
+
+		<?php if (isset($warnings) && !empty($warnings)) { ?>
+			<div class="warning">
+				<h3>Warning</h3>
+				<ul>
+					<?php foreach ($warnings as $warning) { ?>
+						<li><?php echo htmlspecialchars($warning); ?></li>
+					<?php } ?>
+				</ul>
+			</div>
+		<?php }
+		if (isset($messages) && !empty($messages)) { ?>
+			<div class="message">
+				<h3>Message</h3>
+				<ul>
+					<?php foreach ($messages as $message) { ?>
+						<li><?php echo htmlspecialchars($message); ?></li>
+					<?php } ?>
+				</ul>
+			</div>
+		<?php } ?>
+
+		<h3>XML</h3>
+		<iframe width="80%" height="400" src="data:text/xml;base64,<?php echo base64_encode($ai->asXML()); ?>"></iframe>
+
+		<h3>As plain text</h3>
+		<div style="width: 80%; height: 400px; overflow: auto;">
+			<pre><?php
+				$dom = dom_import_simplexml($ai)->ownerDocument;
+				$dom->formatOutput = true;
+				echo htmlspecialchars($dom->saveXML());
+			?></pre>
+		</div>
+
+		<?php
+		exit;
+	}
 }
 
 $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"] == "multipleresponse";
@@ -250,6 +351,41 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 	});
 </script>
 
+<h2>Make a new multiple choice or multiple response item</h2>
+
+<?php
+if (isset($errors) && !empty($errors)) { ?>
+	<div class="error">
+		<h3>Error</h3>
+		<ul>
+			<?php foreach ($errors as $error) { ?>
+				<li><?php echo htmlspecialchars($error); ?></li>
+			<?php } ?>
+		</ul>
+	</div>
+<?php }
+if (isset($warnings) && !empty($warnings)) { ?>
+	<div class="warning">
+		<h3>Warning</h3>
+		<ul>
+			<?php foreach ($warnings as $warning) { ?>
+				<li><?php echo htmlspecialchars($warning); ?></li>
+			<?php } ?>
+		</ul>
+	</div>
+<?php }
+if (isset($messages) && !empty($messages)) { ?>
+	<div class="message">
+		<h3>Message</h3>
+		<ul>
+			<?php foreach ($messages as $message) { ?>
+				<li><?php echo htmlspecialchars($message); ?></li>
+			<?php } ?>
+		</ul>
+	</div>
+<?php }
+?>
+
 <form id="newquestion" action="?page=newMultipleChoiceResponse" method="post">
 	<dl>
 		<dt>Question type</dt>
@@ -265,41 +401,51 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 		</dd>
 
 		<dt><label for="title">Title</label></dt>
-		<dd><input type="text" name="title" id="title"></dd>
+		<dd><input size="64" type="text" name="title" id="title"<?php if (isset($_POST["title"])) { ?> value="<?php echo htmlspecialchars($_POST["title"]); ?>"<?php } ?>></dd>
 
 		<dt><label for="stimulus">Stimulus</label></dt>
-		<dd><textarea name="stimulus" id="stimulus"></textarea></dd>
+		<dd><textarea rows="8" cols="64" name="stimulus" id="stimulus"><?php if (isset($_POST["stimulus"])) echo htmlspecialchars($_POST["stimulus"]); ?></textarea></dd>
 
 		<dt><label for="prompt">Question prompt</label></dt>
-		<dd><textarea name="prompt" id="prompt"></textarea></dd>
+		<dd><textarea rows="2" cols="64" name="prompt" id="prompt"><?php if (isset($_POST["prompt"])) echo htmlspecialchars($_POST["prompt"]); ?></textarea></dd>
 
 		<dt>Options</dt>
 		<dd>
 			<div>
-				<input type="checkbox" id="shuffle" name="shuffle">
+				<input type="checkbox" id="shuffle" name="shuffle"<?php if (isset($_POST["shuffle"])) { ?> checked="checked"<?php } ?>>
 				<label for="shuffle">Shuffle the options</label>
 			</div>
 			<table id="options">
 				<tr>
 					<th>Option text</th>
 					<th>Correct</th>
-					<th class="fixed" style="display: none;">Fixed</th>
+					<th class="fixed"<?php if (!isset($_POST["shuffle"])) { ?> style="display: none;"<?php } ?>>Fixed</th>
 					<th>Actions</th>
 				</tr>
-				<tr class="option" id="option_0">
-					<td><input type="text" id="option_0_optiontext" name="option_0_optiontext" class="optiontext" value=""></td>
-					<td>
-						<?php if ($multipleresponse) { ?>
-							<input type="checkbox" id="option_0_correct" name="option_0_correct" class="correct" checked="checked">
-						<?php } else { ?>
-							<input type="radio" id="option_0_correct" name="correct" value="option_0" class="correct" checked="checked">
-						<?php } ?>
-					</td>
-					<td class="fixed" style="display: none;">
-						<input type="checkbox" id="option_0_fixed" name="option_0_fixed" class="fixed">
-					</td>
-					<td><input type="button" class="removeoption" value="Remove"></td>
-				</tr>
+				<?php if (!isset($_POST["option_0_optiontext"])) {
+					// starting from scratch -- initialize first option
+					$_POST["option_0_optiontext"] = "";
+					if ($multipleresponse)
+						$_POST["option_0_correct"] = true;
+					else
+						$_POST["correct"] = "option_0";
+				} ?>
+				<?php for ($i = 0; array_key_exists("option_{$i}_optiontext", $_POST); $i++) { ?>
+					<tr class="option" id="option_<?php echo $i; ?>">
+						<td><input size="48" type="text" id="option_<?php echo $i; ?>_optiontext" name="option_<?php echo $i; ?>_optiontext" class="optiontext" value="<?php echo htmlspecialchars($_POST["option_{$i}_optiontext"]); ?>"></td>
+						<td>
+							<?php if ($multipleresponse) { ?>
+								<input type="checkbox" id="option_<?php echo $i; ?>_correct" name="option_<?php echo $i; ?>_correct" class="correct"<?php if (isset($_POST["option_{$i}_correct"])) { ?> checked="checked"<?php } ?>>
+							<?php } else { ?>
+								<input type="radio" id="option_<?php echo $i; ?>_correct" name="correct" value="option_<?php echo $i; ?>" class="correct"<?php if ($_POST["correct"] == "option_$i") { ?> checked="checked"<?php } ?>>
+							<?php } ?>
+						</td>
+						<td class="fixed"<?php if (!isset($_POST["shuffle"])) { ?> style="display: none;"<?php } ?>>
+							<input type="checkbox" id="option_<?php echo $i; ?>_fixed" name="option_<?php echo $i; ?>_fixed" class="fixed"<?php if (isset($_POST["option_{$i}_fixed"])) { ?> checked="checked"<?php } ?>>
+						</td>
+						<td><input type="button" class="removeoption" value="Remove"></td>
+					</tr>
+				<?php } ?>
 			</table>
 			<input type="button" id="addoption" value="Add option">
 		</dd>
@@ -309,12 +455,12 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 			<dl>
 				<dt>Maximum choices</dt>
 				<dd>
-					<input type="text" name="maxchoices" id="maxchoices" value="0" size="4">
+					<input type="text" name="maxchoices" id="maxchoices" value="<?php echo isset($_POST["maxchoices"]) ? htmlspecialchars($_POST["maxchoices"]) : "0"; ?>" size="4">
 					The maximum number of choices the candidate is allowed to select. 0 means no restriction.
 				</dd>
 				<dt>Minimum choices</dt>
 				<dd>
-					<input type="text" name="minchoices" id="minchoices" value="0" size="4">
+					<input type="text" name="minchoices" id="minchoices" value="<?php echo isset($_POST["minchoices"]) ? htmlspecialchars($_POST["minchoices"]) : "0"; ?>" size="4">
 					The minimum number of choices the candidate is required to select to form a valid response. 0 means the candidate is not required to select any choices.
 				</dd>
 			</dl>
