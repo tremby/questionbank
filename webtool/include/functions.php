@@ -55,4 +55,17 @@ function notfound($message = "404: not found", $mimetype = "text/plain") {
 	exit;
 }
 
+// make a string safe for XML
+function xmlspecialchars($text) {
+	return str_replace('&#039;', '&apos;', htmlspecialchars($text, ENT_QUOTES));
+}
+
+// add one SimpleXML tree to another
+function simplexml_append(SimpleXMLElement $parent, SimpleXMLElement $new_child) {
+	$node1 = dom_import_simplexml($parent);
+	$dom_sxe = dom_import_simplexml($new_child);
+	$node2 = $node1->ownerDocument->importNode($dom_sxe, true);
+	$node1->appendChild($node2);
+}
+
 ?>
