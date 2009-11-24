@@ -1,12 +1,11 @@
 <?php
 
 if (isset($_POST["submit"])) {
-	// TODO: error checking
-
 	$errors = array();
 	$warnings = array();
 	$messages = array();
 
+	// build XML
 	$ai = new SimpleXMLElement('
 		<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -333,7 +332,7 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 				return false;
 			}
 			// maximum choices >= minimum choices
-			if ($("#minchoices").val() > $("#maxchoices").val()) {
+			if ($("#maxchoices").val() != 0 && $("#minchoices").val() > $("#maxchoices").val()) {
 				alert("Value for minimum choices cannot be greater than the value for maximum choices");
 				return false;
 			}
