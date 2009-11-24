@@ -223,7 +223,7 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 
 		// give it the new id number and wipe its text
 		newoption.attr("id", "option_" + newid);
-		$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("");
+		$("input.optiontext", newoption).css("border-color", "").attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("");
 		$("input.correct", newoption).attr("id", "option_" + newid + "_correct").removeAttr("checked");
 		if ($("input.correct", newoption).attr("type") == "checkbox")
 			$("input.correct", newoption).attr("name", "option_" + newid + "_correct");
@@ -313,7 +313,12 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 	};
 
 	submitcheck = function() {
-		// TODO: more thorough checks -- empty values etc
+		// title must be set
+		if ($("#title").css("border-color", "").val().length == 0) {
+			$("#title").css("border-color", "red");
+			alert("A title must be set for this item");
+			return false;
+		}
 
 		// at least one response must be marked as correct
 		if ($("#options input.correct:checked").size() < 1) {
@@ -323,38 +328,104 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 
 		// choice restriction options must make sense
 		if ($("input.questiontype:checked").attr("id") == "questiontype_mr") {
+			$("#maxchoices, #minchoices").css("border-color", "");
 			// maximum choices
 			if ($("#maxchoices").val().length == 0 || isNaN($("#maxchoices").val())) {
+				$("#maxchoices").css("border-color", "red");
 				alert("Value for maximum choices is not a number");
 				return false;
 			}
 			if ($("#maxchoices").val() < 0 || $("#maxchoices").val().indexOf(".") != -1) {
+				$("#maxchoices").css("border-color", "red");
 				alert("Value for maximum choices must be zero (no restriction) or a positive integer");
 				return false;
 			}
 			if ($("#maxchoices").val() > $("#options tr.option").size()) {
+				$("#maxchoices").css("border-color", "red");
 				alert("Value for maximum choices cannot be greater than the number of possible choices");
 				return false;
 			}
+
 			// minimum choices
 			if ($("#minchoices").val().length == 0 || isNaN($("#minchoices").val())) {
+				$("#minchoices").css("border-color", "red");
 				alert("Value for minimum choices is not a number");
 				return false;
 			}
 			if ($("#minchoices").val() < 0 || $("#minchoices").val().indexOf(".") != -1) {
+				$("#minchoices").css("border-color", "red");
 				alert("Value for minimum choices must be zero (not require to select any choices) or a positive integer");
 				return false;
 			}
 			if ($("#minchoices").val() > $("#options tr.option").size()) {
+				$("#minchoices").css("border-color", "red");
 				alert("Value for minimum choices cannot be greater than the number of possible choices");
 				return false;
 			}
+
 			// maximum choices >= minimum choices
 			if ($("#maxchoices").val() != 0 && $("#minchoices").val() > $("#maxchoices").val()) {
+				$("#maxchoices, #minchoices").css("border-color", "red");
 				alert("Value for minimum choices cannot be greater than the value for maximum choices");
 				return false;
 			}
 		}
+
+		// issue warnings if applicable
+
+		// confirm the user wanted an empty stimulus
+		if ($("#stimulus").css("border-color", "").val().length == 0) {
+			$("#stimulus").css("border-color", "red");
+			if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
+				return false;
+			else
+				$("#stimulus").css("border-color", "");
+		}
+
+		// confirm the user wanted an empty question prompt
+		if ($("#prompt").css("border-color", "").val().length == 0) {
+			$("#prompt").css("border-color", "red");
+			if (!confirm("Question prompt is empty -- click OK to continue regardless or cancel to edit it"))
+				return false;
+			else
+				$("#prompt").css("border-color", "");
+		}
+
+		// confirm the user wanted any empty boxes
+		var ok = true;
+		$("input.optiontext").css("border-color", "").each(function(n) {
+			if ($(this).val().length == 0) {
+				$(this).css("border-color", "red");
+				ok = confirm("Option " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
+				if (ok)
+					$(this).css("border-color", "");
+				else
+					return false; //this is "break" in the Jquery each() pseudoloop
+			}
+		});
+		if (!ok) return false;
+
+		// warn about any identical options
+		$("input.optiontext").css("border_color", "");
+		for (var i = 0; i < $("input.optiontext").size(); i++) {
+			for (var j = i + 1; j < $("input.optiontext").size(); j++) {
+				if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
+					$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("border-color", "red");
+					ok = confirm("Options " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
+					if (ok)
+						$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("border-color", "");
+					else
+						break;
+				}
+			}
+			if (!ok) break;
+		}
+		if (!ok) return false;
+
+		// confirm it's what the user wanted if shuffle is on but all options 
+		// are marked as fixed
+		if ($("#shuffle").is(":checked") && $("input.fixed").size() == $("input.fixed:checked").size() && !confirm("Shuffle is selected but all options are marked as fixed -- click OK to continue regardless or cancel to change this"))
+			return false;
 
 		return true;
 	}

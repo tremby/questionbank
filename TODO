@@ -2,7 +2,6 @@ validate
 -	figure out why Sax is outputting its error messages to stderr and stop it
 webtool
 -	abstract everything so I don't end up repeating code
--	better client side error checking
 -	feedback
 -	editing existing items
 -	scoring options?
