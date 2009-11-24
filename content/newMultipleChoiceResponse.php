@@ -1,11 +1,19 @@
 <?php
 
 if (isset($_POST["submit"])) {
+	// form data submitted -- check it
+
 	$errors = array();
 	$warnings = array();
 	$messages = array();
 
+	// Very little server side validation is necessary here since the Java 
+	// validate application does everything important. Client side checking for 
+	// likely mistakes (empty boxes etc) is sufficient.
+
 	// build XML
+
+	// container element and other metadata
 	$ai = new SimpleXMLElement('
 		<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -16,11 +24,13 @@ if (isset($_POST["submit"])) {
 	$ai->addAttribute("identifier", "mcr_" . md5(uniqid()));
 	$ai->addAttribute("title", $_POST["title"]);
 
+	// response declaration
 	$rd = $ai->addChild("responseDeclaration");
 	$rd->addAttribute("identifier", "RESPONSE");
 	$rd->addAttribute("cardinality", $_POST["questiontype"] == "multiplechoice" ? "single" : "multiple");
 	$rd->addAttribute("baseType", "identifier");
 
+	// correct response
 	$rd->addChild("correctResponse");
 	if ($_POST["questiontype"] == "multiplechoice")
 		$rd->correctResponse->addChild("value", $_POST["correct"]);
@@ -29,6 +39,7 @@ if (isset($_POST["submit"])) {
 			if (isset($_POST["option_{$i}_correct"]))
 				$rd->correctResponse->addChild("value", "option_$i");
 
+	// outcome declaration
 	$od = $ai->addChild("outcomeDeclaration");
 	$od->addAttribute("identifier", "SCORE");
 	$od->addAttribute("cardinality", "single");
@@ -36,6 +47,7 @@ if (isset($_POST["submit"])) {
 	$od->addChild("defaultValue");
 	$od->defaultValue->addChild("value", "0");
 
+	// item body
 	$ib = $ai->addChild("itemBody");
 
 	// get stimulus and add to the XML tree
@@ -62,6 +74,7 @@ if (isset($_POST["submit"])) {
 		libxml_use_internal_errors(false);
 	}
 
+	// choices
 	$ci = $ib->addChild("choiceInteraction");
 	$ci->addAttribute("responseIdentifier", "RESPONSE");
 	$ci->addAttribute("shuffle", isset($_POST["shuffle"]) ? "true" : "false");
@@ -81,6 +94,7 @@ if (isset($_POST["submit"])) {
 			$sc->addAttribute("fixed", isset($_POST["option_{$i}_fixed"]) ? "true" : "false");
 	}
 
+	// response processing
 	$rc = $ai->addChild("responseProcessing")->addChild("responseCondition");
 
 	// if correct
@@ -143,6 +157,8 @@ if (isset($_POST["submit"])) {
 	}
 
 	if (empty($errors)) {
+		// new QTI is fine -- display it and any warnings and messages
+
 		$thingstosay = array();
 		if (!empty($warnings)) $thingstosay[] = "warnings";
 		if (!empty($messages)) $thingstosay[] = "messages";
@@ -153,7 +169,7 @@ if (isset($_POST["submit"])) {
 		<h2>New QTI item complete</h2>
 		<p>The new item has been successfully validated<?php if (!empty($thingstosay)) { ?> with the following <?php echo implode(" and ", $thingstosay); ?>:<?php } ?></p>
 
-		<?php if (isset($warnings) && !empty($warnings)) { ?>
+		<?php if (!empty($warnings)) { ?>
 			<div class="warning">
 				<h3>Warning</h3>
 				<ul>
@@ -163,7 +179,7 @@ if (isset($_POST["submit"])) {
 				</ul>
 			</div>
 		<?php }
-		if (isset($messages) && !empty($messages)) { ?>
+		if (!empty($messages)) { ?>
 			<div class="message">
 				<h3>Message</h3>
 				<ul>
@@ -190,6 +206,8 @@ if (isset($_POST["submit"])) {
 		exit;
 	}
 }
+
+// show authoring form
 
 $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"] == "multipleresponse";
 
