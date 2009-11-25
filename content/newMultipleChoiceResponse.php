@@ -31,13 +31,23 @@ if (isset($_POST["submit"])) {
 	$rd->addAttribute("baseType", "identifier");
 
 	// correct response
-	$rd->addChild("correctResponse");
-	if ($_POST["questiontype"] == "multiplechoice")
-		$rd->correctResponse->addChild("value", $_POST["correct"]);
-	else
+	if ($_POST["questiontype"] == "multipleresponse") {
+		// build array of correct responses
+		$correct = array();
 		for ($i = 0; array_key_exists("option_{$i}_optiontext", $_POST); $i++)
 			if (isset($_POST["option_{$i}_correct"]))
-				$rd->correctResponse->addChild("value", "option_$i");
+				$correct[] = $i;
+
+		// add correctResponse node only if any options are correct (TODO: check 
+		// if this is the right way to do it)
+		if (!empty($correct)) {
+			$rd->addChild("correctResponse");
+			$rd->correctResponse->addChild("value", "option_$i");
+		}
+	} else {
+		$rd->addChild("correctResponse");
+		$rd->correctResponse->addChild("value", $_POST["correct"]);
+	}
 
 	// outcome declaration
 	$od = $ai->addChild("outcomeDeclaration");
@@ -223,7 +233,7 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 
 		// give it the new id number and wipe its text
 		newoption.attr("id", "option_" + newid);
-		$("input.optiontext", newoption).css("border-color", "").attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("");
+		$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("").css("background-color", "");
 		$("input.correct", newoption).attr("id", "option_" + newid + "_correct").removeAttr("checked");
 		if ($("input.correct", newoption).attr("type") == "checkbox")
 			$("input.correct", newoption).attr("name", "option_" + newid + "_correct");
@@ -260,18 +270,18 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 			i++;
 		});
 
-		// ensure at least one is marked as correct
-		if ($("#options input.correct:checked").size() < 1) {
+		// if it's multiple choice, ensure at least one is marked as correct 
+		// until TODO: i've figured out how to get a "correct null-response" 
+		// question to work
+		if ($("input.questiontype:checked").attr("id") == "questiontype_mc" && $("#options input.correct:checked").size() == 0)
 			$("#option_0 input.correct").attr("checked", "checked");
-		}
 	};
 
 	toggleshuffle = function() {
-		if ($("#shuffle").is(":checked")) {
+		if ($("#shuffle").is(":checked"))
 			$("#options th.fixed, #options td.fixed").show();
-		} else {
+		else
 			$("#options th.fixed, #options td.fixed").hide();
-		}
 	};
 
 	switchquestiontype = function() {
@@ -313,14 +323,22 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 	};
 
 	submitcheck = function() {
+		// background colours
+		var errorcolour = "#ffbaba";
+		var warningcolour = "#ffdca4";
+
+		// clear any previously set background colours
+		$("input, textarea").css("background-color", "");
+
 		// title must be set
-		if ($("#title").css("border-color", "").val().length == 0) {
-			$("#title").css("border-color", "red");
+		if ($("#title").val().length == 0) {
+			$("#title").css("background-color", errorcolour);
 			alert("A title must be set for this item");
 			return false;
 		}
 
-		// at least one response must be marked as correct
+		// at least one response must be marked as correct until TODO: i've 
+		// figured out how to get a "correct null-response" question to work
 		if ($("#options input.correct:checked").size() < 1) {
 			alert("You need to mark at least one response as correct");
 			return false;
@@ -328,44 +346,43 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 
 		// choice restriction options must make sense
 		if ($("input.questiontype:checked").attr("id") == "questiontype_mr") {
-			$("#maxchoices, #minchoices").css("border-color", "");
 			// maximum choices
 			if ($("#maxchoices").val().length == 0 || isNaN($("#maxchoices").val())) {
-				$("#maxchoices").css("border-color", "red");
+				$("#maxchoices").css("background-color", errorcolour);
 				alert("Value for maximum choices is not a number");
 				return false;
 			}
 			if ($("#maxchoices").val() < 0 || $("#maxchoices").val().indexOf(".") != -1) {
-				$("#maxchoices").css("border-color", "red");
+				$("#maxchoices").css("background-color", errorcolour);
 				alert("Value for maximum choices must be zero (no restriction) or a positive integer");
 				return false;
 			}
 			if ($("#maxchoices").val() > $("#options tr.option").size()) {
-				$("#maxchoices").css("border-color", "red");
+				$("#maxchoices").css("background-color", errorcolour);
 				alert("Value for maximum choices cannot be greater than the number of possible choices");
 				return false;
 			}
 
 			// minimum choices
 			if ($("#minchoices").val().length == 0 || isNaN($("#minchoices").val())) {
-				$("#minchoices").css("border-color", "red");
+				$("#minchoices").css("background-color", errorcolour);
 				alert("Value for minimum choices is not a number");
 				return false;
 			}
 			if ($("#minchoices").val() < 0 || $("#minchoices").val().indexOf(".") != -1) {
-				$("#minchoices").css("border-color", "red");
+				$("#minchoices").css("background-color", errorcolour);
 				alert("Value for minimum choices must be zero (not require to select any choices) or a positive integer");
 				return false;
 			}
 			if ($("#minchoices").val() > $("#options tr.option").size()) {
-				$("#minchoices").css("border-color", "red");
+				$("#minchoices").css("background-color", errorcolour);
 				alert("Value for minimum choices cannot be greater than the number of possible choices");
 				return false;
 			}
 
 			// maximum choices >= minimum choices
 			if ($("#maxchoices").val() != 0 && $("#minchoices").val() > $("#maxchoices").val()) {
-				$("#maxchoices, #minchoices").css("border-color", "red");
+				$("#maxchoices, #minchoices").css("background-color", errorcolour);
 				alert("Value for minimum choices cannot be greater than the value for maximum choices");
 				return false;
 			}
@@ -374,31 +391,31 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 		// issue warnings if applicable
 
 		// confirm the user wanted an empty stimulus
-		if ($("#stimulus").css("border-color", "").val().length == 0) {
-			$("#stimulus").css("border-color", "orange");
+		if ($("#stimulus").val().length == 0) {
+			$("#stimulus").css("background-color", warningcolour);
 			if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
 				return false;
 			else
-				$("#stimulus").css("border-color", "");
+				$("#stimulus").css("background-color", "");
 		}
 
 		// confirm the user wanted an empty question prompt
-		if ($("#prompt").css("border-color", "").val().length == 0) {
-			$("#prompt").css("border-color", "orange");
+		if ($("#prompt").val().length == 0) {
+			$("#prompt").css("background-color", warningcolour);
 			if (!confirm("Question prompt is empty -- click OK to continue regardless or cancel to edit it"))
 				return false;
 			else
-				$("#prompt").css("border-color", "");
+				$("#prompt").css("background-color", "");
 		}
 
 		// confirm the user wanted any empty boxes
 		var ok = true;
-		$("input.optiontext").css("border-color", "").each(function(n) {
+		$("input.optiontext").each(function(n) {
 			if ($(this).val().length == 0) {
-				$(this).css("border-color", "orange");
+				$(this).css("background-color", warningcolour);
 				ok = confirm("Option " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 				if (ok)
-					$(this).css("border-color", "");
+					$(this).css("background-color", "");
 				else
 					return false; //this is "break" in the Jquery each() pseudoloop
 			}
@@ -406,14 +423,13 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 		if (!ok) return false;
 
 		// warn about any identical options
-		$("input.optiontext").css("border-color", "");
 		for (var i = 0; i < $("input.optiontext").size(); i++) {
 			for (var j = i + 1; j < $("input.optiontext").size(); j++) {
 				if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
-					$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("border-color", "orange");
+					$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("background-color", warningcolour);
 					ok = confirm("Options " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
 					if (ok)
-						$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("border-color", "");
+						$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("background-color", "");
 					else
 						break;
 				}
