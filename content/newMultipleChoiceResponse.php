@@ -406,7 +406,7 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 		if (!ok) return false;
 
 		// warn about any identical options
-		$("input.optiontext").css("border_color", "");
+		$("input.optiontext").css("border-color", "");
 		for (var i = 0; i < $("input.optiontext").size(); i++) {
 			for (var j = i + 1; j < $("input.optiontext").size(); j++) {
 				if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
