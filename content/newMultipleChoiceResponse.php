@@ -375,7 +375,7 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 
 		// confirm the user wanted an empty stimulus
 		if ($("#stimulus").css("border-color", "").val().length == 0) {
-			$("#stimulus").css("border-color", "red");
+			$("#stimulus").css("border-color", "orange");
 			if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
 				return false;
 			else
@@ -384,7 +384,7 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 
 		// confirm the user wanted an empty question prompt
 		if ($("#prompt").css("border-color", "").val().length == 0) {
-			$("#prompt").css("border-color", "red");
+			$("#prompt").css("border-color", "orange");
 			if (!confirm("Question prompt is empty -- click OK to continue regardless or cancel to edit it"))
 				return false;
 			else
@@ -395,7 +395,7 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 		var ok = true;
 		$("input.optiontext").css("border-color", "").each(function(n) {
 			if ($(this).val().length == 0) {
-				$(this).css("border-color", "red");
+				$(this).css("border-color", "orange");
 				ok = confirm("Option " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 				if (ok)
 					$(this).css("border-color", "");
@@ -410,7 +410,7 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 		for (var i = 0; i < $("input.optiontext").size(); i++) {
 			for (var j = i + 1; j < $("input.optiontext").size(); j++) {
 				if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
-					$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("border-color", "red");
+					$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("border-color", "orange");
 					ok = confirm("Options " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
 					if (ok)
 						$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("border-color", "");
@@ -421,6 +421,10 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 			if (!ok) break;
 		}
 		if (!ok) return false;
+
+		// confirm the user wanted only one option
+		if ($("input.optiontext").size() == 1 && !confirm("There is only one option -- click OK to continue regardless or cancel to add more"))
+			return false;
 
 		// confirm it's what the user wanted if shuffle is on but all options 
 		// are marked as fixed
