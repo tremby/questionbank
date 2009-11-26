@@ -38,8 +38,7 @@ if (isset($_POST["submit"])) {
 			if (isset($_POST["option_{$i}_correct"]))
 				$correct[] = $i;
 
-		// add correctResponse node only if any options are correct (TODO: check 
-		// if this is the right way to do it)
+		// add correctResponse node only if any options are correct
 		if (!empty($correct)) {
 			$rd->addChild("correctResponse");
 			$rd->correctResponse->addChild("value", "option_$i");
@@ -107,17 +106,32 @@ if (isset($_POST["submit"])) {
 	// response processing
 	$rc = $ai->addChild("responseProcessing")->addChild("responseCondition");
 
-	// if correct
+	// if
 	$ri = $rc->addChild("responseIf");
-	$m = $ri->addChild("match");
-	$m->addChild("variable")->addAttribute("identifier", "RESPONSE");
-	$m->addChild("correct")->addAttribute("identifier", "RESPONSE");
+
+	// criteria for a correct answer
+	if ($_POST["questiontype"] == "multipleresponse" && empty($correct)) {
+		// multiple response in which the correct response is to tick no boxes 
+		// -- check number of responses is equal to zero
+		$e = $ri->addChild("equal");
+		$e->addAttribute("toleranceMode", "exact");
+		$e->addChild("containerSize")->addChild("variable")->addAttribute("identifier", "RESPONSE");
+		$e->addChild("baseValue", "0")->addAttribute("baseType", "integer");
+	} else {
+		// otherwise, we match responses to the correctResponse above
+		$m = $ri->addChild("match");
+		$m->addChild("variable")->addAttribute("identifier", "RESPONSE");
+		$m->addChild("correct")->addAttribute("identifier", "RESPONSE");
+	}
+
 	// set score = 1
 	$sov = $ri->addChild("setOutcomeValue");
 	$sov->addAttribute("identifier", "SCORE");
 	$sov->addChild("baseValue", "1")->addAttribute("baseType", "integer");
+
 	// else
 	$re = $rc->addChild("responseElse");
+
 	// set score = 0
 	$sov = $re->addChild("setOutcomeValue");
 	$sov->addAttribute("identifier", "SCORE");
@@ -269,12 +283,6 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 			$("input.fixed", this).attr("id", "option_" + i + "_fixed").attr("name", "option_" + i + "_fixed");
 			i++;
 		});
-
-		// if it's multiple choice, ensure at least one is marked as correct 
-		// until TODO: i've figured out how to get a "correct null-response" 
-		// question to work
-		if ($("input.questiontype:checked").attr("id") == "questiontype_mc" && $("#options input.correct:checked").size() == 0)
-			$("#option_0 input.correct").attr("checked", "checked");
 	};
 
 	toggleshuffle = function() {
@@ -334,13 +342,6 @@ $multipleresponse = isset($_REQUEST["questiontype"]) && $_REQUEST["questiontype"
 		if ($("#title").val().length == 0) {
 			$("#title").css("background-color", errorcolour);
 			alert("A title must be set for this item");
-			return false;
-		}
-
-		// at least one response must be marked as correct until TODO: i've 
-		// figured out how to get a "correct null-response" question to work
-		if ($("#options input.correct:checked").size() < 1) {
-			alert("You need to mark at least one response as correct");
 			return false;
 		}
 
