@@ -8,7 +8,7 @@ if (isset($_POST["xml"])) {
 	// XML submitted
 
 	// validate it
-	if (!validate($_POST["xml"])) {
+	if (!validate($_POST["xml"], $errors, $warnings, $messages)) {
 		// give error messages
 		include "htmlheader.php";
 		?>
@@ -586,6 +586,9 @@ function showform($data = array(), $errors = array(), $warnings = array(), $mess
 				</dl>
 			</dd>
 		</dl>
+<?php //TODO: remove this! ?>
+<h3>temporary text box for XML submission</h3>
+<div><textarea name="xml"></textarea></div>
 		<div>
 			<input id="submit" type="submit" name="submit" value="Submit">
 		</div>
