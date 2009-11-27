@@ -4,8 +4,29 @@ $errors = array();
 $warnings = array();
 $messages = array();
 
-if (isset($_POST["submit"])) {
+if (isset($_POST["xml"])) {
+	// XML submitted
+
+	// validate it
+	if (!validate($_POST["xml"])) {
+		// give error messages
+		include "htmlheader.php";
+		?>
+		<h2>Posted string was not valid QTI</h2>
+		<?php
+		showmessages("Error", $errors, "error");
+		showmessages("Warning", $warnings, "warnings");
+		showmessages("Messages", $messages, "messages");
+
+		include "htmlfooter.php";
+	} else {
+		// parse it and reform it so it's like form data
+		$xml = simplexml_load_string($_POST["xml"]);
+		die("validated OK");
+	}
+} else if (isset($_POST["submit"])) {
 	// form submitted, try to build QTI
+
 	if (($xml = buildqti($_POST, $errors, $warnings, $messages)) === false) {
 		// problem of some kind, show the form again with any messages
 		showform($_POST, $errors, $warnings, $messages);
@@ -22,26 +43,10 @@ if (isset($_POST["submit"])) {
 		<h2>New QTI item complete</h2>
 		<p>The new item has been successfully validated<?php if (!empty($thingstosay)) { ?> with the following <?php echo implode(" and ", $thingstosay); ?>:<?php } ?></p>
 
-		<?php if (!empty($warnings)) { ?>
-			<div class="warning">
-				<h3>Warning</h3>
-				<ul>
-					<?php foreach ($warnings as $warning) { ?>
-						<li><?php echo htmlspecialchars($warning); ?></li>
-					<?php } ?>
-				</ul>
-			</div>
-		<?php }
-		if (!empty($messages)) { ?>
-			<div class="message">
-				<h3>Message</h3>
-				<ul>
-					<?php foreach ($messages as $message) { ?>
-						<li><?php echo htmlspecialchars($message); ?></li>
-					<?php } ?>
-				</ul>
-			</div>
-		<?php } ?>
+		<?php
+		showmessages("Warning", $warnings, "warnings");
+		showmessages("Messages", $messages, "messages");
+		?>
 
 		<h3>XML</h3>
 		<iframe width="80%" height="400" src="data:text/xml;base64,<?php echo base64_encode($xml->asXML()); ?>"></iframe>
@@ -60,6 +65,8 @@ if (isset($_POST["submit"])) {
 		exit;
 	}
 } else {
+	// nothing posted -- empty form
+
 	$data = array();
 
 	// preset the question type if it was given as a parameter
@@ -70,6 +77,7 @@ if (isset($_POST["submit"])) {
 	showform($data);
 }
 
+// build QTI from form data
 function buildqti($data, &$errors, &$warnings, &$messages) {
 	// form data submitted -- check it
 
@@ -207,6 +215,16 @@ function buildqti($data, &$errors, &$warnings, &$messages) {
 		return false;
 
 	// validate the QTI
+	validate($ai->asXML(), $errors, $warnings, $messages);
+
+	if (!empty($errors))
+		return false;
+
+	return $ai;
+}
+
+// validate a string of QTI XML
+function validate($xml, &$errors, &$warnings, &$messages) {
 	$pipes = null;
 	$validate = proc_open("./run.sh", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, SITEROOT_LOCAL . "validate");
 	if (!is_resource($validate)) {
@@ -215,7 +233,7 @@ function buildqti($data, &$errors, &$warnings, &$messages) {
 	}
 
 	// give QTI on stdin and close the pipe
-	fwrite($pipes[0], $ai->asXML());
+	fwrite($pipes[0], $xml);
 	fclose($pipes[0]);
 
 	// get contents of stdout and stderr
@@ -248,14 +266,10 @@ function buildqti($data, &$errors, &$warnings, &$messages) {
 	if (empty($errors) && $exitcode != 0)
 		$errors[] = "Validator exited with code $exitcode";
 
-	if (!empty($errors))
-		return false;
-
-	return $ai;
+	return $exitcode == 0;
 }
 
 // show authoring form
-
 function showform($data = array(), $errors = array(), $warnings = array(), $messages = array()) {
 	$multipleresponse = isset($data["questiontype"]) && $data["questiontype"] == "multipleresponse";
 
@@ -487,36 +501,9 @@ function showform($data = array(), $errors = array(), $warnings = array(), $mess
 	<h2>Make a new multiple choice or multiple response item</h2>
 
 	<?php
-	if (isset($errors) && !empty($errors)) { ?>
-		<div class="error">
-			<h3>Error</h3>
-			<ul>
-				<?php foreach ($errors as $error) { ?>
-					<li><?php echo htmlspecialchars($error); ?></li>
-				<?php } ?>
-			</ul>
-		</div>
-	<?php }
-	if (isset($warnings) && !empty($warnings)) { ?>
-		<div class="warning">
-			<h3>Warning</h3>
-			<ul>
-				<?php foreach ($warnings as $warning) { ?>
-					<li><?php echo htmlspecialchars($warning); ?></li>
-				<?php } ?>
-			</ul>
-		</div>
-	<?php }
-	if (isset($messages) && !empty($messages)) { ?>
-		<div class="message">
-			<h3>Message</h3>
-			<ul>
-				<?php foreach ($messages as $message) { ?>
-					<li><?php echo htmlspecialchars($message); ?></li>
-				<?php } ?>
-			</ul>
-		</div>
-	<?php }
+	showmessages("Error", $errors, "error");
+	showmessages("Warning", $warnings, "warning");
+	showmessages("Message", $messages, "message");
 	?>
 
 	<form id="newquestion" action="?page=newMultipleChoiceResponse" method="post">
@@ -606,6 +593,20 @@ function showform($data = array(), $errors = array(), $warnings = array(), $mess
 
 	<?php
 	include "htmlfooter.php";
+}
+
+// show a list of messages if there are any to show
+function showmessages($title, $messages, $class = null) {
+	if (!empty($messages)) { ?>
+		<div<?php if (!is_null($class)) { ?> class="<?php echo $class; ?>"<?php } ?>>
+			<h3><?php echo $title; ?></h3>
+			<ul>
+				<?php foreach ($messages as $message) { ?>
+					<li><?php echo htmlspecialchars($message); ?></li>
+				<?php } ?>
+			</ul>
+		</div>
+	<?php }
 }
 
 ?>
