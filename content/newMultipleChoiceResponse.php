@@ -589,6 +589,9 @@ function showform($data = array(), $errors = array(), $warnings = array(), $mess
 				</dl>
 			</dd>
 		</dl>
+		<div>
+			<input id="submit" type="submit" name="submit" value="Submit">
+		</div>
 	</form>
 
 	<?php
