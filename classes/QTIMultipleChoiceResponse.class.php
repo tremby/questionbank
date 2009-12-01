@@ -3,7 +3,6 @@
 abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 	public function __construct() {
 		parent::__construct();
-		//echo "intermediate constructor";
 	}
 
 	public function showForm($data = null) {
@@ -245,11 +244,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				<dt>Item type</dt>
 				<dd>
 					<ul><label>
-						<input type="radio" name="itemtype" class="itemtype" id="itemtype_mc" value="multiplechoice"<?php if (!$multipleresponse) { ?> checked="checked"<?php } ?>>
+						<input type="radio" name="itemtype" class="itemtype" id="itemtype_mc" value="multipleChoice"<?php if (!$multipleresponse) { ?> checked="checked"<?php } ?>>
 						Multiple choice (choose one answer)
 					</label></ul>
 					<ul><label>
-						<input type="radio" name="itemtype" class="itemtype" id="itemtype_mr" value="multipleresponse"<?php if ($multipleresponse) { ?> checked="checked"<?php } ?>>
+						<input type="radio" name="itemtype" class="itemtype" id="itemtype_mr" value="multipleResponse"<?php if ($multipleresponse) { ?> checked="checked"<?php } ?>>
 						Multiple response (choose all appropriate answers)
 					</label></ul>
 				</dd>
@@ -321,7 +320,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				</dd>
 			</dl>
 			<div>
-				<input type="submit" name="newitem" value="Submit">
+				<input id="submit" type="submit" name="newitem" value="Submit">
 			</div>
 		</form>
 
@@ -346,7 +345,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		// response declaration
 		$rd = $ai->addChild("responseDeclaration");
 		$rd->addAttribute("identifier", "RESPONSE");
-		$rd->addAttribute("cardinality", $this->itemType == "multipleChoice" ? "single" : "multiple");
+		$rd->addAttribute("cardinality", $this->itemType() == "multipleChoice" ? "single" : "multiple");
 		$rd->addAttribute("baseType", "identifier");
 
 		// correct response
@@ -406,7 +405,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		$ci = $ib->addChild("choiceInteraction");
 		$ci->addAttribute("responseIdentifier", "RESPONSE");
 		$ci->addAttribute("shuffle", isset($this->data["shuffle"]) ? "true" : "false");
-		if ($this->itemType == "multipleChoice")
+		if ($this->itemType() == "multipleChoice")
 			$ci->addAttribute("maxChoices", "1");
 		else {
 			if (isset($this->data["maxchoices"]))
@@ -418,7 +417,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
 			$sc = $ci->addChild("simpleChoice", $this->data["option_{$i}_optiontext"]);
 			$sc->addAttribute("identifier", "option_$i");
-			if ($this->data["shuffle"])
+			if (isset($this->data["shuffle"]))
 				$sc->addAttribute("fixed", isset($this->data["option_{$i}_fixed"]) ? "true" : "false");
 		}
 

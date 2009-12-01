@@ -55,8 +55,8 @@ abstract class QTIAssessmentItem {
 
 	// validate a string of QTI XML or SimpleXML element
 	// $errors, $warnings and $messages should be arrays
-	private static function validate($xml, &$errors, &$warnings, &$messages) {
-		if (is_a($xml, "SimpleXMLElement"))
+	public static function validate($xml, &$errors, &$warnings, &$messages) {
+		if ($xml instanceof SimpleXMLElement)
 			$xml = $xml->asXML();
 
 		$pipes = null;

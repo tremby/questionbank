@@ -43,7 +43,7 @@ if (isset($_REQUEST["itemtype"])) {
 			<h3>As plain text</h3>
 			<div style="width: 80%; height: 400px; overflow: auto;">
 				<pre><?php
-					$dom = dom_import_simplexml($ai->getXML())->ownerDocument;
+					$dom = dom_import_simplexml($ai->getQTI())->ownerDocument;
 					$dom->formatOutput = true;
 					echo htmlspecialchars($dom->saveXML());
 				?></pre>
