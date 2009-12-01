@@ -1,11 +1,21 @@
 <?php
 
+// error reporting
+error_reporting(E_ALL | E_STRICT);
+
 // constants
 require_once "include/constants.php";
 
 // class autoloader
 function __autoload($classname) {
-	require_once "classes/$classname.class.php";
+	$path = "classes/$classname.class.php";
+	if (dirname($path) == "classes" && file_exists($path))
+		require_once $path;
+	else {
+		$path = "classes/itemtypes/$classname.class.php";
+		if (dirname($path) == "classes/itemtypes" && file_exists($path))
+			require_once $path;
+	}
 }
 
 // set up include path

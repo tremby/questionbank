@@ -68,4 +68,18 @@ function simplexml_append(SimpleXMLElement $parent, SimpleXMLElement $new_child)
 	$node1->appendChild($node2);
 }
 
+// show an array of messages as HTML
+function showmessages($messages, $title = "Message", $class = null) {
+	if (!empty($messages)) { ?>
+		<div<?php if (!is_null($class)) { ?> class="<?php echo $class; ?>"<?php } ?>>
+			<h3><?php echo htmlspecialchars($title); ?></h3>
+			<ul>
+				<?php foreach ($messages as $message) { ?>
+					<li><?php echo htmlspecialchars($message); ?></li>
+				<?php } ?>
+			</ul>
+		</div>
+	<?php }
+}
+
 ?>
