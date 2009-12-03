@@ -82,4 +82,54 @@ function showmessages($messages, $title = "Message", $class = null) {
 	<?php }
 }
 
+// validate a string of QTI XML or SimpleXML element
+// $errors, $warnings and $messages should be arrays
+function validateQTI($xml, &$errors, &$warnings, &$messages) {
+	if ($xml instanceof SimpleXMLElement)
+		$xml = $xml->asXML();
+
+	$pipes = null;
+	$validate = proc_open("./run.sh", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, SITEROOT_LOCAL . "validate");
+	if (!is_resource($validate)) {
+		$errors[] = "Failed to start validator";
+		return false;
+	}
+
+	// give QTI on stdin and close the pipe
+	fwrite($pipes[0], $xml);
+	fclose($pipes[0]);
+
+	// get contents of stdout and stderr
+	$stdout = trim(stream_get_contents($pipes[1]));
+	fclose($pipes[1]);
+	$stderr = trim(stream_get_contents($pipes[2]));
+	fclose($pipes[2]);
+
+	$exitcode = proc_close($validate);
+
+	if (!empty($stderr))
+		$errors = array_merge($errors, explode("\n", $stderr));
+	if (!empty($stdout)) {
+		$stdout = explode("\n", $stdout);
+		foreach ($stdout as $message) {
+			$parts = explode("\t", $message);
+			switch ($parts[0]) {
+				case "Error":
+					$errors[] = "Validator error: {$parts[1]} ({$parts[2]})";
+					break;
+				case "Warning":
+					$warnings[] = "Validator warning: {$parts[1]} ({$parts[2]})";
+					break;
+				default:
+					$messages[] = "Validator message: {$parts[1]} ({$parts[2]})";
+			}
+		}
+	}
+
+	if (empty($errors) && $exitcode != 0)
+		$errors[] = "Validator exited with code $exitcode";
+
+	return $exitcode == 0;
+}
+
 ?>

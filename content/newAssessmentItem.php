@@ -64,7 +64,7 @@ if (isset($_REQUEST["itemtype"])) {
 	$errors = array();
 	$warnings = array();
 	$messages = array();
-	if (!QTIAssessmentItem::validate($_POST["xml"], $errors, $warnings, $messages)) {
+	if (!validateQTI($_POST["xml"], $errors, $warnings, $messages)) {
 		// give error messages
 		include "htmlheader.php";
 		?>
@@ -74,11 +74,12 @@ if (isset($_REQUEST["itemtype"])) {
 		showmessages($warnings, "Warning", "warning");
 		showmessages($messages, "Message", "message");
 		include "htmlfooter.php";
-	} else {
-		// parse it and reform it so it's like form data
-		$xml = simplexml_load_string($_POST["xml"]);
-		die("validated OK");
+		exit;
 	}
+
+	// parse it and reform it so it's like form data
+	$xml = simplexml_load_string($_POST["xml"]);
+	die("validated OK");
 } else {
 	// choose from a list of item types
 

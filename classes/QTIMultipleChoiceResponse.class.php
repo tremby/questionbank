@@ -455,7 +455,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			return false;
 
 		// validate the QTI
-		self::validate($ai, $this->errors, $this->warnings, $this->messages);
+		validateQTI($ai, $this->errors, $this->warnings, $this->messages);
 
 		if (!empty($this->errors))
 			return false;
