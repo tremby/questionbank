@@ -1,10 +1,6 @@
 <?php
 
 abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
-	public function __construct() {
-		parent::__construct();
-	}
-
 	public function showForm($data = null) {
 		parent::showForm($data);
 

@@ -13,9 +13,7 @@ abstract class QTIAssessmentItem {
 	protected $itemtypedescription = null; //set by child classes' constructors
 
 	// constructor
-	public function __construct() {
-		//echo "assessmentitem constructor";
-	}
+	public function __construct() {}
 
 	// build QTI
 	public function getQTI($data = null) {
