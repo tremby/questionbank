@@ -23,9 +23,8 @@ abstract class QTIAssessmentItem {
 				return false;
 			}
 			return $this->qti;
-		}
-
-		$this->data = $data;
+		} else
+			$this->data = $data;
 
 		// This must be overridden to then build, store and return the QTI from 
 		// the given data. It should call validateQTI() as part of it before 
