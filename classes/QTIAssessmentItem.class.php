@@ -34,7 +34,10 @@ abstract class QTIAssessmentItem {
 
 	// show authoring form
 	public function showForm($data = null) {
-		if (!is_null($data))
+		if (is_null($data)) {
+			$this->errors[] = "No data yet given";
+			return false;
+		} else
 			$this->data = $data;
 
 		// This must be overridden to then output an authoring form (which 
