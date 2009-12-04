@@ -15,39 +15,42 @@ abstract class QTIAssessmentItem {
 	// constructor
 	public function __construct() {}
 
-	// build QTI
+	// get QTI
 	public function getQTI($data = null) {
 		if (is_null($data)) {
-			if (is_null($this->qti)) {
-				$this->errors[] = "No data yet given and so QTI cannot be built";
-				return false;
-			}
-			return $this->qti;
+			if (!is_null($this->qti))
+				return $this->qti;
 		} else
 			$this->data = $data;
 
-		// This must be overridden to then build, store and return the QTI from 
-		// the given data. It should call validateQTI() as part of it before 
-		// storing and returning the SimpleXML element.
-		// Return false if there were any problems.
-	}
-
-	// show authoring form
-	public function showForm($data = null) {
-		if (is_null($data)) {
-			$this->errors[] = "No data yet given";
+		$qti = $this->buildQTI();
+		if (!$qti)
 			return false;
-		} else
-			$this->data = $data;
 
-		// This must be overridden to then output an authoring form (which 
-		// should be blank if $this->data is an empty array)
-		// Very little server side validation is necessary here since the Java 
-		// validate application does everything important. Client side checking 
-		// for likely mistakes (empty boxes etc) is sufficient.
-		// The form should submit with "newitem"
+		$this->qti = $qti;
+		return $this->qti;
 	}
 
+	/** buildQTI
+	 * This must build and return the QTI from the $data property. It should 
+	 * call validateQTI() before returning the SimpleXML element.
+	 * Populate $this->errors, $this->warnings and $this->messages with anything 
+	 * appropriate.
+	 * Return false if there were any errors.
+	 */
+	abstract protected function buildQTI();
+
+	/** showForm
+	 * This must replace $this->data with the $data argument if given and then 
+	 * output an authoring form (which should be blank if $this->data is empty).
+	 * Very little server side validation is necessary here since the Java 
+	 * validate application does everything important. Client side checking for 
+	 * likely mistakes (empty boxes etc) is sufficient.
+	 * The form should submit with "newitem".
+	 */
+	abstract public function showForm($data = null);
+
+	// output nice HTML for any errors, warnings and messages
 	public function showMessages() {
 		foreach(array("error" => $this->errors, "warning" => $this->warnings, "message" => $this->messages) as $type => $messages)
 			showmessages($messages, ucfirst($type), $type);
@@ -55,7 +58,6 @@ abstract class QTIAssessmentItem {
 
 	// get item type string
 	public function itemType() {
-		//echo "hi there";
 		return $this->itemtype;
 	}
 	// get printable item type string

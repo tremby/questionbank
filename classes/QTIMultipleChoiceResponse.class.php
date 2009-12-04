@@ -2,7 +2,8 @@
 
 abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 	public function showForm($data = null) {
-		parent::showForm($data);
+		if (!is_null($data))
+			$this->data = $data;
 
 		$multipleresponse = $this->itemType() == "multipleResponse";
 
@@ -40,9 +41,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				$(this).parents("tr:first").remove();
 
 				// renumber the remaining options
-				var options = $("#options tr.option");
 				var i = 0;
-				options.each(function() {
+				$("#options tr.option").each(function() {
 					$(this).attr("id", "option_" + i);
 					$("input.optiontext", this).attr("id", "option_" + i + "_optiontext").attr("name", "option_" + i + "_optiontext");
 					$("input.correct", this).attr("id", "option_" + i + "_correct");
@@ -102,10 +102,6 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			};
 
 			submitcheck = function() {
-				// background colours
-				var errorcolour = "#ffbaba";
-				var warningcolour = "#ffdca4";
-
 				// clear any previously set background colours
 				$("input, textarea").css("background-color", "");
 
@@ -272,14 +268,13 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 							<th>Actions</th>
 						</tr>
 						<?php if (!isset($this->data["option_0_optiontext"])) {
-							// starting from scratch -- initialize first option
+							// starting from scratch -- initialize first options
 							$this->data["option_0_optiontext"] = "";
-							if ($multipleresponse)
-								$this->data["option_0_correct"] = true;
-							else
+							$this->data["option_1_optiontext"] = "";
+							if (!$multipleresponse)
 								$this->data["correct"] = "option_0";
-						} ?>
-						<?php for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) { ?>
+						}
+						for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) { ?>
 							<tr class="option" id="option_<?php echo $i; ?>">
 								<td><input size="48" type="text" id="option_<?php echo $i; ?>_optiontext" name="option_<?php echo $i; ?>_optiontext" class="optiontext" value="<?php echo htmlspecialchars($this->data["option_{$i}_optiontext"]); ?>"></td>
 								<td>
@@ -324,9 +319,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		include "htmlfooter.php";
 	}
 
-	public function getQTI($data = null) {
-		parent::getQTI($data);
-
+	protected function buildQTI() {
 		// container element and other metadata
 		$ai = new SimpleXMLElement('
 			<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
@@ -460,8 +453,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		if (!empty($this->errors))
 			return false;
 
-		$this->qti = $ai;
-		return $this->qti;
+		return $ai;
 	}
 }
 
