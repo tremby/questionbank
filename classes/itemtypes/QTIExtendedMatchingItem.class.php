@@ -238,6 +238,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 		<?php $this->showmessages(); ?>
 
 		<form id="newitem" action="?page=newAssessmentItem" method="post">
+			<input type="hidden" name="itemtype" value="extendedMatchingItem">
 			<dl>
 				<dt><label for="title">Title</label></dt>
 				<dd><input size="64" type="text" name="title" id="title"<?php if (isset($this->data["title"])) { ?> value="<?php echo htmlspecialchars($this->data["title"]); ?>"<?php } ?>></dd>
@@ -321,31 +322,28 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 		');
 		$ai->addAttribute("adaptive", "false");
 		$ai->addAttribute("timeDependent", "false");
-		$ai->addAttribute("identifier", "mcr_" . md5(uniqid()));
+		$ai->addAttribute("identifier", "emi_" . md5(uniqid()));
 		$ai->addAttribute("title", $this->data["title"]);
 
-		// response declaration
-		$rd = $ai->addChild("responseDeclaration");
-		$rd->addAttribute("identifier", "RESPONSE");
-		$rd->addAttribute("cardinality", $this->itemType() == "multipleChoice" ? "single" : "multiple");
-		$rd->addAttribute("baseType", "identifier");
+		// response declarations
+		for ($q = 0; array_key_exists("question_{$q}_prompt", $this->data); $q++) {
+			$rd = $ai->addChild("responseDeclaration");
+			$rd->addAttribute("identifier", "RESPONSE_question_$q");
+			$rd->addAttribute("cardinality", "multiple");
+			$rd->addAttribute("baseType", "identifier");
 
-		// correct response
-		if ($this->itemType() == "multipleResponse") {
 			// build array of correct responses
 			$correct = array();
-			for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++)
-				if (isset($this->data["option_{$i}_correct"]))
-					$correct[] = $i;
+			for ($o = 0; array_key_exists("option_{$o}_optiontext", $this->data); $o++)
+				if (isset($this->data["question_{$q}_option_{$o}_correct"]))
+					$correct[] = $o;
 
 			// add correctResponse node only if any options are correct
 			if (!empty($correct)) {
 				$rd->addChild("correctResponse");
-				$rd->correctResponse->addChild("value", "option_$i");
+				foreach ($correct as $o)
+					$rd->correctResponse->addChild("value", "question_{$q}_option_$o");
 			}
-		} else {
-			$rd->addChild("correctResponse");
-			$rd->correctResponse->addChild("value", $this->data["correct"]);
 		}
 
 		// outcome declaration
@@ -383,56 +381,62 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			libxml_use_internal_errors(false);
 		}
 
-		// choices
-		$ci = $ib->addChild("choiceInteraction");
-		$ci->addAttribute("responseIdentifier", "RESPONSE");
-		if ($this->itemType() == "multipleChoice")
-			$ci->addAttribute("maxChoices", "1");
-		else {
-			if (isset($this->data["maxchoices"]))
-				$ci->addAttribute("maxChoices", $this->data["maxchoices"]);
-			if (isset($this->data["minchoices"]))
-				$ci->addAttribute("minChoices", $this->data["minchoices"]);
-		}
-		$ci->addChild("prompt", $this->data["prompt"]);
-		for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
-			$sc = $ci->addChild("simpleChoice", $this->data["option_{$i}_optiontext"]);
-			$sc->addAttribute("identifier", "option_$i");
+		// questions
+		for ($q = 0; array_key_exists("question_{$q}_prompt", $this->data); $q++) {
+			$ci = $ib->addChild("choiceInteraction");
+			$ci->addAttribute("maxChoices", "0");
+			$ci->addAttribute("minChoices", "0");
+			$ci->addAttribute("shuffle", "false");
+			$ci->addAttribute("responseIdentifier", "RESPONSE_question_$q");
+			$ci->addChild("prompt", $this->data["question_{$q}_prompt"]);
+			for ($o = 0; array_key_exists("option_{$o}_optiontext", $this->data); $o++) {
+				$sc = $ci->addChild("simpleChoice", chr(ord("A") + $o));
+				$sc->addAttribute("identifier", "question_{$q}_option_$o");
+			}
 		}
 
 		// response processing
-		$rc = $ai->addChild("responseProcessing")->addChild("responseCondition");
-
-		// if
-		$ri = $rc->addChild("responseIf");
-
-		// criteria for a correct answer
-		if ($this->itemType() == "multipleResponse" && empty($correct)) {
-			// multiple response in which the correct response is to tick no boxes 
-			// -- check number of responses is equal to zero
-			$e = $ri->addChild("equal");
-			$e->addAttribute("toleranceMode", "exact");
-			$e->addChild("containerSize")->addChild("variable")->addAttribute("identifier", "RESPONSE");
-			$e->addChild("baseValue", "0")->addAttribute("baseType", "integer");
-		} else {
-			// otherwise, we match responses to the correctResponse above
-			$m = $ri->addChild("match");
-			$m->addChild("variable")->addAttribute("identifier", "RESPONSE");
-			$m->addChild("correct")->addAttribute("identifier", "RESPONSE");
-		}
-
-		// set score = 1
-		$sov = $ri->addChild("setOutcomeValue");
-		$sov->addAttribute("identifier", "SCORE");
-		$sov->addChild("baseValue", "1")->addAttribute("baseType", "integer");
-
-		// else
-		$re = $rc->addChild("responseElse");
+		$rp = $ai->addChild("responseProcessing");
 
 		// set score = 0
-		$sov = $re->addChild("setOutcomeValue");
+		$sov = $rp->addChild("setOutcomeValue");
 		$sov->addAttribute("identifier", "SCORE");
 		$sov->addChild("baseValue", "0")->addAttribute("baseType", "integer");
+
+		for ($q = 0; array_key_exists("question_{$q}_prompt", $this->data); $q++) {
+			$rc = $rp->addChild("responseCondition");
+
+			// if
+			$ri = $rc->addChild("responseIf");
+
+			// build array of correct responses
+			$correct = array();
+			for ($o = 0; array_key_exists("option_{$o}_optiontext", $this->data); $o++)
+				if (isset($this->data["question_{$q}_option_{$o}_correct"]))
+					$correct[] = $o;
+
+			// criteria for a correct answer
+			if (empty($correct)) {
+				// multiple response in which the correct response is to tick no 
+				// boxes -- check number of responses is equal to zero
+				$e = $ri->addChild("equal");
+				$e->addAttribute("toleranceMode", "exact");
+				$e->addChild("containerSize")->addChild("variable")->addAttribute("identifier", "RESPONSE_question_$q");
+				$e->addChild("baseValue", "0")->addAttribute("baseType", "integer");
+			} else {
+				// otherwise, we match responses to the correctResponse above
+				$m = $ri->addChild("match");
+				$m->addChild("variable")->addAttribute("identifier", "RESPONSE_question_$q");
+				$m->addChild("correct")->addAttribute("identifier", "RESPONSE_question_$q");
+			}
+
+			// increment score
+			$sov = $ri->addChild("setOutcomeValue");
+			$sov->addAttribute("identifier", "SCORE");
+			$s = $sov->addChild("sum");
+			$s->addChild("variable")->addAttribute("identifier", "SCORE");
+			$s->addChild("baseValue", "1")->addAttribute("baseType", "integer");
+		}
 
 		if (!empty($this->errors))
 			return false;
