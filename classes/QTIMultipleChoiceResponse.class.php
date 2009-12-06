@@ -348,7 +348,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			// add correctResponse node only if any options are correct
 			if (!empty($correct)) {
 				$rd->addChild("correctResponse");
-				$rd->correctResponse->addChild("value", "option_$i");
+				foreach ($correct as $o)
+					$rd->correctResponse->addChild("value", "option_$o");
 			}
 		} else {
 			$rd->addChild("correctResponse");
