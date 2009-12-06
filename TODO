@@ -10,5 +10,5 @@ webtool
 	-	repository resource selector
 -	other question types
 	-	question matrix
-	-	EMI
 	-	fill in the gaps
+-	see if the options in EMI can be displayed horizontally
