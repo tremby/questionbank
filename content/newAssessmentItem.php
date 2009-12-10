@@ -21,8 +21,13 @@ if (isset($_REQUEST["itemtype"])) {
 			// problem of some kind, show the form again with any messages
 			$ai->showForm($_POST);
 		} else {
-			// new QTI is fine -- store it in session data
-			$_SESSION["qti"] = $ai->getQTI()->asXML();
+			// new QTI is fine -- get indented string
+			$dom = dom_import_simplexml($ai->getQTI())->ownerDocument;
+			$dom->formatOutput = true;
+			$xml = $dom->saveXML();
+
+			// store it in session data
+			$_SESSION["qti"] = $xml;
 
 			// display any warnings and messages
 			$thingstosay = array();
@@ -46,15 +51,11 @@ if (isset($_REQUEST["itemtype"])) {
 			// display XML and edit link
 			?>
 			<h3>XML</h3>
-			<iframe width="80%" height="400" src="data:text/xml;base64,<?php echo base64_encode($ai->getQTI()->asXML()); ?>"></iframe>
+			<iframe width="80%" height="400" src="data:text/xml;base64,<?php echo base64_encode($xml); ?>"></iframe>
 
 			<h3>As plain text</h3>
 			<div style="width: 80%; height: 400px; overflow: auto;">
-				<pre><?php
-					$dom = dom_import_simplexml($ai->getQTI())->ownerDocument;
-					$dom->formatOutput = true;
-					echo htmlspecialchars($dom->saveXML());
-				?></pre>
+				<pre><?php echo htmlspecialchars($xml); ?></pre>
 			</div>
 
 			<?php
