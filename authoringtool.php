@@ -33,9 +33,12 @@ date_default_timezone_set("Europe/London");
 // undo any magic quotes
 unmagic();
 
+// start sessions
+session_start();
+
 // serve the page
 $page = isset($_GET["page"]) ? $_GET["page"] : "home";
-switch($page) {
+switch ($page) {
 	default:
 		if (dirname("content/$page.php") == "content" && file_exists("content/$page.php"))
 			include "content/$page.php";

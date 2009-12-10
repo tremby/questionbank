@@ -132,4 +132,24 @@ function validateQTI($xml, &$errors, &$warnings, &$messages) {
 	return $exitcode == 0;
 }
 
+// redirect to another URL
+function redirect($destination = null, $anal = true, $permanent = false, $textonly = false) {
+	session_write_close();
+	if ($permanent)
+		header("HTTP/1.1 301 Moved Permamently");
+
+	if (is_null($destination))
+		$destination = $_SERVER["REQUEST_URI"];
+
+	// HTTP spec says location has to be absolute. If we started with a slash, 
+	// assume it started with the siteroot and so we can prepend the site's 
+	// domain.
+	if ($destination[0] == "/")
+		$destination = "http://" . $_SERVER["HTTP_HOST"] . $destination;
+
+	header("Location: " . $destination);
+	if ($anal)
+		die("Tried and failed to redirect you. No worries – just follow this link: $destination\n");
+}
+
 ?>

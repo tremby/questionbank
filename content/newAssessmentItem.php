@@ -21,22 +21,30 @@ if (isset($_REQUEST["itemtype"])) {
 			// problem of some kind, show the form again with any messages
 			$ai->showForm($_POST);
 		} else {
-			// new QTI is fine -- display it and any warnings and messages
+			// new QTI is fine -- store it in session data
+			$_SESSION["qti"] = $ai->getQTI()->asXML();
 
+			// display any warnings and messages
 			$thingstosay = array();
 			$tmp = $ai->getWarnings();
 			if (!empty($tmp)) $thingstosay[] = "warnings";
 			$tmp = $ai->getMessages();
 			if (!empty($tmp)) $thingstosay[] = "messages";
-
 			include "htmlheader.php";
 			?>
-
 			<h2>New QTI item complete</h2>
 			<p>The new item has been successfully validated<?php if (!empty($thingstosay)) { ?> with the following <?php echo implode(" and ", $thingstosay); ?>:<?php } ?></p>
+			<?php
+			$ai->showmessages();
 
-			<?php $ai->showmessages(); ?>
+			// show preview
+			?>
+			<h3>QTIEngine preview</h3>
+			<iframe width="80%" height="400" src="?page=previewAssessmentItem"></iframe>
+			<?php
 
+			// display XML and edit link
+			?>
 			<h3>XML</h3>
 			<iframe width="80%" height="400" src="data:text/xml;base64,<?php echo base64_encode($ai->getQTI()->asXML()); ?>"></iframe>
 
