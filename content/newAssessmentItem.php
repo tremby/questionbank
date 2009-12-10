@@ -42,21 +42,13 @@ if (isset($_REQUEST["itemtype"])) {
 			<?php
 			$ai->showmessages();
 
-			// show preview
+			// show preview and download link
 			?>
 			<h3>QTIEngine preview</h3>
 			<iframe width="80%" height="400" src="?page=previewAssessmentItem"></iframe>
-			<?php
 
-			// display XML and edit link
-			?>
-			<h3>XML</h3>
-			<iframe width="80%" height="400" src="data:text/xml;base64,<?php echo base64_encode($xml); ?>"></iframe>
-
-			<h3>As plain text</h3>
-			<div style="width: 80%; height: 400px; overflow: auto;">
-				<pre><?php echo htmlspecialchars($xml); ?></pre>
-			</div>
+			<h3>Download the item</h3>
+			<p>You can <a href="?page=downloadAssessmentItem">download the QTI item as an XML file</a>.</p>
 
 			<?php
 			include "htmlfooter.php";
