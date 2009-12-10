@@ -9,7 +9,6 @@ webtool
 	-	upload to deposit in repository
 	-	repository resource selector
 -	other question types
-	-	question matrix
 	-	fill in the gaps
 -	see if the options in EMI can be displayed horizontally
 -	try and find a way to show the EMI options as a list (requires a CSS style) 
