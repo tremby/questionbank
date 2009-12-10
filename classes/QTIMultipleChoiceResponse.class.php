@@ -394,9 +394,10 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				$this->data["stimulus"] = "<div>" . $this->data["stimulus"] . "</div>";
 
 			// parse it as XML
-			// The stimulus must be valid XML at this point. Even if it is, and even 
-			// if it's also valid XHTML, it may still not be valid QTI since QTI 
-			// only allows a subset of XHTML. So we collect errors here.
+			// The stimulus must be valid XML at this point. Even if it is, and 
+			// even if it's also valid XHTML, it may still not be valid QTI 
+			// since QTI only allows a subset of XHTML. So we collect errors 
+			// here.
 			libxml_use_internal_errors(true);
 			$stimulus = simplexml_load_string($this->data["stimulus"]);
 			if ($stimulus === false) {
