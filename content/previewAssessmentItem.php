@@ -8,8 +8,12 @@ if (!isset($_SESSION["qti"])) die("No QTI in session data");
 // the uploaded file's mimetype. PHP <5.2.10 is still common at the time of 
 // writing so we can't use curl.
 
-// boundary
-$boundary = "----------------------------b3539e0ac209";
+// boundary -- see http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html
+while (true) {
+	$boundary = "----------------------------" + uniqid();
+	if (strpos($_SESSION["qti"], $boundary) === false)
+		break;
+}
 
 // request
 $request =	"--$boundary\r\n";
