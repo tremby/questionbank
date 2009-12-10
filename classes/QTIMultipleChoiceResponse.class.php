@@ -158,6 +158,25 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 				// issue warnings if applicable
 
+				// confirm the user wanted the candidate not to be able to check 
+				// all correct responses or to have to check incorrect ones
+				if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
+					if ($("#maxchoices").val() != 0 && $("#maxchoices").val() < $("input.correct:checked").size()) {
+						$("#maxchoices").css("background-color", warningcolour);
+						if (!confirm("Value for maximum choices is less than the number of correct choices -- click OK to continue regardless or cancel to edit it"))
+							return false;
+						else
+							$("#maxchoices").css("background-color", "");
+					}
+					if ($("#minchoices").val() != 0 && $("#minchoices").val() > $("input.correct:checked").size()) {
+						$("#minchoices").css("background-color", warningcolour);
+						if (!confirm("Value for minimum choices is greater than the number of correct choices -- click OK to continue regardless or cancel to edit it"))
+							return false;
+						else
+							$("#minchoices").css("background-color", "");
+					}
+				}
+
 				// confirm the user wanted an empty stimulus
 				if ($("#stimulus").val().length == 0) {
 					$("#stimulus").css("background-color", warningcolour);
