@@ -31,6 +31,16 @@ abstract class QTIAssessmentItem {
 		return $this->qti;
 	}
 
+	// get QTI identifier
+	public function getQTIID() {
+		$qti = $this->getQTI();
+
+		if (!$qti)
+			return false;
+
+		return (string) $qti["identifier"];
+	}
+
 	/** buildQTI
 	 * This must build and return the QTI from the $data property. It should 
 	 * call validateQTI() before returning the SimpleXML element.

@@ -27,7 +27,9 @@ if (isset($_REQUEST["itemtype"])) {
 			$xml = $dom->saveXML();
 
 			// store it in session data
-			$_SESSION["qti"] = $xml;
+			if (!is_array($_SESSION["qti"]))
+				$_SESSION["qti"] = array();
+			$_SESSION["qti"][$ai->getQTIID()] = $xml;
 
 			// display any warnings and messages
 			$thingstosay = array();
@@ -45,10 +47,10 @@ if (isset($_REQUEST["itemtype"])) {
 			// show preview and download link
 			?>
 			<h3>QTIEngine preview</h3>
-			<iframe width="80%" height="400" src="?page=previewAssessmentItem"></iframe>
+			<iframe width="80%" height="400" src="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>"></iframe>
 
 			<h3>Download the item</h3>
-			<p>You can <a href="?page=downloadAssessmentItem">download the QTI item as an XML file</a>.</p>
+			<p>You can <a href="?page=downloadAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">download the QTI item as an XML file</a>.</p>
 
 			<?php
 			include "htmlfooter.php";

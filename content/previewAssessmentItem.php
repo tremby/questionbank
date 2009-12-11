@@ -1,6 +1,9 @@
 <?php
 
-if (!isset($_SESSION["qti"])) die("No QTI in session data");
+if (!isset($_REQUEST["qtiid"])) die("No QTI ID specified");
+if (!isset($_SESSION["qti"][$_REQUEST["qtiid"]])) die("No QTI found in session data for specified QTI ID");
+
+$qti = $_SESSION["qti"][$_REQUEST["qtiid"]];
 
 // upload the QTI to QTIEngine
 // Doing this manually rather than using curl because until some PHP after 5.2.6 
@@ -11,7 +14,7 @@ if (!isset($_SESSION["qti"])) die("No QTI in session data");
 // boundary -- see http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html
 while (true) {
 	$boundary = "----------------------------" + uniqid();
-	if (strpos($_SESSION["qti"], $boundary) === false)
+	if (strpos($qti, $boundary) === false)
 		break;
 }
 
@@ -20,7 +23,7 @@ $request =	"--$boundary\r\n";
 $request .=	"Content-Disposition: form-data; name=\"uploadedContent\"; filename=\"qti.xml\"\r\n";
 $request .=	"Content-Type: application/xml\r\n";
 $request .=	"\r\n";
-$request .= $_SESSION["qti"];
+$request .= $qti;
 $request .= "\r\n--$boundary--\r\n\r\n";
 
 // headers
