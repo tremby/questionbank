@@ -304,6 +304,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 	}
 
 	protected function fromXML(SimpleXMLElement $xml) {
+		return 0;
 	}
 }
 
