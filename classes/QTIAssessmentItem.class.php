@@ -34,6 +34,15 @@ abstract class QTIAssessmentItem {
 	 */
 	abstract public function showForm($data = null);
 
+	/** fromXML
+	 * This must attempt to parse the given SimpleXML element to whatever kind 
+	 * of item type is being implemented. Return a score where 0 is "given XML 
+	 * is definitely not this question type" and 255 is "given XML is definitely 
+	 * this question type". If the parsing was successful (even if not ideal) 
+	 * the $data property should be populated.
+	 */
+	abstract protected function fromXML(SimpleXMLElement $xml);
+
 	// get QTI
 	public function getQTI($data = null) {
 		if (is_null($data)) {
