@@ -27,7 +27,7 @@ if (isset($_REQUEST["itemtype"])) {
 			$xml = $dom->saveXML();
 
 			// store it in session data
-			if (!is_array($_SESSION["qti"]))
+			if (!isset($_SESSION["qti"]) || !is_array($_SESSION["qti"]))
 				$_SESSION["qti"] = array();
 			$_SESSION["qti"][$ai->getQTIID()] = $xml;
 
