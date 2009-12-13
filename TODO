@@ -13,3 +13,4 @@ webtool
 -	see if the options in EMI can be displayed horizontally
 -	try and find a way to show the EMI options as a list (requires a CSS style) 
 	rather than as a table
+-	improve question matrix view somehow
