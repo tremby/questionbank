@@ -457,7 +457,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 		return $this->qti;
 	}
 
-	protected function fromXML(SimpleXMLElement $xml) {
+	public function fromXML(SimpleXMLElement $xml) {
 		return 0;
 	}
 }

@@ -40,8 +40,9 @@ abstract class QTIAssessmentItem {
 	 * is definitely not this question type" and 255 is "given XML is definitely 
 	 * this question type". If the parsing was successful (even if not ideal) 
 	 * the $data property should be populated.
+	 * It can be assumed that $xml is valid QTI.
 	 */
-	abstract protected function fromXML(SimpleXMLElement $xml);
+	abstract public function fromXML(SimpleXMLElement $xml);
 
 	// get QTI
 	public function getQTI($data = null) {

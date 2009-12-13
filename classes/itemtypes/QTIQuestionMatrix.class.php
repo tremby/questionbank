@@ -209,7 +209,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 		for ($q = 0; array_key_exists("question_{$q}_prompt", $this->data); $q++) {
 			$rd = $ai->addChild("responseDeclaration");
 			$rd->addAttribute("identifier", "RESPONSE_question_$q");
-			$rd->addAttribute("cardinality", "multiple");
+			$rd->addAttribute("cardinality", "single");
 			$rd->addAttribute("baseType", "identifier");
 			$rd->addChild("correctResponse")->addChild("value", "question_{$q}_" . $this->data["question_{$q}_answer"]);
 		}
@@ -303,7 +303,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 		return $this->qti;
 	}
 
-	protected function fromXML(SimpleXMLElement $xml) {
+	public function fromXML(SimpleXMLElement $xml) {
 		return 0;
 	}
 }

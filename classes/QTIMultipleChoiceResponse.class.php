@@ -477,7 +477,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		return $ai;
 	}
 
-	protected function fromXML(SimpleXMLElement $xml) {
+	public function fromXML(SimpleXMLElement $xml) {
 		return 0;
 	}
 }
