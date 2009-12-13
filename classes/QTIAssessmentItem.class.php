@@ -15,6 +15,25 @@ abstract class QTIAssessmentItem {
 	// constructor
 	public function __construct() {}
 
+	/** buildQTI
+	 * This must build and return the QTI from the $data property. It should 
+	 * call validateQTI() before returning the SimpleXML element.
+	 * Populate $this->errors, $this->warnings and $this->messages with anything 
+	 * appropriate.
+	 * Return false if there were any errors.
+	 */
+	abstract protected function buildQTI();
+
+	/** showForm
+	 * This must replace $this->data with the $data argument if given and then 
+	 * output an authoring form (which should be blank if $this->data is empty).
+	 * Very little server side validation is necessary here since the Java 
+	 * validate application does everything important. Client side checking for 
+	 * likely mistakes (empty boxes etc) is sufficient.
+	 * The form should submit with "newitem".
+	 */
+	abstract public function showForm($data = null);
+
 	// get QTI
 	public function getQTI($data = null) {
 		if (is_null($data)) {
@@ -40,25 +59,6 @@ abstract class QTIAssessmentItem {
 
 		return (string) $qti["identifier"];
 	}
-
-	/** buildQTI
-	 * This must build and return the QTI from the $data property. It should 
-	 * call validateQTI() before returning the SimpleXML element.
-	 * Populate $this->errors, $this->warnings and $this->messages with anything 
-	 * appropriate.
-	 * Return false if there were any errors.
-	 */
-	abstract protected function buildQTI();
-
-	/** showForm
-	 * This must replace $this->data with the $data argument if given and then 
-	 * output an authoring form (which should be blank if $this->data is empty).
-	 * Very little server side validation is necessary here since the Java 
-	 * validate application does everything important. Client side checking for 
-	 * likely mistakes (empty boxes etc) is sufficient.
-	 * The form should submit with "newitem".
-	 */
-	abstract public function showForm($data = null);
 
 	// output nice HTML for any errors, warnings and messages
 	public function showMessages() {
