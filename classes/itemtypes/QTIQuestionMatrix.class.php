@@ -313,28 +313,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 		);
 
 		// get the stimulus
-		$stimulus = simplexml_load_string('<stimulus xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"/>', null);
-		$itemBodyIgnore = array(
-			// subclasses of block:
-			"customInteraction", "positionObjectStage",
-			// subclasses of blockInteraction, which is an abstract subclass of 
-			// block:
-			"associateInteraction", "choiceInteraction", "drawingInteraction", 
-			"extendedTextInteraction", "gapMatchInteraction", 
-			"hottextInteraction", "matchInteraction", "mediaInteraction", 
-			"orderInteraction", "sliderInteraction", "uploadInteraction",
-			// subclasses of graphicInteraction, which is an abstract subclass 
-			// of blockInteraction:
-			"graphicAssociateInteraction", "graphicGapMatchInteraction", 
-			"graphicOrderInteraction", "hotspotInteraction", 
-			"selectPointInteraction",
-		);
-		foreach ($xml->itemBody->children() as $child) {
-			if (in_array($child->getName(), $itemBodyIgnore))
-				continue;
-			simplexml_append($stimulus, $child);
-		}
-		$data["stimulus"] = xml_remove_wrapper_element($stimulus->asXML());
+		$data["stimulus"] = qti_get_stimulus($xml->itemBody);
 
 		// count the choiceInteractions
 		$questioncount = count($xml->itemBody->choiceInteraction);

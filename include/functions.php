@@ -158,4 +158,32 @@ function xml_remove_wrapper_element($xml) {
 	return preg_replace(array('%^<\?xml[^>]*\?>\s*%', '%^<[^>]*/>$%s', '%^<[^>]*>(.*)</[^>]*>$%s'), array('', '', '$1'), trim($xml));
 }
 
+// get non-interaction XML from a QTI itemBody node (that is, the stimulus)
+function qti_get_stimulus(SimpleXMLElement $ib) {
+	$itemBodyIgnore = array(
+		// subclasses of block:
+		"customInteraction", "positionObjectStage",
+		// subclasses of blockInteraction, which is an abstract subclass of 
+		// block:
+		"associateInteraction", "choiceInteraction", "drawingInteraction", 
+		"extendedTextInteraction", "gapMatchInteraction", 
+		"hottextInteraction", "matchInteraction", "mediaInteraction", 
+		"orderInteraction", "sliderInteraction", "uploadInteraction",
+		// subclasses of graphicInteraction, which is an abstract subclass 
+		// of blockInteraction:
+		"graphicAssociateInteraction", "graphicGapMatchInteraction", 
+		"graphicOrderInteraction", "hotspotInteraction", 
+		"selectPointInteraction",
+	);
+
+	$stimulus = simplexml_load_string('<stimulus xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"/>', null);
+	foreach ($ib->children() as $child) {
+		if (in_array($child->getName(), $itemBodyIgnore))
+			continue;
+		simplexml_append($stimulus, $child);
+	}
+
+	return xml_remove_wrapper_element($stimulus->asXML());
+}
+
 ?>
