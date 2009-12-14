@@ -10,6 +10,9 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 	}
 
 	public function showForm($data = null) {
+		if (!is_null($data))
+			$this->data = $data;
+
 		include "htmlheader.php";
 		?>
 
