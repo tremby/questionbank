@@ -152,4 +152,10 @@ function redirect($destination = null, $anal = true, $permanent = false, $texton
 		die("Tried and failed to redirect you. No worries – just follow this link: $destination\n");
 }
 
+// remove the XML declaration if it exists and the outer element from a string 
+// of XML
+function xml_remove_wrapper_element($xml) {
+	return preg_replace(array('%^<\?xml[^>]*\?>\s*%', '%^<[^>]*/>$%s', '%^<[^>]*>(.*)</[^>]*>$%s'), array('', '', '$1'), trim($xml));
+}
+
 ?>

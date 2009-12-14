@@ -307,7 +307,112 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 	}
 
 	public function fromXML(SimpleXMLElement $xml) {
-		return 0;
+		$data = array(
+			"itemtype"	=>	$this->itemType(),
+			"title"		=>	(string) $xml["title"],
+		);
+
+		// get the stimulus
+		$stimulus = simplexml_load_string('<stimulus xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"/>', null);
+		$itemBodyIgnore = array(
+			// subclasses of block:
+			"customInteraction", "positionObjectStage",
+			// subclasses of blockInteraction, which is an abstract subclass of 
+			// block:
+			"associateInteraction", "choiceInteraction", "drawingInteraction", 
+			"extendedTextInteraction", "gapMatchInteraction", 
+			"hottextInteraction", "matchInteraction", "mediaInteraction", 
+			"orderInteraction", "sliderInteraction", "uploadInteraction",
+			// subclasses of graphicInteraction, which is an abstract subclass 
+			// of blockInteraction:
+			"graphicAssociateInteraction", "graphicGapMatchInteraction", 
+			"graphicOrderInteraction", "hotspotInteraction", 
+			"selectPointInteraction",
+		);
+		foreach ($xml->itemBody->children() as $child) {
+			if (in_array($child->getName(), $itemBodyIgnore))
+				continue;
+			simplexml_append($stimulus, $child);
+		}
+		$data["stimulus"] = xml_remove_wrapper_element($stimulus->asXML());
+
+		// count the choiceInteractions
+		$questioncount = count($xml->itemBody->choiceInteraction);
+
+		// no good if there are no questions
+		if ($questioncount == 0)
+			return 0;
+
+		// ensure there are the same number of responseDeclarations
+		if (count($xml->responseDeclaration) != $questioncount)
+			return 0;
+
+		// ensure there are the same number of responseConditions
+		if (count($xml->responseProcessing->responseCondition) != $questioncount)
+			return 0;
+
+		// ensure some stuff for each question
+		$q = 0;
+		foreach ($xml->itemBody->choiceInteraction as $ci) {
+			// candidate can only choose one answer
+			if ((string) $ci["maxChoices"] != "1")
+				return 0;
+
+			// there are two possible answers
+			if (count($ci->simpleChoice) != 2)
+				return 0;
+
+			// answers are true and false
+			$answers = array(null, null);
+			foreach ($ci->simpleChoice as $sc) {
+				if (strtolower((string) $sc) == "false")
+					$answers[0] = (string) $sc["identifier"];
+				else if (strtolower((string) $sc) == "true")
+					$answers[1] = (string) $sc["identifier"];
+				else
+					return 0;
+			}
+
+			// check some responseDeclaration things
+			$declarationsfound = 0;
+			foreach ($xml->responseDeclaration as $rd) {
+				if ((string) $rd["identifier"] != (string) $ci["responseIdentifier"])
+					continue;
+
+				$declarationsfound++;
+
+				// has a correct response
+				if (!isset($rd->correctResponse))
+					return 0;
+
+				// has one correct response
+				if (count($rd->correctResponse->value) != 1)
+					return 0;
+
+				// the correct response is one of the options
+				$answer = array_search((string) $rd->correctResponse->value, $answers);
+				if ($answer === false)
+					return 0;
+
+				$data["question_{$q}_prompt"] = (string) $ci->prompt;
+				$data["question_{$q}_answer"] = $answer ? true : false;
+			}
+
+			// there was a good responseDeclaration for each question
+			if ($declarationsfound != 1)
+				return 0;
+
+			$q++;
+		}
+
+		// happy with that -- set data property
+		$this->data = $data;
+
+		// rather strange question matrix if it's only one question
+		if ($questioncount == 1)
+			return 127;
+
+		return 255;
 	}
 }
 
