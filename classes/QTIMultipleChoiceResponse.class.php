@@ -1,6 +1,12 @@
 <?php
 
 abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
+	public function __construct() {
+		parent::__construct();
+
+		$this->interactionType = "choiceInteraction";
+	}
+
 	public function showForm($data = null) {
 		if (!is_null($data))
 			$this->data = $data;
@@ -329,9 +335,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					</dl>
 				</dd>
 			</dl>
-			<div>
-				<input id="submit" type="submit" name="newitem" value="Submit">
-			</div>
+			<div><input id="submit" type="submit" name="newitem" value="Submit"></div>
 		</form>
 
 		<?php

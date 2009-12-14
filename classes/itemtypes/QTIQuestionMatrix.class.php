@@ -7,6 +7,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 		$this->itemtype = "questionMatrix";
 		$this->itemtypeprint = "question matrix";
 		$this->itemtypedescription = "A stimulus followed by a number of question prompts. The candidate selects true or false for each.";
+		$this->interactionType = "choiceInteraction";
 	}
 
 	public function showForm($data = null) {
@@ -183,10 +184,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 					<input type="button" id="addquestion" value="Add question">
 				</dd>
 			</dl>
-			<div>
-
-				<input id="submit" type="submit" name="newitem" value="Submit">
-			</div>
+			<div><input id="submit" type="submit" name="newitem" value="Submit"></div>
 		</form>
 
 		<?php

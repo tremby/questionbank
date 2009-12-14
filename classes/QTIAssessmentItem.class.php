@@ -8,9 +8,11 @@ abstract class QTIAssessmentItem {
 	protected $data = array();
 	protected $qti = null; //SimpleXML element
 
-	protected $itemtype = null; //set by child classes' constructors
-	protected $itemtypeprint = null; //set by child classes' constructors
-	protected $itemtypedescription = null; //set by child classes' constructors
+	// the following are set by child classes' constructors
+	protected $itemtype = null;
+	protected $itemtypeprint = null;
+	protected $itemtypedescription = null;
+	protected $interactionType = null;
 
 	// constructor
 	public function __construct() {}
@@ -87,6 +89,10 @@ abstract class QTIAssessmentItem {
 	// get item type description string
 	public function itemTypeDescription() {
 		return $this->itemtypedescription;
+	}
+	// get interaction type string
+	public function interactionType() {
+		return $this->interactionType;
 	}
 
 	// get errors

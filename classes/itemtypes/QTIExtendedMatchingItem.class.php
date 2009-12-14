@@ -7,6 +7,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 		$this->itemtype = "extendedMatchingItem";
 		$this->itemtypeprint = "extended matching item";
 		$this->itemtypedescription = "A stimulus followed by a number of possible responses and then a number of question prompts. The candidate checks each response which is correct for each question prompt.";
+		$this->interactionType = "choiceInteraction";
 	}
 
 	public function showForm($data = null) {
@@ -304,9 +305,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 					<input type="button" id="addquestion" value="Add question">
 				</dd>
 			</dl>
-			<div>
-				<input id="submit" type="submit" name="newitem" value="Submit">
-			</div>
+			<div><input id="submit" type="submit" name="newitem" value="Submit"></div>
 		</form>
 
 		<?php
