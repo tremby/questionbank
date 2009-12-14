@@ -310,10 +310,8 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 		$data = array(
 			"itemtype"	=>	$this->itemType(),
 			"title"		=>	(string) $xml["title"],
+			"stimulus"	=>	qti_get_stimulus($xml->itemBody),
 		);
-
-		// get the stimulus
-		$data["stimulus"] = qti_get_stimulus($xml->itemBody);
 
 		// count the choiceInteractions
 		$questioncount = count($xml->itemBody->choiceInteraction);
