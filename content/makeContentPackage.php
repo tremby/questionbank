@@ -55,7 +55,7 @@ if (isset($_POST["makecp"])) {
 	$filename = "/tmp/" . uniqid("zip");
 	if ($zip->open($filename, ZIPARCHIVE::CREATE) !== true)
 		die("couldn't make zip file");
-	$zip->addFromString("imsmanifest.xml", $manifest->asXML());
+	$zip->addFromString("imsmanifest.xml", simplexml_indented_string($manifest));
 	$zip->addFromString("$title.qti.xml", $qti);
 	$zip->close();
 
