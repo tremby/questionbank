@@ -42,13 +42,16 @@ if (isset($_REQUEST["itemtype"])) {
 			<?php
 			$ai->showmessages();
 
-			// show preview and download link
+			// show preview and download links
 			?>
 			<h3>QTIEngine preview</h3>
 			<iframe width="80%" height="400" src="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>"></iframe>
 
 			<h3>Download the item</h3>
 			<p>You can <a href="?page=downloadAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">download the QTI item as an XML file</a>.</p>
+
+			<h3>Make a content package</h3>
+			<p>You can <a href="?page=makeContentPackage&amp;qtiid=<?php echo $ai->getQTIID(); ?>">package this item</a> to include metadata.</p>
 
 			<?php
 			include "htmlfooter.php";
