@@ -33,7 +33,8 @@ $reqheader = array(
 	"Content-Length"	=>	strlen($request),
 	"Content-Type"		=>	"multipart/form-data; boundary=$boundary",
 );
-$reqaction =	"POST /application/upload HTTP/1.1";
+$url = "/application/upload";
+$reqaction =	"POST $url HTTP/1.1";
 
 // make requests until we're redirected to the preview page
 $error = null;
@@ -67,7 +68,7 @@ while (true) {
 
 	// check HTTP response code is a redirection
 	if ($httpcode != 301 && $httpcode != 302 || !array_key_exists("Location", $header)) {
-		$error = "Didn't get a redirection to the QTIEngine preview page. Last page was " . curl_getinfo($curl, CURLINFO_EFFECTIVE_URL) . ", content:$data";
+		$error = "Didn't get a redirection to the QTIEngine preview page. Last page was $url";
 		break;
 	}
 
@@ -83,7 +84,8 @@ while (true) {
 		break;
 
 	// redirect
-	$reqaction = "GET " . $urlparts["path"] . " HTTP/1.1";
+	$url = $urlparts["path"];
+	$reqaction = "GET $url HTTP/1.1";
 
 	// delete POST related headers
 	if (isset($reqheader["Content-Length"])) {
