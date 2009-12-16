@@ -46,7 +46,7 @@ if (isset($_POST["makecp"])) {
 	// resource LOM metadata
 	$lom = $md->addChild("lom", null, $imsmd);
 	$g = $lom->addChild("general", null, $imsmd);
-	$g->addChild("title", null, $imsmd)->addChild("langstring", $title, $imsmd);
+	$g->addChild("title", null, $imsmd)->addChild("langstring", (string) $ai["title"], $imsmd);
 	if (isset($_POST["description"]) && !empty($_POST["description"]))
 		$g->addChild("description", null, $imsmd)->addChild("langstring", $_POST["description"], $imsmd);
 
@@ -79,7 +79,7 @@ include "htmlheader.php";
 	<input type="hidden" name="qtiid" value="<?php echo htmlspecialchars($_REQUEST['qtiid']); ?>">
 	<dl>
 		<dt>Title</dt>
-		<dd><?php echo htmlspecialchars($title); ?></dd>
+		<dd><?php echo htmlspecialchars((string) $ai["title"]); ?></dd>
 
 		<dt>Description</dt>
 		<dd><textarea id="description" name="description" rows="4" cols="64"><?php if (isset($_POST["description"])) echo htmlspecialchars($_POST["description"]); ?></textarea></dd>
