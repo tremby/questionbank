@@ -28,7 +28,6 @@ $request .= "\r\n--$boundary--\r\n\r\n";
 
 // headers
 $reqheader = array(
-	"User-Agent"		=>	"curl/7.18.2 (i486-pc-linux-gnu) libcurl/7.18.2 OpenSSL/0.9.8g zlib/1.2.3.3 libidn/1.10",
 	"Host"				=>	QTIENGINE_HOST,
 	"Accept"			=>	"*/*",
 	"Content-Length"	=>	strlen($request),
