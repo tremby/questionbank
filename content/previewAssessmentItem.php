@@ -75,7 +75,7 @@ while (true) {
 	// check its URL is valid
 	$urlparts = parse_url($header["Location"]);
 	if (!isset($urlparts)) {
-		$error = "Hit a malformed Location header pointing to '$url'";
+		$error = "Hit a malformed Location header pointing to '" . $header["Location"] . "'";
 		break;
 	}
 
