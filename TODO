@@ -17,3 +17,5 @@ webtool
 	rather than as a table
 -	improve question matrix view somehow
 -	produce content packages (with manifest file)
+-	bug: QTIEngine JSESSIONID cookie overrides request var so if the user has 
+	such a cookie they won't see the correct preview
