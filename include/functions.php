@@ -70,7 +70,7 @@ function simplexml_append(SimpleXMLElement $parent, SimpleXMLElement $new_child)
 
 // return indented XML string from SimpleXML object
 function simplexml_indented_string(SimpleXMLElement $xml) {
-	$dom = dom_import_simplexml($xml->ownerDocument);
+	$dom = dom_import_simplexml($xml)->ownerDocument;
 	$dom->formatOutput = true;
 	return $dom->saveXML();
 }
