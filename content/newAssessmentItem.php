@@ -22,9 +22,7 @@ if (isset($_REQUEST["itemtype"])) {
 			$ai->showForm($_POST);
 		} else {
 			// new QTI is fine -- get indented string
-			$dom = dom_import_simplexml($ai->getQTI())->ownerDocument;
-			$dom->formatOutput = true;
-			$xml = $dom->saveXML();
+			$xml = simplexml_indented_string($ai->getQTI());
 
 			// store it in session data
 			if (!isset($_SESSION["qti"]) || !is_array($_SESSION["qti"]))
