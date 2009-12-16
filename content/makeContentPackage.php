@@ -8,6 +8,7 @@ $qti = $_SESSION["qti"][$_REQUEST["qtiid"]];
 // parse the QTI to get the title and identifier
 $ai = simplexml_load_string($qti);
 $title = preg_replace('%[^A-Za-z0-9._ -]%', "_", $ai["title"]);
+$titleuri = urlencode($title);
 $identifier = (string) $ai["identifier"];
 
 if (isset($_POST["makecp"])) {
@@ -32,8 +33,7 @@ if (isset($_POST["makecp"])) {
 	$r = $rs->addChild("resource");
 	$r->addAttribute("identifier", $identifier);
 	$r->addAttribute("type", "imsqti_item_xmlv2p1");
-	$r->addAttribute("href", "$title.qti.xml");
-	$r->addChild("file")->addAttribute("href", "$title.qti.xml");
+	$r->addAttribute("href", "$titleuri.qti.xml");
 	$md = $r->addChild("metadata");
 
 	// resource qti metadata
@@ -49,6 +49,9 @@ if (isset($_POST["makecp"])) {
 	$g->addChild("title", null, $imsmd)->addChild("langstring", (string) $ai["title"], $imsmd);
 	if (isset($_POST["description"]) && !empty($_POST["description"]))
 		$g->addChild("description", null, $imsmd)->addChild("langstring", $_POST["description"], $imsmd);
+
+	// file element
+	$r->addChild("file")->addAttribute("href", "$titleuri.qti.xml");
 
 	// make zip archive
 	$zip = new ZipArchive();
