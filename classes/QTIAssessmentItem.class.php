@@ -107,6 +107,19 @@ abstract class QTIAssessmentItem {
 	public function getMessages() {
 		return $this->messages;
 	}
+
+	// add error
+	public function addError($string) {
+		$this->errors[] = $string;
+	}
+	// add warning
+	public function addWarning($string) {
+		$this->warnings[] = $string;
+	}
+	// add message
+	public function addMessage($string) {
+		$this->messages[] = $string;
+	}
 }
 
 ?>
