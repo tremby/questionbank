@@ -211,7 +211,14 @@ function item_types() {
 	}
 	closedir($dh);
 
+	usort($items, "compare_item_alpha");
+
 	return $items;
+}
+
+// compare item types alphabetically by name
+function compare_item_alpha(QTIAssessmentItem $a, QTIAssessmentItem $b) {
+	return strcasecmp($a->itemTypePrint(), $b->itemTypePrint());
 }
 
 ?>
