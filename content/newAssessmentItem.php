@@ -87,21 +87,7 @@ if (isset($_REQUEST["itemtype"])) {
 } else {
 	// choose from a list of item types
 
-	// look for item type classes
-	$dh = opendir(SITEROOT_LOCAL . "classes/itemtypes") or die("Couldn't open item types dir");
-	$items = array();
-	while (($file = readdir($dh)) !== false) {
-		if (!preg_match('%^QTI.*\.class\.php$%', $file))
-			continue;
-
-		$classname = substr($file, 0, -10);
-
-		if (!is_subclass_of($classname, "QTIAssessmentItem"))
-			continue;
-
-		$items[] = new $classname;
-	}
-	closedir($dh);
+	$items = item_types();
 
 	include "htmlheader.php";
 	?>

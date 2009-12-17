@@ -193,4 +193,25 @@ function qti_get_stimulus(SimpleXMLElement $ib) {
 	return xml_remove_wrapper_element($stimulus->asXML());
 }
 
+// get array of items, one of each type
+function item_types() {
+	// look for item type classes
+	$dh = opendir(SITEROOT_LOCAL . "classes/itemtypes") or die("Couldn't open item types dir");
+	$items = array();
+	while (($file = readdir($dh)) !== false) {
+		if (!preg_match('%^QTI.*\.class\.php$%', $file))
+			continue;
+
+		$classname = substr($file, 0, -10);
+
+		if (!is_subclass_of($classname, "QTIAssessmentItem"))
+			continue;
+
+		$items[] = new $classname;
+	}
+	closedir($dh);
+
+	return $items;
+}
+
 ?>
