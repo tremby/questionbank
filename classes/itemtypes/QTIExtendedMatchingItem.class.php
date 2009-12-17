@@ -294,7 +294,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 									<?php for ($j = 0; array_key_exists("option_{$j}_optiontext", $this->data); $j++) { ?>
 										<label class="correct" id="question_<?php echo $i; ?>_option_<?php echo $j; ?>">
 											<span class="optionid"><?php echo chr(ord("A") + $j); ?></span>
-											<input type="checkbox" id="question_<?php echo $i; ?>_option_<?php echo $j; ?>_correct" name="question_<?php echo $i; ?>_option_<?php echo $j; ?>_correct" class="correct"<?php if (isset($this->data["question_{$i}_option_{$i}_correct"])) { ?> checked="checked"<?php } ?>>
+											<input type="checkbox" id="question_<?php echo $i; ?>_option_<?php echo $j; ?>_correct" name="question_<?php echo $i; ?>_option_<?php echo $j; ?>_correct" class="correct"<?php if (isset($this->data["question_{$i}_option_{$j}_correct"])) { ?> checked="checked"<?php } ?>>
 										</label>
 									<?php } ?>
 								</td>
