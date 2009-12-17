@@ -493,7 +493,94 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 	}
 
 	public function fromXML(SimpleXMLElement $xml) {
-		return 0;
+		$data = array(
+			"itemtype"	=>	$this->itemType(),
+			"title"		=>	(string) $xml["title"],
+			"stimulus"	=>	qti_get_stimulus($xml->itemBody),
+		);
+
+		// there is one choiceInteraction
+		if (count($xml->itemBody->choiceInteraction) != 1)
+			return 0;
+
+		// there is one responseDeclaration
+		if (count($xml->responseDeclaration) != 1)
+			return 0;
+
+		// there is one responseCondition
+		if (count($xml->responseProcessing->responseCondition) != 1)
+			return 0;
+
+		// check cardinality is as expected
+		if ($this->itemType() == "multipleResponse" && (string) $xml->responseDeclaration["cardinality"] != "multiple")
+			return 0;
+		if ($this->itemType() == "multipleChoice" && (string) $xml->responseDeclaration["cardinality"] != "single")
+			return 0;
+
+		// multiple choice must have maxchoices 1 and one correct response value
+		if ($this->itemType() == "multipleChoice") {
+			if (!isset($xml->itemBody->choiceInteraction["maxChoices"]) || (string) $xml->itemBody->choiceInteraction["maxChoices"] != "1")
+				return 0;
+			if (!isset($xml->responseDeclaration->correctResponse))
+				return 0;
+			if (count($xml->responseDeclaration->correctResponse->value) != 1)
+				return 0;
+		}
+
+		// get shuffle value
+		$shuffle = isset($xml->itemBody->choiceInteraction["shuffle"]) && (string) $xml->itemBody->choiceInteraction["shuffle"] == "true";
+		if ($shuffle)
+			$data["shuffle"] = "on";
+
+		// there is at least one option
+		if (count($xml->itemBody->choiceInteraction->simpleChoice) == 0)
+			return 0;
+
+		// collect options and their identifiers
+		$o = 0;
+		$options = array();
+		foreach ($xml->itemBody->choiceInteraction->simpleChoice as $sc) {
+			$options[] = (string) $sc["identifier"];
+			$data["option_{$o}_optiontext"] = (string) $sc;
+
+			if ($shuffle && isset($sc["fixed"]) && (string) $sc["fixed"] == "true")
+				$data["option_{$o}_fixed"] = "on";
+
+			$o++;
+		}
+
+		// check correct response makes sense; collect correct responses
+		$correct = array();
+		if (count($xml->responseDeclaration->correctResponse) > 0) {
+			foreach ($xml->responseDeclaration->correctResponse->value as $value) {
+				$pos = array_search((string) $value, $options);
+				if ($pos === false)
+					return 0;
+				$correct[] = $pos;
+			}
+		}
+		if ($this->itemType() == "multipleChoice")
+			$data["correct"] = "option_" . $correct[0];
+		else foreach ($correct as $o)
+			$data["option_{$o}_correct"] = "on";
+
+		// get max and min choices
+		if ($this->itemType() == "multipleResponse") {
+			$data["maxchoices"] = isset($xml->itemBody->choiceInteraction["maxChoices"]) ? (string) $xml->itemBody->choiceInteraction["maxChoices"] : "0";
+			$data["minchoices"] = isset($xml->itemBody->choiceInteraction["minChoices"]) ? (string) $xml->itemBody->choiceInteraction["minChoices"] : "0";
+		}
+
+		// get prompt
+		$data["prompt"] = (string) $xml->itemBody->choiceInteraction->prompt;
+
+		// happy with that -- set data property
+		$this->data = $data;
+
+		// multiple response with one correct answer is less than ideal
+		if ($this->itemType() == "multipleresponse" && count($options) == 1)
+			return 192;
+
+		return 255;
 	}
 }
 

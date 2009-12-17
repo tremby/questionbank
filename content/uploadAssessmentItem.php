@@ -1,6 +1,6 @@
 <?php
 
-$xml = file_get_contents(SITEROOT_LOCAL . "/test2.xml");
+$xml = file_get_contents(SITEROOT_LOCAL . "/mc1.xml");
 
 $errors = array();
 $warnings = array();
