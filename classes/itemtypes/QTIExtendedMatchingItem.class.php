@@ -460,7 +460,121 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 	}
 
 	public function fromXML(SimpleXMLElement $xml) {
-		return 0;
+		$data = array(
+			"itemtype"	=>	$this->itemType(),
+			"title"		=>	(string) $xml["title"],
+		);
+
+		// count the choiceInteractions
+		$questioncount = count($xml->itemBody->choiceInteraction);
+
+		// no good if there are no questions
+		if ($questioncount == 0)
+			return 0;
+
+		// ensure there are the same number of responseDeclarations
+		if (count($xml->responseDeclaration) != $questioncount)
+			return 0;
+
+		// ensure there are the same number of responseConditions
+		if (count($xml->responseProcessing->responseCondition) != $questioncount)
+			return 0;
+
+		// check the stimulus for the options and collect them
+		$options = array();
+		foreach ($xml->itemBody->table as $table) {
+			if (!isset($table["class"]) || (string) $table["class"] != "emioptions")
+				continue;
+			if (count($table->tbody) != 1 || count($table->tbody->tr) < 2)
+				return 0;
+			foreach ($table->tbody->tr as $row) {
+				if (count($row->td) != 1)
+					return 0;
+				$options[] = (string) $row->td;
+			}
+			break;
+		}
+		if (empty($options))
+			return 0;
+
+		// add options to data
+		foreach ($options as $k => $option)
+			$data["option_{$k}_optiontext"] = $option;
+
+		// get stimulus
+		foreach ($xml->itemBody->children() as $child) {
+			if ($child->getName() == "table" && isset($child["class"]) && (string) $child["class"] == "emioptions") {
+				$dom = dom_import_simplexml($child);
+				$dom->parentNode->removeChild($dom);
+			}
+		}
+		$data["stimulus"] = qti_get_stimulus($xml->itemBody);
+
+		// ensure some stuff for each question
+		$q = 0;
+		foreach ($xml->itemBody->choiceInteraction as $ci) {
+			// questions are multiple response so fail if maxChoices is 1. don't 
+			// care about minChoices
+			if ((string) $ci["maxChoices"] == "1")
+				return 0;
+
+			// there are the right number of choices
+			if (count($ci->simpleChoice) != count($options))
+				return 0;
+
+			// answers are ascending single letters; collect their identifiers
+			$i = 0;
+			$answers = array();
+			foreach ($ci->simpleChoice as $sc) {
+				if (strtolower((string) $sc) != chr(ord("a") + $i))
+					return 0;
+				$answers[] = (string) $sc["identifier"];
+				$i++;
+			}
+
+			// check some responseDeclaration things
+			$declarationsfound = 0;
+			foreach ($xml->responseDeclaration as $rd) {
+				if ((string) $rd["identifier"] != (string) $ci["responseIdentifier"])
+					continue;
+
+				$declarationsfound++;
+
+				if (count($rd->correctResponse)) {
+					// the correct response values are some of the options; 
+					// collect them
+					$correct = array();
+					foreach ($rd->correctResponse->value as $value) {
+						$answer = array_search((string) $value, $answers);
+						if ($answer === false)
+							return 0;
+						$correct[] = $answer;
+					}
+
+					// add answers to data
+					foreach ($correct as $o)
+						$data["question_{$q}_option_{$o}_correct"] = "on";
+				} // else an empty response is correct -- nothing to check
+			}
+
+			// there was a good responseDeclaration for this question
+			if ($declarationsfound != 1)
+				return 0;
+
+			// add prompt to data
+			$data["question_{$q}_prompt"] = (string) $ci->prompt;
+
+			$q++;
+		}
+
+		// happy with that -- set data property
+		$this->data = $data;
+
+		// rather strange extended matching item if it's only one question
+		if ($questioncount == 1)
+			return 127;
+
+		return 255;
 	}
 }
 
