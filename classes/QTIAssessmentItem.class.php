@@ -6,7 +6,7 @@ abstract class QTIAssessmentItem {
 	protected $messages = array();
 
 	protected $data = array();
-	protected $qti = null; //SimpleXML element
+	protected $qti = null; //XML string (can't store SimpleXML element in session data)
 
 	// the following are set by child classes' constructors
 	protected $itemtype = null;
@@ -50,7 +50,7 @@ abstract class QTIAssessmentItem {
 	public function getQTI($data = null) {
 		if (is_null($data)) {
 			if (!is_null($this->qti))
-				return $this->qti;
+				return simplexml_load_string($this->qti);
 		} else
 			$this->data = $data;
 
@@ -58,8 +58,16 @@ abstract class QTIAssessmentItem {
 		if (!$qti)
 			return false;
 
-		$this->qti = $qti;
-		return $this->qti;
+		$this->qti = simplexml_indented_string($qti);
+		return $qti;
+	}
+
+	// get QTI as indented XML string
+	public function getQTIIndentedString() {
+		if (!$this->getQTI())
+			return false;
+
+		return simplexml_indented_string($this->getQTI());
 	}
 
 	// get QTI identifier
@@ -72,6 +80,24 @@ abstract class QTIAssessmentItem {
 		return (string) $qti["identifier"];
 	}
 
+	// get item title
+	public function getTitle() {
+		$qti = $this->getQTI();
+		if (!$qti)
+			return false;
+
+		return (string) $qti["title"];
+	}
+
+	// get item title with non filesystem-friendly characters replaced with 
+	// underscores
+	public function getTitleFS() {
+		if (!$this->getTitle())
+			return false;
+
+		return preg_replace('%[^A-Za-z0-9._ -]%', "_", $this->getTitle());
+	}
+
 	// output nice HTML for any errors, warnings and messages
 	public function showMessages() {
 		foreach(array("error" => $this->errors, "warning" => $this->warnings, "message" => $this->messages) as $type => $messages)
@@ -82,6 +108,7 @@ abstract class QTIAssessmentItem {
 	public function itemType() {
 		return $this->itemtype;
 	}
+
 	// get printable item type string
 	public function itemTypePrint() {
 		return $this->itemtypeprint;

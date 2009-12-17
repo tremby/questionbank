@@ -1,9 +1,9 @@
 <?php
 
 if (!isset($_REQUEST["qtiid"])) die("No QTI ID specified");
-if (!isset($_SESSION["qti"][$_REQUEST["qtiid"]])) die("No QTI found in session data for specified QTI ID");
+if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) die("No QTI found in session data for specified QTI ID");
 
-$qti = $_SESSION["qti"][$_REQUEST["qtiid"]];
+$ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 
 // upload the QTI to QTIEngine
 // Doing this manually rather than using curl because until some PHP after 5.2.6 
@@ -14,16 +14,16 @@ $qti = $_SESSION["qti"][$_REQUEST["qtiid"]];
 // boundary -- see http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html
 while (true) {
 	$boundary = "----------------------------" + uniqid();
-	if (strpos($qti, $boundary) === false)
+	if (strpos($ai->getQTIIndentedString(), $boundary) === false)
 		break;
 }
 
 // request
 $request =	"--$boundary\r\n";
-$request .=	"Content-Disposition: form-data; name=\"uploadedContent\"; filename=\"qti.xml\"\r\n";
+$request .=	"Content-Disposition: form-data; name=\"uploadedContent\"; filename=\"{$ai->getTitleFS()}.xml\"\r\n";
 $request .=	"Content-Type: application/xml\r\n";
 $request .=	"\r\n";
-$request .= $qti;
+$request .= $ai->getQTIIndentedString();
 $request .= "\r\n--$boundary--\r\n\r\n";
 
 // headers

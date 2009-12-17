@@ -1,15 +1,9 @@
 <?php
 
 if (!isset($_REQUEST["qtiid"])) die("No QTI ID specified");
-if (!isset($_SESSION["qti"][$_REQUEST["qtiid"]])) die("No QTI found in session data for specified QTI ID");
+if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) die("No QTI found in session data for specified QTI ID");
 
-$qti = $_SESSION["qti"][$_REQUEST["qtiid"]];
-
-// parse the QTI to get the title and identifier
-$ai = simplexml_load_string($qti);
-$title = preg_replace('%[^A-Za-z0-9._ -]%', "_", $ai["title"]);
-$titleuri = urlencode($title);
-$identifier = (string) $ai["identifier"];
+$ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 
 if (isset($_POST["makecp"])) {
 	// build the manifest
@@ -23,7 +17,7 @@ if (isset($_POST["makecp"])) {
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd http://www.imsglobal.org/xsd/imsmd_v1p2 imsmd_v1p2p4.xsd http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
 	/>');
-	$manifest->addAttribute("identifier", "MANIFEST-" . $identifier);
+	$manifest->addAttribute("identifier", "MANIFEST-" . $ai->getQTIID());
 
 	// organizations element
 	$manifest->addChild("organizations");
@@ -31,9 +25,9 @@ if (isset($_POST["makecp"])) {
 	// resources element
 	$rs = $manifest->addChild("resources");
 	$r = $rs->addChild("resource");
-	$r->addAttribute("identifier", $identifier);
+	$r->addAttribute("identifier", $ai->getQTIID());
 	$r->addAttribute("type", "imsqti_item_xmlv2p1");
-	$r->addAttribute("href", "$titleuri.qti.xml");
+	$r->addAttribute("href", "{$ai->getTitleFS()}.qti.xml");
 	$md = $r->addChild("metadata");
 
 	// resource qti metadata
@@ -46,7 +40,7 @@ if (isset($_POST["makecp"])) {
 	// resource LOM metadata
 	$lom = $md->addChild("lom", null, $imsmd);
 	$g = $lom->addChild("general", null, $imsmd);
-	$g->addChild("title", null, $imsmd)->addChild("langstring", (string) $ai["title"], $imsmd);
+	$g->addChild("title", null, $imsmd)->addChild("langstring", $ai->getTitle(), $imsmd);
 	if (isset($_POST["description"]) && !empty($_POST["description"]))
 		$g->addChild("description", null, $imsmd)->addChild("langstring", $_POST["description"], $imsmd);
 	if (isset($_POST["keywords"])) {
@@ -60,23 +54,23 @@ if (isset($_POST["makecp"])) {
 	}
 
 	// file element
-	$r->addChild("file")->addAttribute("href", "$titleuri.qti.xml");
+	$r->addChild("file")->addAttribute("href", "{$ai->getTitleFS()}.qti.xml");
 
-	// make zip archive
+	// make temporary zip archive
 	$zip = new ZipArchive();
 	$filename = "/tmp/" . uniqid("zip");
 	if ($zip->open($filename, ZIPARCHIVE::CREATE) !== true)
 		die("couldn't make zip file");
 	$zip->addFromString("imsmanifest.xml", simplexml_indented_string($manifest));
-	$zip->addFromString("$title.qti.xml", $qti);
+	$zip->addFromString("{$ai->getTitleFS()}.qti.xml", $ai->getQTIIndentedString());
 	$zip->close();
 
 	// download the content package
 	header("Content-Type: application/zip");
-	header("Content-Disposition: attachment; filename=\"$title.zip\"");
+	header("Content-Disposition: attachment; filename=\"{$ai->getTitleFS()}.zip\"");
 	echo file_get_contents($filename);
 
-	// delete the zip archive
+	// delete the temporary zip archive
 	unlink($filename);
 
 	exit;
@@ -91,7 +85,7 @@ include "htmlheader.php";
 	<input type="hidden" name="qtiid" value="<?php echo htmlspecialchars($_REQUEST['qtiid']); ?>">
 	<dl>
 		<dt>Title</dt>
-		<dd><?php echo htmlspecialchars((string) $ai["title"]); ?></dd>
+		<dd><?php echo htmlspecialchars($ai->getTitle()); ?></dd>
 
 		<dt>Description</dt>
 		<dd><textarea id="description" name="description" rows="4" cols="64"><?php if (isset($_POST["description"])) echo htmlspecialchars($_POST["description"]); ?></textarea></dd>

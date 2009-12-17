@@ -21,13 +21,12 @@ if (isset($_REQUEST["itemtype"])) {
 			// problem of some kind, show the form again with any messages
 			$ai->showForm($_POST);
 		} else {
-			// new QTI is fine -- get indented string
-			$xml = simplexml_indented_string($ai->getQTI());
+			// new QTI is fine
 
-			// store it in session data
-			if (!isset($_SESSION["qti"]) || !is_array($_SESSION["qti"]))
-				$_SESSION["qti"] = array();
-			$_SESSION["qti"][$ai->getQTIID()] = $xml;
+			// store item in session data
+			if (!isset($_SESSION["items"]) || !is_array($_SESSION["items"]))
+				$_SESSION["items"] = array();
+			$_SESSION["items"][$ai->getQTIID()] = $ai;
 
 			// display any warnings and messages
 			$thingstosay = array();
