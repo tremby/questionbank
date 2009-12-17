@@ -5,6 +5,10 @@ webtool
 	-	multiple choice: one piece per possible response
 	-	multiple response: one each for checked/unchecked for each response
 -	editing existing items
+	-	uploading interface
+	-	logic for
+		-	multiple choice
+		-	multiple response
 -	scoring options?
 -	stimulus editor
 	-	Wysiwyg
