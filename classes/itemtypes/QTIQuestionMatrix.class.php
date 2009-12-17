@@ -369,13 +369,16 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 				if ($answer === false)
 					return 0;
 
-				$data["question_{$q}_prompt"] = (string) $ci->prompt;
+				// add answer to data
 				$data["question_{$q}_answer"] = $answer ? true : false;
 			}
 
-			// there was a good responseDeclaration for each question
+			// there was a good responseDeclaration for this question
 			if ($declarationsfound != 1)
 				return 0;
+
+			// add prompt to data
+			$data["question_{$q}_prompt"] = (string) $ci->prompt;
 
 			$q++;
 		}
