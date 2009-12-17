@@ -164,6 +164,17 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 				// issue warnings if applicable
 
+				// maximum choices 1 for a multiple response is strange
+				if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
+					if ($("#maxchoices").val() == 1) {
+						$("#maxchoices").css("background-color", warningcolour);
+						if (!confirm("Value for maximum choices is set as 1 which will lead to radio buttons rather than checkboxes -- click OK to continue regardless or cancel to edit it"))
+							return false;
+						else
+							$("#maxchoices").css("background-color", "");
+					}
+				}
+
 				// confirm the user wanted the candidate not to be able to check 
 				// all correct responses or to have to check incorrect ones
 				if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
