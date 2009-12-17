@@ -49,6 +49,15 @@ if (isset($_POST["makecp"])) {
 	$g->addChild("title", null, $imsmd)->addChild("langstring", (string) $ai["title"], $imsmd);
 	if (isset($_POST["description"]) && !empty($_POST["description"]))
 		$g->addChild("description", null, $imsmd)->addChild("langstring", $_POST["description"], $imsmd);
+	if (isset($_POST["keywords"])) {
+		$keywords = explode(",", $_POST["keywords"]);
+		$keywords = array_map("trim", $keywords);
+		foreach ($keywords as $keyword) {
+			if (strlen($keyword) == 0)
+				continue;
+			$g->addChild("keyword", null, $imsmd)->addChild("langstring", $keyword, $imsmd);
+		}
+	}
 
 	// file element
 	$r->addChild("file")->addAttribute("href", "$titleuri.qti.xml");
@@ -86,6 +95,9 @@ include "htmlheader.php";
 
 		<dt>Description</dt>
 		<dd><textarea id="description" name="description" rows="4" cols="64"><?php if (isset($_POST["description"])) echo htmlspecialchars($_POST["description"]); ?></textarea></dd>
+
+		<dt>Keywords (comma-separated)</dt>
+		<dd><textarea id="keywords" name="keywords" rows="4" cols="64"><?php if (isset($_POST["keywords"])) echo htmlspecialchars($_POST["keywords"]); ?></textarea></dd>
 	</dl>
 	<div><input id="submit" type="submit" name="makecp" value="Submit"></div>
 </form>
