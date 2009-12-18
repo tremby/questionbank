@@ -160,6 +160,27 @@ abstract class QTIAssessmentItem {
 	public function addMessage($string) {
 		$this->messages[] = $string;
 	}
+
+	// compare items by title or ID
+	public static function compare_by_title(QTIAssessmentItem $a, QTIAssessmentItem $b) {
+		// get titles
+		$ta = $a->getTitle();
+		$tb = $b->getTitle();
+
+		// if both lack titles compare by ID
+		if ($ta === false && $tb === false)
+			return strcasecmp($a->getQTIID(), $b->getQTIID());
+
+		// if A lacks a title B is further up the list and so A is "more"
+		if ($ta === false)
+			return 1;
+
+		// if B lacks a title A is further up the list and so A is "less"
+		if ($tb === false)
+			return -1;
+
+		return strcasecmp($ta, $tb);
+	}
 }
 
 ?>
