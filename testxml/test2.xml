@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd" adaptive="false" timeDependent="false" identifier="emi_f56032619c2092f69c22b9c99927cc23" title="testing">
+  <responseDeclaration identifier="RESPONSE_question_0" cardinality="multiple" baseType="identifier">
+    <correctResponse>
+      <value>question_0_option_0</value>
+    </correctResponse>
+  </responseDeclaration>
+  <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="integer">
+    <defaultValue>
+      <value>0</value>
+
+    </defaultValue>
+  </outcomeDeclaration>
+  <itemBody>
+    <div>test blah bmlah</div>
+    <table class="emioptions">
+      <tbody>
+        <tr>
+          <th>A</th>
+
+          <td>option 1</td>
+        </tr>
+        <tr>
+          <th>B</th>
+          <td>and another</td>
+        </tr>
+        <tr>
+
+          <th>C</th>
+          <td>three</td>
+        </tr>
+      </tbody>
+    </table>
+    <choiceInteraction maxChoices="0" minChoices="0" shuffle="false" responseIdentifier="RESPONSE_question_0">
+      <prompt>one response</prompt>
+
+      <simpleChoice identifier="question_0_option_0">A</simpleChoice>
+      <simpleChoice identifier="question_0_option_1">B</simpleChoice>
+      <simpleChoice identifier="question_0_option_2">C</simpleChoice>
+    </choiceInteraction>
+  </itemBody>
+  <responseProcessing>
+    <setOutcomeValue identifier="SCORE">
+      <baseValue baseType="integer">0</baseValue>
+    </setOutcomeValue>
+    <responseCondition>
+
+      <responseIf>
+        <match>
+          <variable identifier="RESPONSE_question_0"/>
+          <correct identifier="RESPONSE_question_0"/>
+        </match>
+        <setOutcomeValue identifier="SCORE">
+          <sum>
+            <variable identifier="SCORE"/>
+            <baseValue baseType="integer">1</baseValue>
+
+          </sum>
+        </setOutcomeValue>
+      </responseIf>
+    </responseCondition>
+  </responseProcessing>
+</assessmentItem>

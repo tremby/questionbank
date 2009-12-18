@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd" adaptive="false" timeDependent="false" identifier="mcr_edeebdef894e7c83586be76c6b93a4b5" title="tit">
+  <responseDeclaration identifier="RESPONSE" cardinality="multiple" baseType="identifier"/>
+  <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="integer">
+    <defaultValue>
+      <value>0</value>
+    </defaultValue>
+  </outcomeDeclaration>
+  <itemBody>
+    <div>blah</div>
+    <choiceInteraction responseIdentifier="RESPONSE" shuffle="true" maxChoices="0" minChoices="0">
+      <prompt>this</prompt>
+      <simpleChoice identifier="option_0" fixed="false">xbrah</simpleChoice>
+      <simpleChoice identifier="option_1" fixed="true">yes</simpleChoice>
+      <simpleChoice identifier="option_2" fixed="false">ueoueeou</simpleChoice>
+    </choiceInteraction>
+  </itemBody>
+  <responseProcessing>
+    <responseCondition>
+      <responseIf>
+        <equal toleranceMode="exact">
+          <containerSize>
+            <variable identifier="RESPONSE"/>
+          </containerSize>
+          <baseValue baseType="integer">0</baseValue>
+        </equal>
+        <setOutcomeValue identifier="SCORE">
+          <baseValue baseType="integer">1</baseValue>
+        </setOutcomeValue>
+      </responseIf>
+      <responseElse>
+        <setOutcomeValue identifier="SCORE">
+          <baseValue baseType="integer">0</baseValue>
+        </setOutcomeValue>
+      </responseElse>
+    </responseCondition>
+  </responseProcessing>
+</assessmentItem>

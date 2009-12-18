@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd" adaptive="false" timeDependent="false" identifier="qm_d6068853ffa423b962cdc03fd9c1abc7" title="the title">
+  <responseDeclaration identifier="RESPONSE_question_0" cardinality="single" baseType="identifier">
+    <correctResponse>
+      <value>question_0_true</value>
+    </correctResponse>
+  </responseDeclaration>
+  <responseDeclaration identifier="RESPONSE_question_1" cardinality="single" baseType="identifier">
+    <correctResponse>
+
+      <value>question_1_false</value>
+    </correctResponse>
+  </responseDeclaration>
+  <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="integer">
+    <defaultValue>
+      <value>0</value>
+    </defaultValue>
+  </outcomeDeclaration>
+
+  <itemBody>
+    <div>some stimuli</div>
+    <choiceInteraction maxChoices="1" shuffle="false" responseIdentifier="RESPONSE_question_0">
+      <prompt>question 1</prompt>
+      <simpleChoice identifier="question_0_true">true</simpleChoice>
+      <simpleChoice identifier="question_0_false">false</simpleChoice>
+    </choiceInteraction>
+
+    <choiceInteraction maxChoices="1" shuffle="false" responseIdentifier="RESPONSE_question_1">
+      <prompt>question 2 </prompt>
+      <simpleChoice identifier="question_1_true">true</simpleChoice>
+      <simpleChoice identifier="question_1_false">false</simpleChoice>
+    </choiceInteraction>
+  </itemBody>
+  <responseProcessing>
+
+    <setOutcomeValue identifier="SCORE">
+      <baseValue baseType="integer">0</baseValue>
+    </setOutcomeValue>
+    <responseCondition>
+      <responseIf>
+        <match>
+          <variable identifier="RESPONSE_question_0"/>
+          <correct identifier="RESPONSE_question_0"/>
+
+        </match>
+        <setOutcomeValue identifier="SCORE">
+          <sum>
+            <variable identifier="SCORE"/>
+            <baseValue baseType="integer">1</baseValue>
+          </sum>
+        </setOutcomeValue>
+      </responseIf>
+
+    </responseCondition>
+    <responseCondition>
+      <responseIf>
+        <match>
+          <variable identifier="RESPONSE_question_1"/>
+          <correct identifier="RESPONSE_question_1"/>
+        </match>
+        <setOutcomeValue identifier="SCORE">
+          <sum>
+
+            <variable identifier="SCORE"/>
+            <baseValue baseType="integer">1</baseValue>
+          </sum>
+        </setOutcomeValue>
+      </responseIf>
+    </responseCondition>
+  </responseProcessing>
+</assessmentItem>
+
