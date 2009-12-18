@@ -66,6 +66,6 @@ if (isset($_POST["edititem"])) {
 }
 
 // nothing posted -- show form with data as is (possibly empty)
-$ai->showform();
+$ai->showForm();
 
 ?>
