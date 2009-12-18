@@ -118,6 +118,14 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					return false;
 				}
 
+				// if multiple choice, one option must be correct
+				if ($("input.itemtype:checked").attr("id") == "itemtype_mc") {
+					if ($("input.correct:checked").size() == 0) {
+						alert("One response must be marked as correct");
+						return false;
+					}
+				}
+
 				// choice restriction options must make sense
 				if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
 					// maximum choices
