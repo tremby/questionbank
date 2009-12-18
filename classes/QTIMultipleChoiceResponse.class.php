@@ -263,11 +263,12 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			});
 		</script>
 
-		<h2>Make a new multiple choice or multiple response item</h2>
+		<h2>Edit a multiple choice or multiple response item</h2>
 
 		<?php $this->showmessages(); ?>
 
-		<form id="newitem" action="?page=newAssessmentItem" method="post">
+		<form id="edititem" action="?page=editAssessmentItem" method="post">
+			<input type="hidden" name="qtiid" value="<?php echo $this->getQTIID(); ?>">
 			<dl>
 				<dt>Item type</dt>
 				<dd>
@@ -346,14 +347,20 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					</dl>
 				</dd>
 			</dl>
-			<div><input id="submit" type="submit" name="newitem" value="Submit"></div>
+			<div><input id="submit" type="submit" name="edititem" value="Submit"></div>
 		</form>
 
 		<?php
 		include "htmlfooter.php";
 	}
 
-	protected function buildQTI() {
+	protected function buildQTI($data = null) {
+		if (!is_null($data))
+			$this->data = $data;
+
+		if (empty($this->data))
+			return false;
+
 		// container element and other metadata
 		$ai = new SimpleXMLElement('
 			<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"

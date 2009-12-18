@@ -138,12 +138,12 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 			});
 		</script>
 
-		<h2>Make a new question matrix item</h2>
+		<h2>Edit question matrix item</h2>
 
 		<?php $this->showmessages(); ?>
 
-		<form id="newitem" action="?page=newAssessmentItem" method="post">
-			<input type="hidden" name="itemtype" value="questionMatrix">
+		<form id="edititem" action="?page=editAssessmentItem" method="post">
+			<input type="hidden" name="qtiid" value="<?php echo $this->getQTIID(); ?>">
 			<dl>
 				<dt><label for="title">Title</label></dt>
 				<dd><input size="64" type="text" name="title" id="title"<?php if (isset($this->data["title"])) { ?> value="<?php echo htmlspecialchars($this->data["title"]); ?>"<?php } ?>></dd>
@@ -184,7 +184,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 					<input type="button" id="addquestion" value="Add question">
 				</dd>
 			</dl>
-			<div><input id="submit" type="submit" name="newitem" value="Submit"></div>
+			<div><input id="submit" type="submit" name="edititem" value="Submit"></div>
 		</form>
 
 		<?php
@@ -194,6 +194,9 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 	public function buildQTI($data = null) {
 		if (!is_null($data))
 			$this->data = $data;
+
+		if (empty($this->data))
+			return false;
 
 		// container element and other metadata
 		$ai = new SimpleXMLElement('

@@ -32,7 +32,8 @@ abstract class QTIAssessmentItem {
 	 * Very little server side validation is necessary here since the Java 
 	 * validate application does everything important. Client side checking for 
 	 * likely mistakes (empty boxes etc) is sufficient.
-	 * The form should submit with "newitem".
+	 * The form should submit with "edititem" set and should also submit a 
+	 * "qtiid"
 	 */
 	abstract public function showForm($data = null);
 
@@ -58,7 +59,19 @@ abstract class QTIAssessmentItem {
 		if (!$qti)
 			return false;
 
+		// store the QTI string in a property
 		$this->qti = simplexml_indented_string($qti);
+
+		// this will now have a new identifier, so unset the old one (which may 
+		// have been "new" in session data and store the new
+		if (!isset($_SESSION["items"]))
+			$_SESSION["items"] = array();
+		else
+			foreach($_SESSION["items"] as $id => $item)
+				if ($this == $_SESSION["items"][$id])
+					unset($_SESSION["items"][$id]);
+		$_SESSION["items"][$this->getQTIID()] = $this;
+
 		return $qti;
 	}
 
@@ -75,7 +88,7 @@ abstract class QTIAssessmentItem {
 		$qti = $this->getQTI();
 
 		if (!$qti)
-			return false;
+			return "new";
 
 		return (string) $qti["identifier"];
 	}
