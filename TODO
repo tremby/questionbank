@@ -19,3 +19,4 @@ webtool
 -	improve question matrix view somehow
 -	bug: QTIEngine JSESSIONID cookie overrides request var so if the user has 
 	such a cookie they won't see the correct preview
+-	remove debug stuff from the footer
