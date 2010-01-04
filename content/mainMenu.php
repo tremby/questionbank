@@ -51,7 +51,7 @@ permanent so ensure you save them manually before logging out.</p>
 			<tr>
 				<td><?php echo $item->getTitle() === false ? "[untitled]" : htmlspecialchars($item->getTitle()); ?></td>
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
-				<td class="<?php echo count($item->getErrors()) ? "bad" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
+				<td class="<?php echo count($item->getErrors()) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
 					<?php echo count($item->getErrors()); ?> error<?php echo plural($item->getErrors()); ?>
 					<br />
 					<?php echo count($item->getWarnings()); ?> warning<?php echo plural($item->getWarnings()); ?>

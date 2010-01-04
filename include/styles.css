@@ -5,10 +5,10 @@ html, body {
 .disabled {
 	color: gray;
 }
-.bad {
+.error {
 	color: red;
 }
-td.bad, div.bad {
+td.error, div.error {
 	color: inherit;
 	background-color: #fcc;
 }
