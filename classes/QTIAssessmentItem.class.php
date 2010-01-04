@@ -55,6 +55,11 @@ abstract class QTIAssessmentItem {
 		} else
 			$this->data = $data;
 
+		// clear errors, warnings and messages
+		$this->errors = array();
+		$this->warnings = array();
+		$this->messages = array();
+
 		$qti = $this->buildQTI();
 		if (!$qti)
 			return false;
