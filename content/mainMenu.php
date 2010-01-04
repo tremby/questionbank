@@ -34,12 +34,11 @@ $items = array_reverse($items);
 </dl>
 
 <h3 id="itemlist">Item list</h3>
-<p>There follows a list of items you are currently editing. They are not 
-permanent so ensure you save them manually before logging out.</p>
-
 <?php if (empty($items)) { ?>
-	<p><strong>No items are in memory for this session</strong></p>
+	<p>No items are in memory for this session</p>
 <?php } else { ?>
+	<p>There follows a list of items you are currently editing. They are not 
+permanent so ensure you save them manually before logging out.</p>
 	<table>
 		<tr>
 			<th>Title</th>
