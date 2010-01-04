@@ -37,7 +37,7 @@ unmagic();
 session_start();
 
 // serve the page
-$page = isset($_GET["page"]) ? $_GET["page"] : "home";
+$page = isset($_GET["page"]) ? $_GET["page"] : "mainMenu";
 switch ($page) {
 	default:
 		if (dirname("content/$page.php") == "content" && file_exists("content/$page.php"))
