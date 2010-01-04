@@ -4,8 +4,6 @@ webtool
 -	feedback
 	-	multiple choice: one piece per possible response
 	-	multiple response: one each for checked/unchecked for each response
--	editing existing items
-	-	uploading interface
 -	scoring options?
 -	stimulus editor
 	-	Wysiwyg

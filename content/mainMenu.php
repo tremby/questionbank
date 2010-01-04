@@ -29,6 +29,9 @@ $items = array_reverse($items);
 		<?php } ?>
 	</dd>
 
+	<dl><a href="?page=uploadAssessmentItem">Upload an existing assessment item</a></dl>
+	<dd>Upload an existing assessment item so it can be edited and packaged</dd>
+
 	<dt><a href="#itemlist">Item list</a><dt>
 	<dd>A list of items currently in memory for your session</dd>
 </dl>
