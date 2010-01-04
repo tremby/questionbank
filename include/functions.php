@@ -221,4 +221,11 @@ function compare_item_alpha(QTIAssessmentItem $a, QTIAssessmentItem $b) {
 	return strcasecmp($a->itemTypePrint(), $b->itemTypePrint());
 }
 
+// return plural ending if appropriate
+function plural($input, $pluralsuffix = "s", $singularsuffix = "") {
+	if (is_array($input) && count($input) != 1 || is_numeric($input) && $input != 1)
+		return $pluralsuffix;
+	return $singularsuffix;
+}
+
 ?>

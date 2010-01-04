@@ -1,0 +1,28 @@
+html, body {
+	background-color: white;
+	color: black;
+}
+.disabled {
+	color: gray;
+}
+.bad {
+	color: red;
+}
+td.bad, div.bad {
+	color: inherit;
+	background-color: #fcc;
+}
+.good {
+	color: green;
+}
+td.good, div.good {
+	color: inherit;
+	background-color: #cfc;
+}
+.warning {
+	color: #f90;
+}
+td.warning, div.warning {
+	color: inherit;
+	background-color: #fda;
+}

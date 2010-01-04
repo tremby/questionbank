@@ -9,5 +9,6 @@ header("Content-Script-Type: text/javascript");
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/authoringtool.js"></script>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/jquery.js"></script>
+	<link rel="stylesheet" href="<?php echo SITEROOT_WEB; ?>include/styles.css">
 </head>
 <body>
