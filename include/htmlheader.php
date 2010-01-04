@@ -11,3 +11,7 @@ header("Content-Script-Type: text/javascript");
 	<link rel="stylesheet" href="<?php echo SITEROOT_WEB; ?>include/styles.css">
 </head>
 <body>
+<h1>QTI authoring tool</h1>
+<ul>
+	<li><a href="?">Back to main menu</a></li>
+</ul>
