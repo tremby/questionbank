@@ -25,7 +25,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 				// give it the new id number and wipe its text
 				newoption.attr("id", "option_" + newid);
-				$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("").css("background-color", "");
+				$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("").removeClass("error warning");
 				$("input.correct", newoption).attr("id", "option_" + newid + "_correct").removeAttr("checked");
 				if ($("input.correct", newoption).attr("type") == "checkbox")
 					$("input.correct", newoption).attr("name", "option_" + newid + "_correct");
@@ -109,11 +109,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 			submitcheck = function() {
 				// clear any previously set background colours
-				$("input, textarea").css("background-color", "");
+				$("input, textarea").removeClass("error warning");
 
 				// title must be set
 				if ($("#title").val().length == 0) {
-					$("#title").css("background-color", errorcolour);
+					$("#title").addClass("error");
 					alert("A title must be set for this item");
 					return false;
 				}
@@ -130,41 +130,41 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
 					// maximum choices
 					if ($("#maxchoices").val().length == 0 || isNaN($("#maxchoices").val())) {
-						$("#maxchoices").css("background-color", errorcolour);
+						$("#maxchoices").addClass("error");
 						alert("Value for maximum choices is not a number");
 						return false;
 					}
 					if ($("#maxchoices").val() < 0 || $("#maxchoices").val().indexOf(".") != -1) {
-						$("#maxchoices").css("background-color", errorcolour);
+						$("#maxchoices").addClass("error");
 						alert("Value for maximum choices must be zero (no restriction) or a positive integer");
 						return false;
 					}
 					if ($("#maxchoices").val() > $("#options tr.option").size()) {
-						$("#maxchoices").css("background-color", errorcolour);
+						$("#maxchoices").addClass("error");
 						alert("Value for maximum choices cannot be greater than the number of possible choices");
 						return false;
 					}
 
 					// minimum choices
 					if ($("#minchoices").val().length == 0 || isNaN($("#minchoices").val())) {
-						$("#minchoices").css("background-color", errorcolour);
+						$("#minchoices").addClass("error");
 						alert("Value for minimum choices is not a number");
 						return false;
 					}
 					if ($("#minchoices").val() < 0 || $("#minchoices").val().indexOf(".") != -1) {
-						$("#minchoices").css("background-color", errorcolour);
+						$("#minchoices").addClass("error");
 						alert("Value for minimum choices must be zero (not require to select any choices) or a positive integer");
 						return false;
 					}
 					if ($("#minchoices").val() > $("#options tr.option").size()) {
-						$("#minchoices").css("background-color", errorcolour);
+						$("#minchoices").addClass("error");
 						alert("Value for minimum choices cannot be greater than the number of possible choices");
 						return false;
 					}
 
 					// maximum choices >= minimum choices
 					if ($("#maxchoices").val() != 0 && $("#minchoices").val() > $("#maxchoices").val()) {
-						$("#maxchoices, #minchoices").css("background-color", errorcolour);
+						$("#maxchoices, #minchoices").addClass("error");
 						alert("Value for minimum choices cannot be greater than the value for maximum choices");
 						return false;
 					}
@@ -175,11 +175,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				// maximum choices 1 for a multiple response is strange
 				if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
 					if ($("#maxchoices").val() == 1) {
-						$("#maxchoices").css("background-color", warningcolour);
+						$("#maxchoices").addClass("warning");
 						if (!confirm("Value for maximum choices is set as 1 which will lead to radio buttons rather than checkboxes -- click OK to continue regardless or cancel to edit it"))
 							return false;
 						else
-							$("#maxchoices").css("background-color", "");
+							$("#maxchoices").removeClass("error warning");
 					}
 				}
 
@@ -187,47 +187,47 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				// all correct responses or to have to check incorrect ones
 				if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
 					if ($("#maxchoices").val() != 0 && $("#maxchoices").val() < $("input.correct:checked").size()) {
-						$("#maxchoices").css("background-color", warningcolour);
+						$("#maxchoices").addClass("warning");
 						if (!confirm("Value for maximum choices is less than the number of correct choices -- click OK to continue regardless or cancel to edit it"))
 							return false;
 						else
-							$("#maxchoices").css("background-color", "");
+							$("#maxchoices").removeClass("error warning");
 					}
 					if ($("#minchoices").val() != 0 && $("#minchoices").val() > $("input.correct:checked").size()) {
-						$("#minchoices").css("background-color", warningcolour);
+						$("#minchoices").addClass("warning");
 						if (!confirm("Value for minimum choices is greater than the number of correct choices -- click OK to continue regardless or cancel to edit it"))
 							return false;
 						else
-							$("#minchoices").css("background-color", "");
+							$("#minchoices").removeClass("error warning");
 					}
 				}
 
 				// confirm the user wanted an empty stimulus
 				if ($("#stimulus").val().length == 0) {
-					$("#stimulus").css("background-color", warningcolour);
+					$("#stimulus").addClass("warning");
 					if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
 						return false;
 					else
-						$("#stimulus").css("background-color", "");
+						$("#stimulus").removeClass("error warning");
 				}
 
 				// confirm the user wanted an empty question prompt
 				if ($("#prompt").val().length == 0) {
-					$("#prompt").css("background-color", warningcolour);
+					$("#prompt").addClass("warning");
 					if (!confirm("Question prompt is empty -- click OK to continue regardless or cancel to edit it"))
 						return false;
 					else
-						$("#prompt").css("background-color", "");
+						$("#prompt").removeClass("error warning");
 				}
 
 				// confirm the user wanted any empty boxes
 				var ok = true;
 				$("input.optiontext").each(function(n) {
 					if ($(this).val().length == 0) {
-						$(this).css("background-color", warningcolour);
+						$(this).addClass("warning");
 						ok = confirm("Option " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 						if (ok)
-							$(this).css("background-color", "");
+							$(this).removeClass("error warning");
 						else
 							return false; //this is "break" in the Jquery each() pseudoloop
 					}
@@ -238,10 +238,10 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				for (var i = 0; i < $("input.optiontext").size(); i++) {
 					for (var j = i + 1; j < $("input.optiontext").size(); j++) {
 						if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
-							$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("background-color", warningcolour);
+							$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").addClass("warning");
 							ok = confirm("Options " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
 							if (ok)
-								$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("background-color", "");
+								$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").removeClass("error warning");
 							else
 								break;
 						}

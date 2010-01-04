@@ -26,7 +26,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 
 				// give it the new id number and wipe its text
 				newquestion.attr("id", "question_" + newid);
-				$("textarea", newquestion).attr("id", "question_" + newid + "_prompt").attr("name", "question_" + newid + "_prompt").val("").css("background-color", "");
+				$("textarea", newquestion).attr("id", "question_" + newid + "_prompt").attr("name", "question_" + newid + "_prompt").val("").removeClass("error warning");
 
 				// clear all its checkboxes and update their question numbers
 				$("td.answer input", newquestion).removeAttr("checked");
@@ -63,11 +63,11 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 
 			submitcheck = function() {
 				// clear any previously set background colours
-				$("input, textarea, td.answer").css("background-color", "");
+				$("input, textarea, td.answer").removeClass("error warning");
 
 				// title must be set
 				if ($("#title").val().length == 0) {
-					$("#title").css("background-color", errorcolour);
+					$("#title").addClass("error");
 					alert("A title must be set for this item");
 					return false;
 				}
@@ -76,7 +76,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 				var ok = true;
 				$("#questions tr.question td.answer").each(function(n) {
 					if ($("input:checked", this).size() == 0) {
-						$(this).css("background-color", errorcolour);
+						$(this).addClass("error");
 						alert("No correct response has been chosen for question " + (n + 1));
 						ok = false;
 						return false;
@@ -88,20 +88,20 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 
 				// confirm the user wanted an empty stimulus
 				if ($("#stimulus").val().length == 0) {
-					$("#stimulus").css("background-color", warningcolour);
+					$("#stimulus").addClass("warning");
 					if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
 						return false;
 					else
-						$("#stimulus").css("background-color", "");
+						$("#stimulus").removeClass("error warning");
 				}
 
 				// confirm the user wanted any empty boxes
 				$("textarea.prompt").each(function(n) {
 					if ($(this).val().length == 0) {
-						$(this).css("background-color", warningcolour);
+						$(this).addClass("warning");
 						ok = confirm("The prompt for question " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 						if (ok)
-							$(this).css("background-color", "");
+							$(this).removeClass("error warning");
 						else
 							return false; //this is "break" in the Jquery each() pseudoloop
 					}
@@ -112,10 +112,10 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 				for (var i = 0; i < $("textarea.prompt").size(); i++) {
 					for (var j = i + 1; j < $("textarea.prompt").size(); j++) {
 						if ($("#question_" + i + "_prompt").val() == $("#question_" + j + "_prompt").val()) {
-							$("#question_" + i + "_prompt, #question_" + j + "_prompt").css("background-color", warningcolour);
+							$("#question_" + i + "_prompt, #question_" + j + "_prompt").addClass("warning");
 							ok = confirm("The prompts for questions " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
 							if (ok)
-								$("#question_" + i + "_prompt, #question_" + j + "_prompt").css("background-color", "");
+								$("#question_" + i + "_prompt, #question_" + j + "_prompt").removeClass("error warning");
 							else
 								break;
 						}

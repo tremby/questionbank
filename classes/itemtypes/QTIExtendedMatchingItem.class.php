@@ -29,7 +29,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 				// give it the new id number and wipe its text
 				newoption.attr("id", "option_" + newid);
 				$(".optionid", newoption).text(alphaChars.charAt(newid));
-				$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("").css("background-color", "");
+				$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("").removeClass("error warning");
 
 				// reinstate the remove action
 				$("input.removeoption", newoption).click(removeoption);
@@ -97,7 +97,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 
 				// give it the new id number and wipe its text
 				newquestion.attr("id", "question_" + newid);
-				$("textarea", newquestion).attr("id", "question_" + newid + "_prompt").attr("name", "question_" + newid + "_prompt").val("").css("background-color", "");
+				$("textarea", newquestion).attr("id", "question_" + newid + "_prompt").attr("name", "question_" + newid + "_prompt").val("").removeClass("error warning");
 
 				// clear all its checkboxes and update their question numbers
 				$("input.correct", newquestion).removeAttr("checked");
@@ -140,11 +140,11 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 
 			submitcheck = function() {
 				// clear any previously set background colours
-				$("input, textarea").css("background-color", "");
+				$("input, textarea").removeClass("error warning");
 
 				// title must be set
 				if ($("#title").val().length == 0) {
-					$("#title").css("background-color", errorcolour);
+					$("#title").addClass("error");
 					alert("A title must be set for this item");
 					return false;
 				}
@@ -153,21 +153,21 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 
 				// confirm the user wanted an empty stimulus
 				if ($("#stimulus").val().length == 0) {
-					$("#stimulus").css("background-color", warningcolour);
+					$("#stimulus").addClass("warning");
 					if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
 						return false;
 					else
-						$("#stimulus").css("background-color", "");
+						$("#stimulus").removeClass("error warning");
 				}
 
 				// confirm the user wanted any empty boxes
 				var ok = true;
 				$("input.optiontext").each(function(n) {
 					if ($(this).val().length == 0) {
-						$(this).css("background-color", warningcolour);
+						$(this).addClass("warning");
 						ok = confirm("Option " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 						if (ok)
-							$(this).css("background-color", "");
+							$(this).removeClass("error warning");
 						else
 							return false; //this is "break" in the Jquery each() pseudoloop
 					}
@@ -175,10 +175,10 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 				if (!ok) return false;
 				$("textarea.prompt").each(function(n) {
 					if ($(this).val().length == 0) {
-						$(this).css("background-color", warningcolour);
+						$(this).addClass("warning");
 						ok = confirm("The prompt for question " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 						if (ok)
-							$(this).css("background-color", "");
+							$(this).removeClass("error warning");
 						else
 							return false; //this is "break" in the Jquery each() pseudoloop
 					}
@@ -189,10 +189,10 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 				for (var i = 0; i < $("input.optiontext").size(); i++) {
 					for (var j = i + 1; j < $("input.optiontext").size(); j++) {
 						if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
-							$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("background-color", warningcolour);
+							$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").addClass("warning");
 							ok = confirm("Options " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
 							if (ok)
-								$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").css("background-color", "");
+								$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").removeClass("error warning");
 							else
 								break;
 						}
@@ -205,10 +205,10 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 				for (var i = 0; i < $("textarea.prompt").size(); i++) {
 					for (var j = i + 1; j < $("textarea.prompt").size(); j++) {
 						if ($("#question_" + i + "_prompt").val() == $("#question_" + j + "_prompt").val()) {
-							$("#question_" + i + "_prompt, #question_" + j + "_prompt").css("background-color", warningcolour);
+							$("#question_" + i + "_prompt, #question_" + j + "_prompt").addClass("warning");
 							ok = confirm("The prompts for questions " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
 							if (ok)
-								$("#question_" + i + "_prompt, #question_" + j + "_prompt").css("background-color", "");
+								$("#question_" + i + "_prompt, #question_" + j + "_prompt").removeClass("error warning");
 							else
 								break;
 						}
