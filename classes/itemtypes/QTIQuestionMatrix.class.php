@@ -207,7 +207,8 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 		$ai->addAttribute("adaptive", "false");
 		$ai->addAttribute("timeDependent", "false");
 		$ai->addAttribute("identifier", "qm_" . md5(uniqid()));
-		$ai->addAttribute("title", $this->data["title"]);
+		if (isset($this->data["title"]))
+			$ai->addAttribute("title", $this->data["title"]);
 
 		// response declarations
 		for ($q = 0; array_key_exists("question_{$q}_prompt", $this->data); $q++) {
@@ -215,7 +216,8 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 			$rd->addAttribute("identifier", "RESPONSE_question_$q");
 			$rd->addAttribute("cardinality", "single");
 			$rd->addAttribute("baseType", "identifier");
-			$rd->addChild("correctResponse")->addChild("value", "question_{$q}_" . $this->data["question_{$q}_answer"]);
+			if (isset($this->data["question_{$q}_answer"]))
+				$rd->addChild("correctResponse")->addChild("value", "question_{$q}_" . $this->data["question_{$q}_answer"]);
 		}
 
 		// outcome declaration

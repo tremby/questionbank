@@ -378,7 +378,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		$ai->addAttribute("adaptive", "false");
 		$ai->addAttribute("timeDependent", "false");
 		$ai->addAttribute("identifier", "mcr_" . md5(uniqid()));
-		$ai->addAttribute("title", $this->data["title"]);
+		if (isset($this->data["title"]))
+			$ai->addAttribute("title", $this->data["title"]);
 
 		// response declaration
 		$rd = $ai->addChild("responseDeclaration");
@@ -453,7 +454,9 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			if (isset($this->data["minchoices"]))
 				$ci->addAttribute("minChoices", $this->data["minchoices"]);
 		}
-		$ci->addChild("prompt", $this->data["prompt"]);
+
+		if (isset($this->data["prompt"]))
+			$ci->addChild("prompt", $this->data["prompt"]);
 		for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
 			$sc = $ci->addChild("simpleChoice", $this->data["option_{$i}_optiontext"]);
 			$sc->addAttribute("identifier", "option_$i");
