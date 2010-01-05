@@ -8,7 +8,7 @@ $ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 // download the QTI
 //header("Content-Type: application/qti+xml"); //proposed Mime type -- http://www.imsglobal.org/question/ims-qti-archives/2003-January/000502.html
 header("Content-Type: application/xml");
-header("Content-Disposition: attachment; filename=\"{$ai->getTitleFS()}.qti.xml\"");
+header("Content-Disposition: attachment; filename=\"{$ai->getTitleFS()}.xml\"");
 echo $ai->getQTIIndentedString();
 exit;
 

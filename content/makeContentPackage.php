@@ -27,7 +27,7 @@ if (isset($_POST["makecp"])) {
 	$r = $rs->addChild("resource");
 	$r->addAttribute("identifier", $ai->getQTIID());
 	$r->addAttribute("type", "imsqti_item_xmlv2p1");
-	$r->addAttribute("href", "{$ai->getTitleFS()}.qti.xml");
+	$r->addAttribute("href", "{$ai->getTitleFS()}.xml");
 	$md = $r->addChild("metadata");
 
 	// resource qti metadata
@@ -54,7 +54,7 @@ if (isset($_POST["makecp"])) {
 	}
 
 	// file element
-	$r->addChild("file")->addAttribute("href", "{$ai->getTitleFS()}.qti.xml");
+	$r->addChild("file")->addAttribute("href", "{$ai->getTitleFS()}.xml");
 
 	// make temporary zip archive
 	$zip = new ZipArchive();
@@ -62,7 +62,7 @@ if (isset($_POST["makecp"])) {
 	if ($zip->open($filename, ZIPARCHIVE::CREATE) !== true)
 		die("couldn't make zip file");
 	$zip->addFromString("imsmanifest.xml", simplexml_indented_string($manifest));
-	$zip->addFromString("{$ai->getTitleFS()}.qti.xml", $ai->getQTIIndentedString());
+	$zip->addFromString("{$ai->getTitleFS()}.xml", $ai->getQTIIndentedString());
 	$zip->close();
 
 	// download the content package
