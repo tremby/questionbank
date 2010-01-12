@@ -53,12 +53,16 @@ if (isset($_POST["edititem"])) {
 	?>
 	<h3>QTIEngine preview</h3>
 	<iframe width="80%" height="400" src="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>"></iframe>
+	<p>You can <a href="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">preview the item full screen</a>.<p>
 
 	<h3>Download the item</h3>
 	<p>You can <a href="?page=downloadAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">download the QTI item as an XML file</a>.</p>
 
 	<h3>Make a content package</h3>
 	<p>You can <a href="?page=makeContentPackage&amp;qtiid=<?php echo $ai->getQTIID(); ?>">package this item</a> to include metadata.</p>
+
+	<h3>Edit the item</h3>
+	<p>You can <a href="?page=editAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">edit this item</a> further.</p>
 
 	<?php
 	include "htmlfooter.php";
