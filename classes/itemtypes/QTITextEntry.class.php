@@ -460,9 +460,9 @@ class QTITextEntry extends QTIAssessmentItem {
 
 		// get stimulus and add to the XML tree
 		if (isset($this->data["stimulus"]) && !empty($this->data["stimulus"])) {
-			// if stimulus doesn't start with a tag, wrap it in a div
+			// if stimulus doesn't start with a div tag, wrap it in one
 			$this->data["stimulus"] = trim($this->data["stimulus"]);
-			if ($this->data["stimulus"][0] != "<")
+			if (substr($this->data["stimulus"], 0, 4) != "<div")
 				$this->data["stimulus"] = "<div>" . $this->data["stimulus"] . "</div>";
 
 			// parse it as XML
