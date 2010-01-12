@@ -380,29 +380,27 @@ class QTITextEntry extends QTIAssessmentItem {
 								<input type="button" class="addresponse" value="Add response">
 							</dd>
 						</div>
-						<?php if (isset($this->data["gap_0_response_0"])) { ?>
-							<?php for ($i = 0; array_key_exists("gap_{$i}_prompt_0", $this->data); $i++) { ?>
-								<div class="gap" id="gap_<?php echo $i; ?>">
-									<dt>Gap <span class="gapnumber"><?php echo $i + 1; ?></span></dt>
-									<dd>
-										<table class="responses">
-											<tr>
-												<th>Response</th>
-												<th>Score</th>
-												<th>Actions</th>
+						<?php for ($i = 0; array_key_exists("gap_{$i}_response_0", $this->data); $i++) { ?>
+							<div class="gap" id="gap_<?php echo $i; ?>">
+								<dt>Gap <span class="gapnumber"><?php echo $i + 1; ?></span></dt>
+								<dd>
+									<table class="responses">
+										<tr>
+											<th>Response</th>
+											<th>Score</th>
+											<th>Actions</th>
+										</tr>
+										<?php for ($j = 0; array_key_exists("gap_{$i}_response_{$j}", $this->data); $j++) { ?>
+											<tr class="response">
+												<td><input type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" size="32" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}"]); ?>"></td>
+												<td><input type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" size="3" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}_score"]); ?>"></td>
+												<td><input type="button" class="removequestion" value="Remove"></td>
 											</tr>
-											<?php for ($j = 0; array_key_exists("gap_{$i}_prompt_{$j}", $this->data); $j++) { ?>
-												<tr class="response">
-													<td><input type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" size="32" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}"]); ?>"></td>
-													<td><input type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" size="3" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}_score"]); ?>"></td>
-													<td><input type="button" class="removequestion" value="Remove"></td>
-												</tr>
-											<?php } ?>
-										</table>
-										<input type="button" class="addresponse" value="Add response">
-									</dd>
-								</div>
-							<?php } ?>
+										<?php } ?>
+									</table>
+									<input type="button" class="addresponse" value="Add response">
+								</dd>
+							</div>
 						<?php } ?>
 					</dl>
 				</dd>
