@@ -11,6 +11,8 @@ webtool
 	-	repository resource selector
 -	other question types
 	-	fill in the gaps
+		-	JS is buggy if there are square brackets in the text or responses
+		-	finish logic
 -	see if the options in EMI can be displayed horizontally
 -	try and find a way to show the EMI options as a list (requires a CSS style) 
 	rather than as a table
