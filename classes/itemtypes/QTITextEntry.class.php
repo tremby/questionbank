@@ -156,7 +156,7 @@ class QTITextEntry extends QTIAssessmentItem {
 				for (var i = firstresponsestrings.length; i < gapstrings.length; i++)
 					addgap(i, gapstrings[i]);
 				for (var i = gapstrings.length - 1; i < firstresponsestrings.length - 1; i++)
-					$("#gap_" + i).remove();
+					$("#gap_" + (i + 1)).remove();
 
 				// update first responses
 				for (var i = 0; i < gapstrings.length; i++)
