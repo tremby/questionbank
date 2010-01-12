@@ -429,7 +429,7 @@ class QTITextEntry extends QTIAssessmentItem {
 		');
 		$ai->addAttribute("adaptive", "false");
 		$ai->addAttribute("timeDependent", "false");
-		$ai->addAttribute("identifier", "emi_" . md5(uniqid()));
+		$ai->addAttribute("identifier", "te_" . md5(uniqid()));
 		if (isset($this->data["title"]))
 			$ai->addAttribute("title", $this->data["title"]);
 
