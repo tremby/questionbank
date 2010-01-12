@@ -421,7 +421,129 @@ class QTITextEntry extends QTIAssessmentItem {
 		if (empty($this->data))
 			return false;
 
-		// TODO -- build QTI
+		// container element and other metadata
+		$ai = new SimpleXMLElement('
+			<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"/>
+		');
+		$ai->addAttribute("adaptive", "false");
+		$ai->addAttribute("timeDependent", "false");
+		$ai->addAttribute("identifier", "emi_" . md5(uniqid()));
+		if (isset($this->data["title"]))
+			$ai->addAttribute("title", $this->data["title"]);
+
+		// response declarations
+		for ($g = 0; array_key_exists("gap_{$g}_response_0", $this->data); $g++) {
+			$rd = $ai->addChild("responseDeclaration");
+			$rd->addAttribute("identifier", "RESPONSE_gap_$g");
+			$rd->addAttribute("cardinality", "single");
+			$rd->addAttribute("baseType", "string");
+
+			$m = $rd->addChild("mapping");
+			$m->addAttribute("defaultValue", "0");
+			for ($r = 0; array_key_exists("gap_{$g}_response_{$r}", $this->data); $r++) {
+				$me = $m->addChild("mapEntry");
+				$me->addAttribute("mapKey", $this->data["gap_{$g}_response_$r"]);
+				$me->addAttribute("mappedValue", $this->data["gap_{$g}_response_${r}_score"]);
+			}
+		}
+
+		// outcome declaration
+		$od = $ai->addChild("outcomeDeclaration");
+		$od->addAttribute("identifier", "SCORE");
+		$od->addAttribute("cardinality", "single");
+		$od->addAttribute("baseType", "float");
+		$od->addChild("defaultValue");
+		$od->defaultValue->addChild("value", "0");
+
+		// item body
+		$ib = $ai->addChild("itemBody");
+
+		// get stimulus and add to the XML tree
+		if (isset($this->data["stimulus"]) && !empty($this->data["stimulus"])) {
+			// if stimulus doesn't start with a tag, wrap it in a div
+			$this->data["stimulus"] = trim($this->data["stimulus"]);
+			if ($this->data["stimulus"][0] != "<")
+				$this->data["stimulus"] = "<div>" . $this->data["stimulus"] . "</div>";
+
+			// parse it as XML
+			// The stimulus must be valid XML at this point. Even if it is, and even 
+			// if it's also valid XHTML, it may still not be valid QTI since QTI 
+			// only allows a subset of XHTML. So we collect errors here.
+			libxml_use_internal_errors(true);
+			$stimulus = simplexml_load_string($this->data["stimulus"]);
+			if ($stimulus === false) {
+				$this->errors[] = "Stimulus is not valid XML. It must not only be valid XML but valid QTI, which accepts a subset of XHTML. Details on specific issues follow:";
+				foreach (libxml_get_errors() as $error)
+					$this->errors[] = "Stimulus line " . $error->line . ", column " . $error->column . ": " . $error->message;
+				libxml_clear_errors();
+			} else {
+				simplexml_append($ib, $stimulus);
+			}
+			libxml_use_internal_errors(false);
+		}
+
+		// body text
+		$bt = $ib->addChild("div");
+		$bt->addAttribute("class", "textentrytextbody");
+		$text = xmlspecialchars($this->data["textbody"]);
+		$text = preg_replace('%\n\n+%', "</p><p>", $text);
+		$text = preg_replace('%\n%', "<br/>", $text);
+		$text = "<p>" . $text . "</p>";
+		$g = 0;
+		$start = 0;
+		while (($start = strpos($text, "[", $start)) !== false) {
+			$start = strpos($text, "[");
+			$end = strpos($text, "]", $start);
+
+			// base expected length on the longest answer plus 10%
+			$el = 0;
+			for ($r = 0; array_key_exists("gap_{$g}_response_{$r}", $this->data); $r++)
+				$el = max($el, strlen($this->data["gap_{$g}_response_{$r}"]));
+			$el = ceil($el * 1.1);
+
+			$text = substr($text, 0, $start)
+				. '<textEntryInteraction responseIdentifier="RESPONSE_gap_' . ($g++) . '" expectedLength="' . $el . '"/>'
+				. substr($text, $end + 1);
+		}
+		// parse it as XML
+		libxml_use_internal_errors(true);
+		$textxml = simplexml_load_string($text);
+		if ($textxml === false) {
+			$this->errors[] = "Text body did not convert to valid XML";
+			foreach (libxml_get_errors() as $error)
+				$this->errors[] = "Text body line " . $error->line . ", column " . $error->column . ": " . $error->message;
+			libxml_clear_errors();
+		} else {
+			simplexml_append($bt, $textxml);
+		}
+		libxml_use_internal_errors(false);
+
+		// response processing
+		$rp = $ai->addChild("responseProcessing");
+
+		// set score = 0
+		$sov = $rp->addChild("setOutcomeValue");
+		$sov->addAttribute("identifier", "SCORE");
+		$sov->addChild("baseValue", "0.0")->addAttribute("baseType", "float");
+
+		for ($g = 0; array_key_exists("gap_{$g}_response_0", $this->data); $g++) {
+			$rc = $rp->addChild("responseCondition");
+
+			// if
+			$ri = $rc->addChild("responseIf");
+
+			// not null
+			$ri->addChild("not")->addChild("isNull")->addChild("variable")->addAttribute("identifier", "RESPONSE_gap_{$g}");
+
+			// increment score
+			$sov = $ri->addChild("setOutcomeValue");
+			$sov->addAttribute("identifier", "SCORE");
+			$s = $sov->addChild("sum");
+			$s->addChild("variable")->addAttribute("identifier", "SCORE");
+			$s->addChild("mapResponse")->addAttribute("identifier", "RESPONSE_gap_{$g}");
+		}
 
 		if (!empty($this->errors))
 			return false;
