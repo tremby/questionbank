@@ -562,12 +562,134 @@ class QTITextEntry extends QTIAssessmentItem {
 			"title"		=>	(string) $xml["title"],
 		);
 
-		// TODO: logic
+		// get the text body and remove it from the tree
+		$tb = null;
+		foreach ($xml->itemBody->children() as $child) {
+			if ($child->getName() == "div" && isset($child["class"]) && (string) $child["class"] == "textentrytextbody") {
+				$tb = dom_import_simplexml($child);
+				$tb->parentNode->removeChild($tb);
+				break;
+			}
+		}
+		if (is_null($tb))
+			return 0;
+
+		// get text body fragments
+		$fragments = self::getTextEntryInteractionsAndText($tb);
+		$data["textbody"] = "";
+		$gaps = array();
+
+		// fail if there was a problem with a textEntryInteraction (for example 
+		// it doesn't have a responseDeclaration id associated)
+		if ($fragments === false)
+			return 0;
+
+		// go through the textbody fragments, match them to responseDeclarations 
+		// and collect responses
+		foreach ($fragments as $fid => $fragment) {
+			if (!preg_match('%^\[.*\]$%', $fragment)) {
+				$data["textbody"] .= $fragment;
+				continue;
+			}
+
+			// we have a textEntryInteraction id -- look for a matching 
+			// responseDeclaration
+			$rdi = substr($fragment, 1, -1);
+			$rd = null;
+			foreach ($xml->responseDeclaration as $d) {
+				if ((string) $d["identifier"] == $rdi) {
+					$rd = $d;
+					break;
+				}
+			}
+			if (is_null($rd))
+				return 0;
+
+			// get all the responses for this gap and their scores
+			if (!isset($rd->mapping))
+				return 0;
+
+			// fail if the default score isn't 0
+			if ((string) $rd->mapping["defaultValue"] !== "0")
+				return 0;
+
+			// fail if there are no responses
+			if (!isset($rd->mapping->mapEntry))
+				return 0;
+
+			// collect responses and their scores and find the best response
+			$gaps[$fid] = array();
+			foreach ($rd->mapping->mapEntry as $me)
+				$gaps[$fid][(string) $me["mapKey"]] = (string) $me["mappedValue"];
+
+			// sort responses by descending score
+			arsort($gaps[$fid]);
+
+			// add the plaintext gap to the textbody string
+			$data["textbody"] .= "[" . key($gaps[$fid]) . "]";
+		}
+
+		// turn HTML paragraphs and line breaks into plaintext newlines
+		$data["textbody"] = preg_replace(array('%\s*</p>\s*<p>\s*%', '%\s*</?p>\s*%', '%\s*<br\s*/?>\s*%'), array("\n\n", "", "\n"), trim($data["textbody"]));
+
+		// fail if there are no gaps
+		if (count($gaps) == 0)
+			return 0;
+
+		// get stimulus
+		$data["stimulus"] = qti_get_stimulus($xml->itemBody);
+
+		// add responses and their scores to data
+		$g = 0;
+		foreach ($gaps as $responses) {
+			$r = 0;
+			foreach ($responses as $response => $score) {
+				$data["gap_{$g}_response_{$r}"] = $response;
+				$data["gap_{$g}_response_{$r}_score"] = $score;
+				$r++;
+			}
+			$g++;
+		}
 
 		// happy with that -- set data property
 		$this->data = $data;
 
 		return 255;
+	}
+
+	// return an array of text fragments to be concatenated. a fragment starting 
+	// with [ and ending with ] holds the identifier of a textEntryInteraction.
+	private static function getTextEntryInteractionsAndText(DOMNode $node) {
+		$fragments = array();
+		foreach($node->childNodes as $child) {
+			switch ($child->nodeType) {
+				case XML_TEXT_NODE:
+					$fragments[] = $child->wholeText;
+					break;
+				case XML_ELEMENT_NODE:
+					if ($child->tagName == "textEntryInteraction") {
+						$ri = null;
+						foreach ($child->attributes as $a) {
+							if ($a->name == "responseIdentifier") {
+								$ri = $a->value;
+								break;
+							}
+						}
+						if (is_null($ri))
+							return false;
+						$fragments[] = "[" . $a->value . "]";
+					} else {
+						$fragments[] = "<" . $child->tagName . ">";
+						$childfragments = self::getTextEntryInteractionsAndText($child);
+						if ($childfragments === false)
+							return false;
+						$fragments = array_merge($fragments, $childfragments);
+						$fragments[] = "</" . $child->tagName . ">";
+					}
+					break;
+			}
+		}
+		return $fragments;
 	}
 }
 
