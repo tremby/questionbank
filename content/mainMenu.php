@@ -65,7 +65,7 @@ permanent so ensure you save them manually before logging out.</p>
 					<li><a href="?page=downloadAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download</a></li>
 					<li><a href="?page=makeContentPackage&amp;qtiid=<?php echo $item->getQTIID(); ?>">Package</a></li>
 					<?php } ?>
-					<li><a href="?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Delete</a></li>
+					<li><a href="?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a></li>
 				</ul></td>
 			</tr>
 		<?php } ?>
