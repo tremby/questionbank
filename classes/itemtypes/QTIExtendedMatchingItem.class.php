@@ -505,11 +505,12 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 		foreach ($options as $k => $option)
 			$data["option_{$k}_optiontext"] = $option;
 
-		// get stimulus
+		// get stimulus, first removing the options table
 		foreach ($xml->itemBody->children() as $child) {
 			if ($child->getName() == "table" && isset($child["class"]) && (string) $child["class"] == "emioptions") {
 				$dom = dom_import_simplexml($child);
 				$dom->parentNode->removeChild($dom);
+				break;
 			}
 		}
 		$data["stimulus"] = qti_get_stimulus($xml->itemBody);
