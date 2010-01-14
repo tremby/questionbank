@@ -19,6 +19,13 @@ $items = array_reverse($items);
 ?>
 <?php include "htmlheader.php"; ?>
 
+<script type="text/javascript">
+	$(document).ready(function() {
+		if (location.hash.substr(0, 6) == "#item_")
+			$(location.hash).addClass("highlight");
+	});
+</script>
+
 <h2>Main menu</h2>
 <dl>
 	<dt><a href="?page=newAssessmentItem">New assessment item</a></dt>
@@ -50,7 +57,7 @@ permanent so ensure you save them manually before logging out.</p>
 			<th>Actions</th>
 		</tr>
 		<?php foreach ($items as $item) { ?>
-			<tr>
+			<tr id="item_<?php echo $item->getQTIID(); ?>">
 				<td><?php echo $item->getTitle() === false ? "[untitled]" : htmlspecialchars($item->getTitle()); ?></td>
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
 				<td class="<?php echo count($item->getErrors()) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">

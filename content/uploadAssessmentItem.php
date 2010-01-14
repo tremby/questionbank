@@ -50,8 +50,8 @@ function handleupload(&$errors, &$warnings, &$messages) {
 		$_SESSION["items"] = array();
 	$_SESSION["items"][$ai->getQTIID()] = $ai;
 
-	// take the user to the edit item form
-	redirect("?page=editAssessmentItem&qtiid=" . $ai->getQTIID());
+	// take the user to the main menu with the uploaded item highlighted
+	redirect("?#item_" . $ai->getQTIID());
 }
 
 $errors = array();
