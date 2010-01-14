@@ -8,6 +8,8 @@ abstract class QTIAssessmentItem {
 	protected $data = array();
 	protected $qti = null; //XML string (can't store SimpleXML element in session data)
 
+	private $modified = null;
+
 	// the following are set by child classes' constructors
 	protected $itemtype = null;
 	protected $itemtypeprint = null;
@@ -60,6 +62,7 @@ abstract class QTIAssessmentItem {
 		$this->warnings = array();
 		$this->messages = array();
 
+		$this->modified = time();
 		$qti = $this->buildQTI();
 		if (!$qti)
 			return false;
@@ -164,6 +167,11 @@ abstract class QTIAssessmentItem {
 	// add message
 	public function addMessage($string) {
 		$this->messages[] = $string;
+	}
+
+	// get modification time
+	public function getModified() {
+		return $this->modified;
 	}
 
 	// compare items by title or ID

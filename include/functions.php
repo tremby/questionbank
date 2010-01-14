@@ -228,4 +228,45 @@ function plural($input, $pluralsuffix = "s", $singularsuffix = "") {
 	return $singularsuffix;
 }
 
+// return a readable date in HTML form
+function friendlydate_html($timestamp, $dayofweek = false, $html = true) {
+	$diff = time() - $timestamp;
+	if ($diff < 0 || $timestamp < strtotime("January 1 00:00")) {
+		// future or not this year -- give full date
+		$datestring = date("Y M j, H:i", $timestamp);
+	} else if ($timestamp < strtotime("today")) {
+		// yesterday or before
+		$datestring = date("D, M j, H:i", $timestamp);
+		if ($timestamp < strtotime("-6 days 00:00")) {
+			// a week or more ago -- leave at month and day
+		} else if ($timestamp < strtotime("-1 day 00:00")) {
+			// before yesterday -- additionally give number of days ago
+			$datestring .= " (" . round((strtotime("00:00") - strtotime("00:00", $timestamp)) /24/60/60) . "&nbsp;days&nbsp;ago)";
+		} else {
+			// yesterday -- say so
+			$datestring .= " (yesterday)";
+		}
+	} else if ($diff >= 60*60) {
+		// an hour or more ago -- give rough number of hours
+		$hours = round($diff / 60 / 60);
+		$datestring = $hours . " hour" . plural($hours) . " ago";
+	} else if ($diff >= 60) {
+		// a minute or more ago -- give rough number of minutes
+		$minutes = round($diff / 60);
+		$datestring = $minutes . " minute" . plural($minutes) . " ago";
+	} else if ($diff > 20) {
+		// 20 seconds or more ago -- give number of seconds
+		$datestring = $diff . " seconds ago";
+	} else
+		$datestring = "just now";
+
+	if ($html)
+		return "<span class=\"date\" title=\"" . date("Y-m-d H:i:s T", $timestamp) . "\">$datestring</span>";
+	return str_replace("&nbsp;", " ", $datestring);
+}
+// same in plain text
+function friendlydate($timestamp, $dayofweek = false) {
+	return friendlydate_html($timestamp, $dayofweek, false);
+}
+
 ?>

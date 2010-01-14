@@ -51,6 +51,7 @@ $items = array_reverse($items);
 permanent so ensure you save them manually before logging out.</p>
 	<table>
 		<tr>
+			<th>Modified</th>
 			<th>Title</th>
 			<th>Item type</th>
 			<th>Status</th>
@@ -58,6 +59,7 @@ permanent so ensure you save them manually before logging out.</p>
 		</tr>
 		<?php foreach ($items as $item) { ?>
 			<tr id="item_<?php echo $item->getQTIID(); ?>">
+				<td><?php echo friendlydate_html($item->getModified()); ?></td>
 				<td><?php echo $item->getTitle() === false ? "[untitled]" : htmlspecialchars($item->getTitle()); ?></td>
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
 				<td class="<?php echo count($item->getErrors()) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
