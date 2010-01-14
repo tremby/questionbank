@@ -9,9 +9,6 @@ webtool
 	-	Wysiwyg
 	-	upload to deposit in repository
 	-	repository resource selector
--	other question types
-	-	fill in the gaps
-		-	JS is buggy if there are square brackets in the text or responses
 -	see if the options in EMI can be displayed horizontally
 -	try and find a way to show the EMI options as a list (requires a CSS style) 
 	rather than as a table
@@ -20,3 +17,5 @@ webtool
 	such a cookie they won't see the correct preview
 -	remove debug stuff from the footer
 -	test in non-Firefox
+-	issue: can't have square brackets in text entry since they're used for 
+	marking gaps

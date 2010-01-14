@@ -34,7 +34,7 @@ class QTITextEntry extends QTIAssessmentItem {
 
 					gaps[gaps.length] = value.substring(pos + 1, endpos);
 
-					pos++;
+					pos = endpos;
 				}
 				return gaps;
 			};
