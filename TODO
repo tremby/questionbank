@@ -2,8 +2,9 @@ validate
 -	figure out why Sax is outputting its error messages to stderr and stop it
 webtool
 -	feedback
-	-	multiple choice: one piece per possible response
-	-	multiple response: one each for checked/unchecked for each response
+	-	EMI
+	-	question matrix
+	-	text entry
 -	scoring options?
 -	stimulus editor
 	-	Wysiwyg
@@ -19,3 +20,4 @@ webtool
 -	test in non-Firefox
 -	issue: can't have square brackets in text entry since they're used for 
 	marking gaps
+-	client side errors/warnings for feedback?
