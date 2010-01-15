@@ -31,11 +31,24 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$("input.correct", newoption).attr("name", "option_" + newid + "_correct");
 				$("input.fixed", newoption).attr("id", "option_" + newid + "_fixed").attr("name", "option_" + newid + "_fixed").removeAttr("checked");
 
-				// reinstate the remove action
+				// add the remove and update feedback actions
 				$("input.removeoption", newoption).click(removeoption);
+				$("input.optiontext", newoption).change(updatefeedback);
 
 				// add it to the list
 				$("#options").append(newoption);
+
+				// clone the last feedback row
+				var newfeedback = $("#option_" + oldid + "_feedback").clone();
+
+				// give it and its bits the new id and wipe the text
+				newfeedback.attr("id", "option_" + newid + "_feedback");
+				$(".feedbackoptiontext", newfeedback).text("");
+				$("textarea.feedbackchosen", newfeedback).attr("name", "option_" + newid + "_feedback_chosen").attr("id", "option_" + newid + "_feedback_chosen").val("").removeClass("error warning");
+				$("textarea.feedbackunchosen", newfeedback).attr("name", "option_" + newid + "_feedback_unchosen").attr("id", "option_" + newid + "_feedback_unchosen").val("").removeClass("error warning");
+
+				// add it to the list
+				$("#feedbackdiv table").append(newfeedback);
 			};
 
 			removeoption = function() {
@@ -44,7 +57,9 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					return;
 				}
 
-				$(this).parents("tr:first").remove();
+				var optionid = $(this).parents("tr:first").attr("id").split("_")[1];
+
+				$("#option_" + optionid + ", #option_" + optionid + "_feedback").remove();
 
 				// renumber the remaining options
 				var i = 0;
@@ -60,6 +75,15 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$("input.fixed", this).attr("id", "option_" + i + "_fixed").attr("name", "option_" + i + "_fixed");
 					i++;
 				});
+
+				// renumber the remaining feedback
+				i = 0;
+				$("#feedbackdiv tr.feedback").each(function() {
+					$(this).attr("id", "option_" + i + "_feedback");
+					$("textarea.feedbackchosen", this).attr("name", "option_" + i + "_feedback_chosen").attr("id", "option_" + i + "_feedback_chosen");
+					$("textarea.feedbackunchosen", this).attr("name", "option_" + i + "_feedback_unchosen").attr("id", "option_" + i + "_feedback_unchosen");
+					i++;
+				});
 			};
 
 			toggleshuffle = function() {
@@ -67,6 +91,18 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$("#options th.fixed, #options td.fixed").show();
 				else
 					$("#options th.fixed, #options td.fixed").hide();
+			};
+
+			togglefeedback = function() {
+				if ($("#feedback").is(":checked"))
+					$("#feedbackdiv").show();
+				else
+					$("#feedbackdiv").hide();
+			};
+
+			updatefeedback = function() {
+				var optionid = $(this).attr("id").split("_")[1];
+				$("#option_" + optionid + "_feedback .feedbackoptiontext").text($(this).val());
 			};
 
 			switchitemtype = function() {
@@ -266,8 +302,10 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				$("#addoption").click(addoption);
 				$(".removeoption").click(removeoption);
 				$("#shuffle").click(toggleshuffle);
+				$("#feedback").click(togglefeedback);
 				$("input.itemtype").click(switchitemtype);
 				$("#submit").click(submitcheck);
+				$("input.optiontext").change(updatefeedback);
 			});
 		</script>
 
@@ -337,6 +375,31 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 						<?php } ?>
 					</table>
 					<input type="button" id="addoption" value="Add option">
+				</dd>
+
+				<dt>Feedback</dt>
+				<dd>
+					<div>
+						<input type="checkbox" id="feedback" name="feedback"<?php if (isset($this->data["feedback"])) { ?> checked="checked"<?php } ?>>
+						<label for="feedback">Provide feedback based on the answer given</label>
+						<p class="hint">Each matching piece of feedback is given – leave boxes for unneccessary cases empty</p>
+					</div>
+					<div id="feedbackdiv"<?php if (!isset($this->data["feedback"])) { ?> style="display: none;"<?php } ?>>
+						<table>
+							<tr>
+								<th>Option</th>
+								<th>Feedback if chosen</th>
+								<th>Feedback if not chosen</th>
+							</tr>
+							<?php for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) { ?>
+								<tr class="feedback" id="option_<?php echo $i; ?>_feedback">
+									<td><span class="feedbackoptiontext"><?php echo htmlspecialchars($this->data["option_{$i}_optiontext"]); ?></span></td>
+									<td><textarea class="feedbackchosen" rows="2" cols="32" name="option_<?php echo $i; ?>_feedback_chosen" id="option_<?php echo $i; ?>_feedback_chosen"><?php if (isset($this->data["option_{$i}_feedback_chosen"])) echo htmlspecialchars($this->data["option_{$i}_feedback_chosen"]); ?></textarea></td>
+									<td><textarea class="feedbackunchosen" rows="2" cols="32" name="option_<?php echo $i; ?>_feedback_unchosen" id="option_<?php echo $i; ?>_feedback_unchosen"><?php if (isset($this->data["option_{$i}_feedback_unchosen"])) echo htmlspecialchars($this->data["option_{$i}_feedback_unchosen"]); ?></textarea></td>
+								</tr>
+							<?php } ?>
+						</table>
+					</div>
 				</dd>
 
 				<dt class="choicerestrictions"<?php if (!$multipleresponse) { ?> style="display: none;"<?php } ?>>Choice restrictions</dt>
