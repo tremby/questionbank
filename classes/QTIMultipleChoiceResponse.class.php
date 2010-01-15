@@ -382,7 +382,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					<div>
 						<input type="checkbox" id="feedback" name="feedback"<?php if (isset($this->data["feedback"])) { ?> checked="checked"<?php } ?>>
 						<label for="feedback">Provide feedback based on the answer given</label>
-						<p class="hint">Each matching piece of feedback is given – leave boxes for unneccessary cases empty</p>
+						<p class="hint">Each matching piece of feedback is given, in this order – leave boxes for unneccessary cases empty</p>
 					</div>
 					<div id="feedbackdiv"<?php if (!isset($this->data["feedback"])) { ?> style="display: none;"<?php } ?>>
 						<table>
