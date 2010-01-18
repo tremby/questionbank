@@ -565,10 +565,10 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$m->addChild("baseValue", "option_$i")->addAttribute("baseType", "identifier");	//if this
 					$m->addChild("variable")->addAttribute("identifier", "RESPONSE");				//is equal to this
 				}
-				$sov = $ri->addChild("setOutcomeValue");										//then do this
+				$sov = $ri->addChild("setOutcomeValue");											//then do this
 				$sov->addAttribute("identifier", "feedback_option_$i");
 				$sov->addChild("baseValue", "true")->addAttribute("baseType", "identifier");
-				$re = $rc->addChild("responseElse");											//else do this
+				$re = $rc->addChild("responseElse");												//else do this
 				$sov = $re->addChild("setOutcomeValue");
 				$sov->addAttribute("identifier", "feedback_option_$i");
 				$sov->addChild("null");
@@ -640,10 +640,6 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		if (count($xml->responseDeclaration) != 1)
 			return 0;
 
-		// there is one responseCondition
-		if (count($xml->responseProcessing->responseCondition) != 1)
-			return 0;
-
 		// check cardinality is as expected
 		if ($this->itemType() == "multipleResponse" && (string) $xml->responseDeclaration["cardinality"] != "multiple")
 			return 0;
@@ -705,6 +701,19 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 		// get prompt
 		$data["prompt"] = (string) $xml->itemBody->choiceInteraction->prompt;
+
+		// not checking this properly at all but if modalFeedback elements exist 
+		// which look about right, use them for feedback
+		foreach ($xml->modalFeedback as $mf) {
+			$oi = explode("_", (string) $mf["outcomeIdentifier"]);
+			if (count($oi) == 3 && $oi[2] < count($options) && (string) $mf["identifier"] == "true") {
+				$data["feedback"] = true;
+				if ((string) $mf["showHide"] == "show")
+					$data["option_{$oi[2]}_feedback_chosen"] = xml_remove_wrapper_element($mf->asXML());
+				else
+					$data["option_{$oi[2]}_feedback_unchosen"] = xml_remove_wrapper_element($mf->asXML());
+			}
+		}
 
 		// happy with that -- set data property
 		$this->data = $data;
