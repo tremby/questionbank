@@ -269,4 +269,32 @@ function friendlydate($timestamp, $dayofweek = false) {
 	return friendlydate_html($timestamp, $dayofweek, false);
 }
 
+// parse text as XML, return SimpleXML if fine or array of errors if not
+function stringtoxml($string, $title = "XML") {
+	// switch on internal error handling, remember old value
+	$internalerrors = libxml_use_internal_errors(true);
+
+	// parse as XML
+	$xml = simplexml_load_string($string);
+	if ($xml === false) {
+		// collect and return errors
+		$errors = array();
+		foreach (libxml_get_errors() as $error)
+			$errors[] = ucfirst($title) . " line {$error->line}, column {$error->column}: {$error->message}";
+		libxml_clear_errors();
+	} else
+		return $xml;
+
+	// reset internal errors to original value
+	libxml_use_internal_errors($internalerrors);
+}
+
+// trim, then wrap XML in a div if it doesn't already start with one
+function wrapindiv($string) {
+	$string = trim($string);
+	if (substr($string, 0, 4) != "<div")
+		$string = "<div>" . $string . "</div>";
+	return $string;
+}
+
 ?>

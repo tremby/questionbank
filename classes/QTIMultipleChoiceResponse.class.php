@@ -469,7 +469,15 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			$rd->correctResponse->addChild("value", $this->data["correct"]);
 		}
 
-		// outcome declaration
+		// feedback outcome declarations
+		if (isset($this->data["feedback"])) for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
+			$od = $ai->addChild("outcomeDeclaration");
+			$od->addAttribute("identifier", "feedback_option_" . $i);
+			$od->addAttribute("cardinality", "single");
+			$od->addAttribute("baseType", "identifier");
+		}
+
+		// score outcome declaration
 		$od = $ai->addChild("outcomeDeclaration");
 		$od->addAttribute("identifier", "SCORE");
 		$od->addAttribute("cardinality", "single");
@@ -482,27 +490,16 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 		// get stimulus and add to the XML tree
 		if (isset($this->data["stimulus"]) && !empty($this->data["stimulus"])) {
-			// if stimulus doesn't start with a div tag, wrap it in one
-			$this->data["stimulus"] = trim($this->data["stimulus"]);
-			if (substr($this->data["stimulus"], 0, 4) != "<div")
-				$this->data["stimulus"] = "<div>" . $this->data["stimulus"] . "</div>";
+			$this->data["stimulus"] = wrapindiv($this->data["stimulus"]);
 
 			// parse it as XML
-			// The stimulus must be valid XML at this point. Even if it is, and 
-			// even if it's also valid XHTML, it may still not be valid QTI 
-			// since QTI only allows a subset of XHTML. So we collect errors 
-			// here.
-			libxml_use_internal_errors(true);
-			$stimulus = simplexml_load_string($this->data["stimulus"]);
-			if ($stimulus === false) {
+			$stimulus = stringtoxml($this->data["stimulus"], "stimulus");
+			if (is_array($stimulus)) {
+				// errors
 				$this->errors[] = "Stimulus is not valid XML. It must not only be valid XML but valid QTI, which accepts a subset of XHTML. Details on specific issues follow:";
-				foreach (libxml_get_errors() as $error)
-					$this->errors[] = "Stimulus line " . $error->line . ", column " . $error->column . ": " . $error->message;
-				libxml_clear_errors();
-			} else {
+				$this->errors = array_merge($this->errors, $stimulus);
+			} else
 				simplexml_append($ib, $stimulus);
-			}
-			libxml_use_internal_errors(false);
 		}
 
 		// choices
@@ -528,12 +525,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		}
 
 		// response processing
-		$rc = $ai->addChild("responseProcessing")->addChild("responseCondition");
+		$rp = $ai->addChild("responseProcessing");
 
-		// if
+		// scoring logic
+		$rc = $rp->addChild("responseCondition");
 		$ri = $rc->addChild("responseIf");
-
-		// criteria for a correct answer
 		if ($this->itemType() == "multipleResponse" && empty($correct)) {
 			// multiple response in which the correct response is to tick no boxes 
 			// -- check number of responses is equal to zero
@@ -547,19 +543,75 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			$m->addChild("variable")->addAttribute("identifier", "RESPONSE");
 			$m->addChild("correct")->addAttribute("identifier", "RESPONSE");
 		}
-
-		// set score = 1
 		$sov = $ri->addChild("setOutcomeValue");
 		$sov->addAttribute("identifier", "SCORE");
 		$sov->addChild("baseValue", "1")->addAttribute("baseType", "integer");
-
-		// else
 		$re = $rc->addChild("responseElse");
-
-		// set score = 0
 		$sov = $re->addChild("setOutcomeValue");
 		$sov->addAttribute("identifier", "SCORE");
 		$sov->addChild("baseValue", "0")->addAttribute("baseType", "integer");
+
+		if (isset($this->data["feedback"])) {
+			// feedback logic
+			for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
+				$rc = $rp->addChild("responseCondition");
+				$ri = $rc->addChild("responseIf");
+				if ($this->itemType() == "multipleResponse") {
+					$c = $ri->addChild("member");
+					$c->addChild("baseValue", "option_$i")->addAttribute("baseType", "identifier");	//if this
+					$c->addChild("variable")->addAttribute("identifier", "RESPONSE");				//is a member of this
+				} else {
+					$m = $ri->addChild("match");
+					$m->addChild("baseValue", "option_$i")->addAttribute("baseType", "identifier");	//if this
+					$m->addChild("variable")->addAttribute("identifier", "RESPONSE");				//is equal to this
+				}
+				$sov = $ri->addChild("setOutcomeValue");										//then do this
+				$sov->addAttribute("identifier", "feedback_option_$i");
+				$sov->addChild("baseValue", "true")->addAttribute("baseType", "identifier");
+				$re = $rc->addChild("responseElse");											//else do this
+				$sov = $re->addChild("setOutcomeValue");
+				$sov->addAttribute("identifier", "feedback_option_$i");
+				$sov->addChild("null");
+			}
+
+			// the feedback itself
+			for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
+				if (isset($this->data["option_{$i}_feedback_chosen"]) && !empty($this->data["option_{$i}_feedback_chosen"])) {
+					$this->data["option_{$i}_feedback_chosen"] = wrapindiv($this->data["option_{$i}_feedback_chosen"]);
+
+					$mf = $ai->addChild("modalFeedback");
+					$mf->addAttribute("outcomeIdentifier", "feedback_option_{$i}");
+					$mf->addAttribute("identifier", "true");
+					$mf->addAttribute("showHide", "show");
+
+					// parse it as XML
+					$feedback = stringtoxml($this->data["option_{$i}_feedback_chosen"], "feedback");
+					if (is_array($feedback)) {
+						// errors
+						$this->errors[] = "Feedback is not valid XML. It must not only be valid XML but valid QTI, which accepts a subset of XHTML. Details on specific issues follow:";
+						$this->errors = array_merge($this->errors, $feedback);
+					} else
+						simplexml_append($mf, $feedback);
+				}
+				if (isset($this->data["option_{$i}_feedback_unchosen"]) && !empty($this->data["option_{$i}_feedback_unchosen"])) {
+					$this->data["option_{$i}_feedback_unchosen"] = wrapindiv($this->data["option_{$i}_feedback_unchosen"]);
+
+					$mf = $ai->addChild("modalFeedback");
+					$mf->addAttribute("outcomeIdentifier", "feedback_option_{$i}");
+					$mf->addAttribute("identifier", "true");
+					$mf->addAttribute("showHide", "hide");
+
+					// parse it as XML
+					$feedback = stringtoxml($this->data["option_{$i}_feedback_unchosen"], "feedback");
+					if (is_array($feedback)) {
+						// errors
+						$this->errors[] = "Feedback is not valid XML. It must not only be valid XML but valid QTI, which accepts a subset of XHTML. Details on specific issues follow:";
+						$this->errors = array_merge($this->errors, $feedback);
+					} else
+						simplexml_append($mf, $feedback);
+				}
+			}
+		}
 
 		if (!empty($this->errors))
 			return false;
