@@ -233,27 +233,16 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 
 		// get stimulus and add to the XML tree
 		if (isset($this->data["stimulus"]) && !empty($this->data["stimulus"])) {
-			// if stimulus doesn't start with a div tag, wrap it in one
-			$this->data["stimulus"] = trim($this->data["stimulus"]);
-			if (substr($this->data["stimulus"], 0, 4) != "<div")
-				$this->data["stimulus"] = "<div>" . $this->data["stimulus"] . "</div>";
+			$this->data["stimulus"] = wrapindiv($this->data["stimulus"]);
 
 			// parse it as XML
-			// The stimulus must be valid XML at this point. Even if it is, and 
-			// even if it's also valid XHTML, it may still not be valid QTI 
-			// since QTI only allows a subset of XHTML. So we collect errors 
-			// here.
-			libxml_use_internal_errors(true);
-			$stimulus = simplexml_load_string($this->data["stimulus"]);
-			if ($stimulus === false) {
+			$stimulus = stringtoxml($this->data["stimulus"], "stimulus");
+			if (is_array($stimulus)) {
+				// errors
 				$this->errors[] = "Stimulus is not valid XML. It must not only be valid XML but valid QTI, which accepts a subset of XHTML. Details on specific issues follow:";
-				foreach (libxml_get_errors() as $error)
-					$this->errors[] = "Stimulus line " . $error->line . ", column " . $error->column . ": " . $error->message;
-				libxml_clear_errors();
-			} else {
+				$this->errors = array_merge($this->errors, $stimulus);
+			} else
 				simplexml_append($ib, $stimulus);
-			}
-			libxml_use_internal_errors(false);
 		}
 
 		// questions
