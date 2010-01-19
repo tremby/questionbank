@@ -282,6 +282,7 @@ function stringtoxml($string, $title = "XML") {
 		foreach (libxml_get_errors() as $error)
 			$errors[] = ucfirst($title) . " line {$error->line}, column {$error->column}: {$error->message}";
 		libxml_clear_errors();
+		return $errors;
 	} else
 		return $xml;
 
