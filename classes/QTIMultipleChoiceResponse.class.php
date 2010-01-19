@@ -38,6 +38,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				// add it to the list
 				$("#options").append(newoption);
 
+				// switch off all tinyMCEs in feedback rows
+				$("#feedbackdiv textarea.qtitinymce").each(function() {
+					tinyMCE.execCommand("mceRemoveControl", false, $(this).attr("id"));
+				});
+
 				// clone the last feedback row
 				var newfeedback = $("#option_" + oldid + "_feedback").clone();
 
@@ -49,6 +54,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 				// add it to the list
 				$("#feedbackdiv table").append(newfeedback);
+
+				// switch the tinyMCEs back on
+				$("#feedbackdiv textarea.qtitinymce").each(function() {
+					tinyMCE.execCommand("mceAddControl", false, $(this).attr("id"));
+				});
 			};
 
 			removeoption = function() {
@@ -58,6 +68,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				}
 
 				var optionid = $(this).parents("tr:first").attr("id").split("_")[1];
+
+				// switch off all tinyMCEs in feedback rows
+				$("#feedbackdiv textarea.qtitinymce").each(function() {
+					tinyMCE.execCommand("mceRemoveControl", false, $(this).attr("id"));
+				});
 
 				$("#option_" + optionid + ", #option_" + optionid + "_feedback").remove();
 
@@ -83,6 +98,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$("textarea.feedbackchosen", this).attr("name", "option_" + i + "_feedback_chosen").attr("id", "option_" + i + "_feedback_chosen");
 					$("textarea.feedbackunchosen", this).attr("name", "option_" + i + "_feedback_unchosen").attr("id", "option_" + i + "_feedback_unchosen");
 					i++;
+				});
+
+				// switch the tinyMCEs back on
+				$("#feedbackdiv textarea.qtitinymce").each(function() {
+					tinyMCE.execCommand("mceAddControl", false, $(this).attr("id"));
 				});
 			};
 
@@ -332,7 +352,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				<dd><input size="64" type="text" name="title" id="title"<?php if (isset($this->data["title"])) { ?> value="<?php echo htmlspecialchars($this->data["title"]); ?>"<?php } ?>></dd>
 
 				<dt><label for="stimulus">Stimulus</label></dt>
-				<dd><textarea rows="8" cols="64" name="stimulus" id="stimulus"><?php if (isset($this->data["stimulus"])) echo htmlspecialchars($this->data["stimulus"]); ?></textarea></dd>
+				<dd><textarea class="qtitinymce resizable" rows="8" cols="64" name="stimulus" id="stimulus"><?php if (isset($this->data["stimulus"])) echo htmlspecialchars($this->data["stimulus"]); ?></textarea></dd>
 
 				<dt><label for="prompt">Question prompt</label></dt>
 				<dd><textarea rows="2" cols="64" name="prompt" id="prompt"><?php if (isset($this->data["prompt"])) echo htmlspecialchars($this->data["prompt"]); ?></textarea></dd>
@@ -382,10 +402,10 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					<div>
 						<input type="checkbox" id="feedback" name="feedback"<?php if (isset($this->data["feedback"])) { ?> checked="checked"<?php } ?>>
 						<label for="feedback">Provide feedback based on the answer given</label>
-						<p class="hint">Each matching piece of feedback is given, in this order – leave boxes for unneccessary cases empty</p>
 					</div>
 					<div id="feedbackdiv"<?php if (!isset($this->data["feedback"])) { ?> style="display: none;"<?php } ?>>
-						<table>
+						<p class="hint">Each matching piece of feedback is given, in this order – leave boxes for unneccessary cases empty</p>
+						<table style="width: 100%;">
 							<tr>
 								<th>Option</th>
 								<th>Feedback if chosen</th>
@@ -394,8 +414,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 							<?php for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) { ?>
 								<tr class="feedback" id="option_<?php echo $i; ?>_feedback">
 									<td><span class="feedbackoptiontext"><?php echo htmlspecialchars($this->data["option_{$i}_optiontext"]); ?></span></td>
-									<td><textarea class="feedbackchosen" rows="2" cols="32" name="option_<?php echo $i; ?>_feedback_chosen" id="option_<?php echo $i; ?>_feedback_chosen"><?php if (isset($this->data["option_{$i}_feedback_chosen"])) echo htmlspecialchars($this->data["option_{$i}_feedback_chosen"]); ?></textarea></td>
-									<td><textarea class="feedbackunchosen" rows="2" cols="32" name="option_<?php echo $i; ?>_feedback_unchosen" id="option_<?php echo $i; ?>_feedback_unchosen"><?php if (isset($this->data["option_{$i}_feedback_unchosen"])) echo htmlspecialchars($this->data["option_{$i}_feedback_unchosen"]); ?></textarea></td>
+									<td><textarea style="width: 100%;" class="qtitinymce feedbackchosen" rows="2" cols="48" name="option_<?php echo $i; ?>_feedback_chosen" id="option_<?php echo $i; ?>_feedback_chosen"><?php if (isset($this->data["option_{$i}_feedback_chosen"])) echo htmlspecialchars($this->data["option_{$i}_feedback_chosen"]); ?></textarea></td>
+									<td><textarea style="width: 100%;" class="qtitinymce feedbackunchosen" rows="2" cols="48" name="option_<?php echo $i; ?>_feedback_unchosen" id="option_<?php echo $i; ?>_feedback_unchosen"><?php if (isset($this->data["option_{$i}_feedback_unchosen"])) echo htmlspecialchars($this->data["option_{$i}_feedback_unchosen"]); ?></textarea></td>
 								</tr>
 							<?php } ?>
 						</table>
