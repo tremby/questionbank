@@ -1,0 +1,5 @@
+qtibox.manifest
+cgi/qtibox_playitem
+cfg/plugins/EPrints/Plugin/Screen/EPrint/Box/QTIBox.pm
+cfg/static/javascript/auto/qtibox.js
+cfg/lang/en/phrases/qtibox.xml

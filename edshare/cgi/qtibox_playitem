@@ -1,0 +1,99 @@
+#!/usr/bin/perl -w
+use strict;
+use EPrints;
+use LWP::UserAgent;
+use Data::Dumper;
+
+my $qtiengine_host = "qtiengine.qtitools.org";
+
+my $session = EPrints::Session->new();
+my $docid = $session->param("docid");
+
+if (!defined($docid)) {
+	return;
+}
+
+my $doc = EPrints::DataObj::Document->new($session, $docid);
+my $filename = $doc->get_value("main");
+
+# get file contents
+my $path = $doc->local_path() . "/" . $filename;
+open(FILE, $path) or die "Couldn't open file: $!";
+my $xml = join("", <FILE>);
+close FILE;
+
+# boundary -- see http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html
+my $boundary;
+while (1) {
+	$boundary = "--------------------------------";
+	for (my $i = 0; $i < 13; ) {
+		my $j = chr(int(rand(127)));
+		if ($j =~ /[a-zA-Z0-9]/) {
+			$boundary .= $j;
+			$i++;
+		}
+	}
+	if ($xml !~ /$boundary/) {
+		last;
+	}
+}
+
+# build request
+my $request =	"--$boundary\r\n";
+$request .=	"Content-Disposition: form-data; name=\"uploadedContent\"; filename=\"$filename\"\r\n";
+$request .=	"Content-Type: application/xml\r\n";
+$request .=	"\r\n";
+$request .=	$xml;
+$request .=	"\r\n--$boundary--\r\n\r\n";
+
+# user agent object
+my $ua = LWP::UserAgent->new();
+$ua->max_redirect(0);
+
+# request object
+my $url = "/application/upload";
+my $req = HTTP::Request->new("POST" => "http://" . $qtiengine_host . $url);
+$req->protocol("HTTP/1.1");
+$req->header("Host" => $qtiengine_host);
+$req->header("Accept" => "*/*");
+$req->header("Content-Length" => length($request));
+$req->header("Content-Type" => "multipart/form-data; boundary=$boundary");
+$req->content($request);
+
+# make requests until we're redirected to the preview page
+my $error = undef;
+while (1) {
+	print STDERR "about to make request:\n";
+	print STDERR $req->as_string();
+
+	my $res = $ua->request($req);
+
+	if (!$res->is_redirect()) {
+		$error = "Didn't get a redirection to the QTIEngine preview page. Last page was $url";
+		last;
+	}
+
+	# assuming the Location header points to something valid
+	$url = $res->header("Location");
+	print STDERR "location header is " . $url;
+
+	# stop if we're at the preview page
+	if ($url =~ /^http:\/\/$qtiengine_host\/item\/play\/0;/) {
+		last;
+	}
+
+	# redirect
+	$req = HTTP::Request->new(GET => $url);
+	$req->protocol("HTTP/1.1");
+	$req->header("Host" => $qtiengine_host);
+	$req->header("Accept" => "*/*");
+}
+
+if (defined($error)) {
+	die($error);
+}
+
+$session->redirect($url);
+
+$session->terminate();
+exit;

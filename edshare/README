@@ -1,0 +1,3 @@
+These files should be extracted to <eprintsroot>/archives/<archivename>/ and 
+then a symlink to the cgi/qtibox_playitem file added to the <eprintsroot>/cgi 
+directory.
