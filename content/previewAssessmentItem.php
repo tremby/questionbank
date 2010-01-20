@@ -13,7 +13,7 @@ $ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 
 // boundary -- see http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html
 while (true) {
-	$boundary = "----------------------------" + uniqid();
+	$boundary = "----------------------------" . uniqid();
 	if (strpos($ai->getQTIIndentedString(), $boundary) === false)
 		break;
 }
@@ -23,8 +23,8 @@ $request =	"--$boundary\r\n";
 $request .=	"Content-Disposition: form-data; name=\"uploadedContent\"; filename=\"{$ai->getTitleFS()}.xml\"\r\n";
 $request .=	"Content-Type: application/xml\r\n";
 $request .=	"\r\n";
-$request .= $ai->getQTIIndentedString();
-$request .= "\r\n--$boundary--\r\n\r\n";
+$request .=	$ai->getQTIIndentedString();
+$request .=	"\r\n--$boundary--\r\n\r\n";
 
 // headers
 $reqheader = array(
