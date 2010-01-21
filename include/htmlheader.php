@@ -43,9 +43,22 @@ header("Content-Script-Type: text/javascript");
 			entities: "34,quot,38,amp,39,apos,60,lt,62,gt",
 		};
 		$(document).ready(function() {
-			$("textarea.qtitinymce.resizable").tinymce(jQuery.extend(true, {}, qtitinymceoptions, {theme_advanced_resizing: true}));
-			$("textarea.qtitinymce").not(".resizable").tinymce(qtitinymceoptions);
+			$("textarea.qtitinymce").focus(focustinymce);
 		});
+		focustinymce = function() {
+			if (typeof tinyMCE != "undefined" && tinyMCE.get($(this).attr("id")))
+				return;
+
+			removetinymces();
+			qtitinymceoptions.theme_advanced_resizing = $(this).is(".resizable");
+			$(this).tinymce(qtitinymceoptions);
+		};
+		removetinymces = function() {
+			$("textarea.qtitinymce").each(function() {
+				if (typeof tinyMCE != "undefined" && tinyMCE.get($(this).attr("id")))
+					tinyMCE.execCommand("mceRemoveControl", false, $(this).attr("id"));
+			});
+		};
 	</script>
 	<link rel="stylesheet" href="<?php echo SITEROOT_WEB; ?>include/styles.css">
 </head>

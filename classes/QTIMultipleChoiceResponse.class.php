@@ -38,10 +38,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				// add it to the list
 				$("#options").append(newoption);
 
-				// switch off all tinyMCEs in feedback rows
-				$("#feedbackdiv textarea.qtitinymce").each(function() {
-					tinyMCE.execCommand("mceRemoveControl", false, $(this).attr("id"));
-				});
+				// switch off all tinyMCEs
+				removetinymces();
 
 				// clone the last feedback row
 				var newfeedback = $("#option_" + oldid + "_feedback").clone();
@@ -52,13 +50,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				$("textarea.feedbackchosen", newfeedback).attr("name", "option_" + newid + "_feedback_chosen").attr("id", "option_" + newid + "_feedback_chosen").val("").removeClass("error warning");
 				$("textarea.feedbackunchosen", newfeedback).attr("name", "option_" + newid + "_feedback_unchosen").attr("id", "option_" + newid + "_feedback_unchosen").val("").removeClass("error warning");
 
+				// add the focus actions
+				$("textarea.qtitinymce", newfeedback).focus(focustinymce);
+
 				// add it to the list
 				$("#feedbackdiv table").append(newfeedback);
-
-				// switch the tinyMCEs back on
-				$("#feedbackdiv textarea.qtitinymce").each(function() {
-					tinyMCE.execCommand("mceAddControl", false, $(this).attr("id"));
-				});
 			};
 
 			removeoption = function() {
@@ -69,10 +65,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 				var optionid = $(this).parents("tr:first").attr("id").split("_")[1];
 
-				// switch off all tinyMCEs in feedback rows
-				$("#feedbackdiv textarea.qtitinymce").each(function() {
-					tinyMCE.execCommand("mceRemoveControl", false, $(this).attr("id"));
-				});
+				// switch off all tinyMCEs
+				removetinymces();
 
 				$("#option_" + optionid + ", #option_" + optionid + "_feedback").remove();
 
@@ -98,11 +92,6 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$("textarea.feedbackchosen", this).attr("name", "option_" + i + "_feedback_chosen").attr("id", "option_" + i + "_feedback_chosen");
 					$("textarea.feedbackunchosen", this).attr("name", "option_" + i + "_feedback_unchosen").attr("id", "option_" + i + "_feedback_unchosen");
 					i++;
-				});
-
-				// switch the tinyMCEs back on
-				$("#feedbackdiv textarea.qtitinymce").each(function() {
-					tinyMCE.execCommand("mceAddControl", false, $(this).attr("id"));
 				});
 			};
 

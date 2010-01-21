@@ -9,8 +9,6 @@ webtool
 -	qtihtml editors
 	-	upload to deposit in repository
 	-	repository resource selector
-	-	find a better solution for cloning and deleting TinyMCEs (problem posted 
-		at <http://tinymce.moxiecode.com/punbb/viewtopic.php?id=19846>)
 -	see if the options in EMI can be displayed horizontally
 -	try and find a way to show the EMI options as a list (requires a CSS style) 
 	rather than as a table
