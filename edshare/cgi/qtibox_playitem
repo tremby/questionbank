@@ -63,9 +63,6 @@ $req->content($request);
 # make requests until we're redirected to the preview page
 my $error = undef;
 while (1) {
-	print STDERR "about to make request:\n";
-	print STDERR $req->as_string();
-
 	my $res = $ua->request($req);
 
 	if (!$res->is_redirect()) {
@@ -75,7 +72,6 @@ while (1) {
 
 	# assuming the Location header points to something valid
 	$url = $res->header("Location");
-	print STDERR "location header is " . $url;
 
 	# stop if we're at the preview page
 	if ($url =~ /^http:\/\/$qtiengine_host\/item\/play\/0;/) {
