@@ -20,3 +20,7 @@ webtool
 -	issue: can't have square brackets in text entry since they're used for 
 	marking gaps
 -	client side errors/warnings for feedback?
+Edshare plugin
+-	previewable for each document of an eprint, not just the first
+-	upload content packages properly (base64?)
+-	use a QTIEngine which supports single item content packages
