@@ -116,7 +116,7 @@ abstract class QTIAssessmentItem {
 		if (!$this->getTitle())
 			return false;
 
-		return preg_replace('%[^A-Za-z0-9._ -]%', "_", $this->getTitle());
+		return preg_replace('%[^A-Za-z0-9._-]%', "_", $this->getTitle());
 	}
 
 	// output nice HTML for any errors, warnings and messages
