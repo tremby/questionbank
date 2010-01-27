@@ -22,3 +22,4 @@ webtool
 -	client side errors/warnings for feedback?
 Edshare plugin
 -	previewable for each document of an eprint, not just the first
+-	import metadata from content package manifest when uploading?
