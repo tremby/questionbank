@@ -10,306 +10,290 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 		$this->interactionType = "choiceInteraction";
 	}
 
-	public function showForm($data = null) {
-		if (!is_null($data))
-			$this->data = $data;
-
-		include "htmlheader.php";
+	protected function headerJS() {
+		ob_start();
 		?>
+		//<script type="javascript"> (make vim colour the syntax properly)
+		alphaChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-		<script type="text/javascript">
-			alphaChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		addoption = function() {
+			// clone the last option on the list and increment its id
+			var newoption = $("#options tr.option:last").clone();
+			var oldid = parseInt($("input.optiontext", newoption).attr("id").split("_")[1]);
+			var newid = oldid + 1;
 
-			addoption = function() {
-				// clone the last option on the list and increment its id
-				var newoption = $("#options tr.option:last").clone();
-				var oldid = parseInt($("input.optiontext", newoption).attr("id").split("_")[1]);
-				var newid = oldid + 1;
+			// give it the new id number and wipe its text
+			newoption.attr("id", "option_" + newid);
+			$(".optionid", newoption).text(alphaChars.charAt(newid));
+			$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("").removeClass("error warning");
 
-				// give it the new id number and wipe its text
-				newoption.attr("id", "option_" + newid);
-				$(".optionid", newoption).text(alphaChars.charAt(newid));
-				$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("").removeClass("error warning");
+			// reinstate the remove action
+			$("input.removeoption", newoption).click(removeoption);
 
-				// reinstate the remove action
-				$("input.removeoption", newoption).click(removeoption);
+			// add it to the list
+			$("#options").append(newoption);
 
-				// add it to the list
-				$("#options").append(newoption);
-
-				// add checkboxes for this new option to each question
-				$("#questions tr.question td.correctresponses").each(function() {
-					var newcorrect = $("label.correct:last", this).clone();
-					var questionid = newcorrect.attr("id").split("_")[1];
-					newcorrect.attr("id", "question_" + questionid + "_option_" + newid);
-					$("input", newcorrect).removeAttr("checked").attr("id", "question_" + questionid + "_option_" + newid + "_correct").attr("name", "question_" + questionid + "_option_" + newid + "_correct");
-					$(".optionid", newcorrect).text(alphaChars.charAt(newid));
-					$(this).append(newcorrect);
-				});
-			};
-
-			removeoption = function() {
-				if ($("#options tr.option").size() < 2) {
-					alert("Can't remove the last option");
-					return;
-				}
-
-				var row = $(this).parents("tr:first");
-
-				// get its id
-				var optionid = row.attr("id").split("_")[1];
-
-				// remove it
-				row.remove();
-
-				// renumber the remaining options
-				var i = 0;
-				$("#options tr.option").each(function() {
-					$(this).attr("id", "option_" + i);
-					$(".optionid", this).text(alphaChars.charAt(i));
-					$("input.optiontext", this).attr("id", "option_" + i + "_optiontext").attr("name", "option_" + i + "_optiontext");
-					i++;
-				});
-
-				// remove this option's checkboxes from each question
-				for (var i = 0; i < $("#questions tr.question").size(); i++) {
-					$("#question_" + i + "_option_" + optionid).remove();
-				}
-
-				// renumber the remaining checkboxes
-				$("#questions tr.question td.correctresponses").each(function() {
-					var questionid = $(this).parents("tr.question:first").attr("id").split("_")[1];
-					i = 0;
-					$("label.correct", this).each(function() {
-						$(this).attr("id", "question_" + questionid + "_option_" + i);
-						$(".optionid", this).text(alphaChars.charAt(i));
-						$("input.correct", this).attr("id", "question_" + questionid + "_option_" + i + "_correct").attr("name", "question_" + questionid + "_option_" + i + "_correct");
-						i++;
-					});
-				});
-			};
-
-			addquestion = function() {
-				// clone the last question on the list and increment its id
-				var newquestion = $("#questions tr.question:last").clone();
-				var oldid = parseInt($("textarea", newquestion).attr("id").split("_")[1]);
-				var newid = oldid + 1;
-
-				// give it the new id number and wipe its text
-				newquestion.attr("id", "question_" + newid);
-				$("textarea", newquestion).attr("id", "question_" + newid + "_prompt").attr("name", "question_" + newid + "_prompt").val("").removeClass("error warning");
-
-				// clear all its checkboxes and update their question numbers
-				$("input.correct", newquestion).removeAttr("checked");
-				var i = 0;
-				$("td.correctresponses label.correct", newquestion).each(function() {
-					$(this).attr("id", "question_" + newid + "_option_" + i);
-					$("input.correct", this).attr("id", "question_" + newid + "_option_" + i + "_correct").attr("name", "question_" + newid + "_option_" + i + "_correct");
-					i++;
-				});
-
-				// reinstate the remove action
-				$("input.removequestion", newquestion).click(removequestion);
-
-				// add it to the list
-				$("#questions").append(newquestion);
-			};
-
-			removequestion = function() {
-				if ($("#questions tr.question").size() < 2) {
-					alert("Can't remove the last question");
-					return;
-				}
-
-				$(this).parents("tr:first").remove();
-
-				// renumber the remaining questions
-				var i = 0;
-				$("#questions tr.question").each(function() {
-					$(this).attr("id", "question_" + i);
-					$("textarea", this).attr("id", "question_" + i + "_prompt").attr("name", "question_" + i + "_prompt");
-					var j = 0;
-					$("td.correctresponses label.correct", this).each(function() {
-						$(this).attr("id", "question_" + i + "_option_" + j);
-						$("input.correct", this).attr("id", "question_" + i + "_option_" + j + "_correct").attr("name", "question_" + i + "_option_" + j + "_correct");
-						j++;
-					});
-					i++;
-				});
-			};
-
-			submitcheck = function() {
-				// clear any previously set background colours
-				$("input, textarea").removeClass("error warning");
-
-				// title must be set
-				if ($("#title").val().length == 0) {
-					$("#title").addClass("error");
-					alert("A title must be set for this item");
-					return false;
-				}
-
-				// issue warnings if applicable
-
-				// confirm the user wanted an empty stimulus
-				if ($("#stimulus").val().length == 0) {
-					$("#stimulus").addClass("warning");
-					if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
-						return false;
-					else
-						$("#stimulus").removeClass("error warning");
-				}
-
-				// confirm the user wanted any empty boxes
-				var ok = true;
-				$("input.optiontext").each(function(n) {
-					if ($(this).val().length == 0) {
-						$(this).addClass("warning");
-						ok = confirm("Option " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
-						if (ok)
-							$(this).removeClass("error warning");
-						else
-							return false; //this is "break" in the Jquery each() pseudoloop
-					}
-				});
-				if (!ok) return false;
-				$("textarea.prompt").each(function(n) {
-					if ($(this).val().length == 0) {
-						$(this).addClass("warning");
-						ok = confirm("The prompt for question " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
-						if (ok)
-							$(this).removeClass("error warning");
-						else
-							return false; //this is "break" in the Jquery each() pseudoloop
-					}
-				});
-				if (!ok) return false;
-
-				// warn about any identical options
-				for (var i = 0; i < $("input.optiontext").size(); i++) {
-					for (var j = i + 1; j < $("input.optiontext").size(); j++) {
-						if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
-							$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").addClass("warning");
-							ok = confirm("Options " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
-							if (ok)
-								$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").removeClass("error warning");
-							else
-								break;
-						}
-					}
-					if (!ok) break;
-				}
-				if (!ok) return false;
-
-				// warn about any identical questions
-				for (var i = 0; i < $("textarea.prompt").size(); i++) {
-					for (var j = i + 1; j < $("textarea.prompt").size(); j++) {
-						if ($("#question_" + i + "_prompt").val() == $("#question_" + j + "_prompt").val()) {
-							$("#question_" + i + "_prompt, #question_" + j + "_prompt").addClass("warning");
-							ok = confirm("The prompts for questions " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
-							if (ok)
-								$("#question_" + i + "_prompt, #question_" + j + "_prompt").removeClass("error warning");
-							else
-								break;
-						}
-					}
-					if (!ok) break;
-				}
-				if (!ok) return false;
-
-				// confirm the user wanted only one option
-				if ($("input.optiontext").size() == 1 && !confirm("There is only one option -- click OK to continue regardless or cancel to add more"))
-					return false;
-
-				// confirm the user wanted only one question
-				if ($("textarea.prompt").size() == 1 && !confirm("There is only one question -- click OK to continue regardless or cancel to add more"))
-					return false;
-
-				return true;
-			};
-
-			$(document).ready(function() {
-				$("#addoption").click(addoption);
-				$(".removeoption").click(removeoption);
-				$("#addquestion").click(addquestion);
-				$(".removequestion").click(removequestion);
-				$("#submit").click(submitcheck);
+			// add checkboxes for this new option to each question
+			$("#questions tr.question td.correctresponses").each(function() {
+				var newcorrect = $("label.correct:last", this).clone();
+				var questionid = newcorrect.attr("id").split("_")[1];
+				newcorrect.attr("id", "question_" + questionid + "_option_" + newid);
+				$("input", newcorrect).removeAttr("checked").attr("id", "question_" + questionid + "_option_" + newid + "_correct").attr("name", "question_" + questionid + "_option_" + newid + "_correct");
+				$(".optionid", newcorrect).text(alphaChars.charAt(newid));
+				$(this).append(newcorrect);
 			});
-		</script>
+		};
 
-		<h2>Edit extended matching item</h2>
+		removeoption = function() {
+			if ($("#options tr.option").size() < 2) {
+				alert("Can't remove the last option");
+				return;
+			}
 
-		<?php $this->showmessages(); ?>
+			var row = $(this).parents("tr:first");
 
-		<form id="edititem" action="?page=editAssessmentItem" method="post">
-			<input type="hidden" name="qtiid" value="<?php echo $this->getQTIID(); ?>">
-			<dl>
-				<dt><label for="title">Title</label></dt>
-				<dd><input size="64" type="text" name="title" id="title"<?php if (isset($this->data["title"])) { ?> value="<?php echo htmlspecialchars($this->data["title"]); ?>"<?php } ?>></dd>
+			// get its id
+			var optionid = row.attr("id").split("_")[1];
 
-				<dt><label for="stimulus">Stimulus</label></dt>
-				<dd><textarea class="qtitinymce resizable" rows="8" cols="64" name="stimulus" id="stimulus"><?php if (isset($this->data["stimulus"])) echo htmlspecialchars($this->data["stimulus"]); ?></textarea></dd>
+			// remove it
+			row.remove();
 
-				<dt>Options</dt>
-				<dd>
-					<table id="options">
-						<tr>
-							<th>ID</th>
-							<th>Option text</th>
-							<th>Actions</th>
-						</tr>
-						<?php if (!isset($this->data["option_0_optiontext"])) {
-							// starting from scratch -- initialize first options
-							$this->data["option_0_optiontext"] = "";
-							$this->data["option_1_optiontext"] = "";
-						}
-						for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) { ?>
-							<tr class="option" id="option_<?php echo $i; ?>">
-								<td class="optionid"><?php echo chr(ord("A") + $i); ?></td>
-								<td><input size="48" type="text" id="option_<?php echo $i; ?>_optiontext" name="option_<?php echo $i; ?>_optiontext" class="optiontext" value="<?php echo htmlspecialchars($this->data["option_{$i}_optiontext"]); ?>"></td>
-								<td><input type="button" class="removeoption" value="Remove"></td>
-							</tr>
-						<?php } ?>
-					</table>
-					<input type="button" id="addoption" value="Add option">
-				</dd>
+			// renumber the remaining options
+			var i = 0;
+			$("#options tr.option").each(function() {
+				$(this).attr("id", "option_" + i);
+				$(".optionid", this).text(alphaChars.charAt(i));
+				$("input.optiontext", this).attr("id", "option_" + i + "_optiontext").attr("name", "option_" + i + "_optiontext");
+				i++;
+			});
 
-				<dt>Questions</dt>
-				<dd>
-					<table id="questions">
-						<tr>
-							<th>Question prompt</th>
-							<th>Correct response</th>
-							<th>Actions</th>
-						</tr>
-						<?php if (!isset($this->data["question_0_prompt"])) {
-							// starting from scratch -- initialize first questions
-							$this->data["question_0_prompt"] = "";
-							$this->data["question_1_prompt"] = "";
-						}
-						for ($i = 0; array_key_exists("question_{$i}_prompt", $this->data); $i++) { ?>
-							<tr class="question" id="question_<?php echo $i; ?>">
-								<td><textarea class="prompt" rows="2" cols="48" name="question_<?php echo $i; ?>_prompt" id="question_<?php echo $i; ?>_prompt"><?php if (isset($this->data["question_{$i}_prompt"])) echo htmlspecialchars($this->data["question_{$i}_prompt"]); ?></textarea></td>
-								<td class="correctresponses">
-									<?php for ($j = 0; array_key_exists("option_{$j}_optiontext", $this->data); $j++) { ?>
-										<label class="correct" id="question_<?php echo $i; ?>_option_<?php echo $j; ?>">
-											<span class="optionid"><?php echo chr(ord("A") + $j); ?></span>
-											<input type="checkbox" id="question_<?php echo $i; ?>_option_<?php echo $j; ?>_correct" name="question_<?php echo $i; ?>_option_<?php echo $j; ?>_correct" class="correct"<?php if (isset($this->data["question_{$i}_option_{$j}_correct"])) { ?> checked="checked"<?php } ?>>
-										</label>
-									<?php } ?>
-								</td>
-								<td><input type="button" class="removequestion" value="Remove"></td>
-							</tr>
-						<?php } ?>
-					</table>
-					<input type="button" id="addquestion" value="Add question">
-				</dd>
-			</dl>
-			<div><input id="submit" type="submit" name="edititem" value="Submit"></div>
-		</form>
+			// remove this option's checkboxes from each question
+			for (var i = 0; i < $("#questions tr.question").size(); i++) {
+				$("#question_" + i + "_option_" + optionid).remove();
+			}
 
+			// renumber the remaining checkboxes
+			$("#questions tr.question td.correctresponses").each(function() {
+				var questionid = $(this).parents("tr.question:first").attr("id").split("_")[1];
+				i = 0;
+				$("label.correct", this).each(function() {
+					$(this).attr("id", "question_" + questionid + "_option_" + i);
+					$(".optionid", this).text(alphaChars.charAt(i));
+					$("input.correct", this).attr("id", "question_" + questionid + "_option_" + i + "_correct").attr("name", "question_" + questionid + "_option_" + i + "_correct");
+					i++;
+				});
+			});
+		};
+
+		addquestion = function() {
+			// clone the last question on the list and increment its id
+			var newquestion = $("#questions tr.question:last").clone();
+			var oldid = parseInt($("textarea", newquestion).attr("id").split("_")[1]);
+			var newid = oldid + 1;
+
+			// give it the new id number and wipe its text
+			newquestion.attr("id", "question_" + newid);
+			$("textarea", newquestion).attr("id", "question_" + newid + "_prompt").attr("name", "question_" + newid + "_prompt").val("").removeClass("error warning");
+
+			// clear all its checkboxes and update their question numbers
+			$("input.correct", newquestion).removeAttr("checked");
+			var i = 0;
+			$("td.correctresponses label.correct", newquestion).each(function() {
+				$(this).attr("id", "question_" + newid + "_option_" + i);
+				$("input.correct", this).attr("id", "question_" + newid + "_option_" + i + "_correct").attr("name", "question_" + newid + "_option_" + i + "_correct");
+				i++;
+			});
+
+			// reinstate the remove action
+			$("input.removequestion", newquestion).click(removequestion);
+
+			// add it to the list
+			$("#questions").append(newquestion);
+		};
+
+		removequestion = function() {
+			if ($("#questions tr.question").size() < 2) {
+				alert("Can't remove the last question");
+				return;
+			}
+
+			$(this).parents("tr:first").remove();
+
+			// renumber the remaining questions
+			var i = 0;
+			$("#questions tr.question").each(function() {
+				$(this).attr("id", "question_" + i);
+				$("textarea", this).attr("id", "question_" + i + "_prompt").attr("name", "question_" + i + "_prompt");
+				var j = 0;
+				$("td.correctresponses label.correct", this).each(function() {
+					$(this).attr("id", "question_" + i + "_option_" + j);
+					$("input.correct", this).attr("id", "question_" + i + "_option_" + j + "_correct").attr("name", "question_" + i + "_option_" + j + "_correct");
+					j++;
+				});
+				i++;
+			});
+		};
+
+		submitcheck = function() {
+			// clear any previously set background colours
+			$("input, textarea").removeClass("error warning");
+
+			// title must be set
+			if ($("#title").val().length == 0) {
+				$("#title").addClass("error");
+				alert("A title must be set for this item");
+				return false;
+			}
+
+			// issue warnings if applicable
+
+			// confirm the user wanted an empty stimulus
+			if ($("#stimulus").val().length == 0) {
+				$("#stimulus").addClass("warning");
+				if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
+					return false;
+				else
+					$("#stimulus").removeClass("error warning");
+			}
+
+			// confirm the user wanted any empty boxes
+			var ok = true;
+			$("input.optiontext").each(function(n) {
+				if ($(this).val().length == 0) {
+					$(this).addClass("warning");
+					ok = confirm("Option " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
+					if (ok)
+						$(this).removeClass("error warning");
+					else
+						return false; //this is "break" in the Jquery each() pseudoloop
+				}
+			});
+			if (!ok) return false;
+			$("textarea.prompt").each(function(n) {
+				if ($(this).val().length == 0) {
+					$(this).addClass("warning");
+					ok = confirm("The prompt for question " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
+					if (ok)
+						$(this).removeClass("error warning");
+					else
+						return false; //this is "break" in the Jquery each() pseudoloop
+				}
+			});
+			if (!ok) return false;
+
+			// warn about any identical options
+			for (var i = 0; i < $("input.optiontext").size(); i++) {
+				for (var j = i + 1; j < $("input.optiontext").size(); j++) {
+					if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
+						$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").addClass("warning");
+						ok = confirm("Options " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
+						if (ok)
+							$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").removeClass("error warning");
+						else
+							break;
+					}
+				}
+				if (!ok) break;
+			}
+			if (!ok) return false;
+
+			// warn about any identical questions
+			for (var i = 0; i < $("textarea.prompt").size(); i++) {
+				for (var j = i + 1; j < $("textarea.prompt").size(); j++) {
+					if ($("#question_" + i + "_prompt").val() == $("#question_" + j + "_prompt").val()) {
+						$("#question_" + i + "_prompt, #question_" + j + "_prompt").addClass("warning");
+						ok = confirm("The prompts for questions " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
+						if (ok)
+							$("#question_" + i + "_prompt, #question_" + j + "_prompt").removeClass("error warning");
+						else
+							break;
+					}
+				}
+				if (!ok) break;
+			}
+			if (!ok) return false;
+
+			// confirm the user wanted only one option
+			if ($("input.optiontext").size() == 1 && !confirm("There is only one option -- click OK to continue regardless or cancel to add more"))
+				return false;
+
+			// confirm the user wanted only one question
+			if ($("textarea.prompt").size() == 1 && !confirm("There is only one question -- click OK to continue regardless or cancel to add more"))
+				return false;
+
+			return true;
+		};
+
+		$(document).ready(function() {
+			$("#addoption").click(addoption);
+			$(".removeoption").click(removeoption);
+			$("#addquestion").click(addquestion);
+			$(".removequestion").click(removequestion);
+			$("#submit").click(submitcheck);
+		});
 		<?php
-		include "htmlfooter.php";
+		return ob_get_clean();
+	}
+
+	protected function formHTML() {
+		ob_start();
+		?>
+		<dt>Options</dt>
+		<dd>
+			<table id="options">
+				<tr>
+					<th>ID</th>
+					<th>Option text</th>
+					<th>Actions</th>
+				</tr>
+				<?php if (!isset($this->data["option_0_optiontext"])) {
+					// starting from scratch -- initialize first options
+					$this->data["option_0_optiontext"] = "";
+					$this->data["option_1_optiontext"] = "";
+				}
+				for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) { ?>
+					<tr class="option" id="option_<?php echo $i; ?>">
+						<td class="optionid"><?php echo chr(ord("A") + $i); ?></td>
+						<td><input size="48" type="text" id="option_<?php echo $i; ?>_optiontext" name="option_<?php echo $i; ?>_optiontext" class="optiontext" value="<?php echo htmlspecialchars($this->data["option_{$i}_optiontext"]); ?>"></td>
+						<td><input type="button" class="removeoption" value="Remove"></td>
+					</tr>
+				<?php } ?>
+			</table>
+			<input type="button" id="addoption" value="Add option">
+		</dd>
+
+		<dt>Questions</dt>
+		<dd>
+			<table id="questions">
+				<tr>
+					<th>Question prompt</th>
+					<th>Correct response</th>
+					<th>Actions</th>
+				</tr>
+				<?php if (!isset($this->data["question_0_prompt"])) {
+					// starting from scratch -- initialize first questions
+					$this->data["question_0_prompt"] = "";
+					$this->data["question_1_prompt"] = "";
+				}
+				for ($i = 0; array_key_exists("question_{$i}_prompt", $this->data); $i++) { ?>
+					<tr class="question" id="question_<?php echo $i; ?>">
+						<td><textarea class="prompt" rows="2" cols="48" name="question_<?php echo $i; ?>_prompt" id="question_<?php echo $i; ?>_prompt"><?php if (isset($this->data["question_{$i}_prompt"])) echo htmlspecialchars($this->data["question_{$i}_prompt"]); ?></textarea></td>
+						<td class="correctresponses">
+							<?php for ($j = 0; array_key_exists("option_{$j}_optiontext", $this->data); $j++) { ?>
+								<label class="correct" id="question_<?php echo $i; ?>_option_<?php echo $j; ?>">
+									<span class="optionid"><?php echo chr(ord("A") + $j); ?></span>
+									<input type="checkbox" id="question_<?php echo $i; ?>_option_<?php echo $j; ?>_correct" name="question_<?php echo $i; ?>_option_<?php echo $j; ?>_correct" class="correct"<?php if (isset($this->data["question_{$i}_option_{$j}_correct"])) { ?> checked="checked"<?php } ?>>
+								</label>
+							<?php } ?>
+						</td>
+						<td><input type="button" class="removequestion" value="Remove"></td>
+					</tr>
+				<?php } ?>
+			</table>
+			<input type="button" id="addquestion" value="Add question">
+		</dd>
+		<?php
+		return ob_get_clean();
 	}
 
 	public function buildQTI($data = null) {

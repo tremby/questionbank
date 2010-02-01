@@ -28,16 +28,30 @@ abstract class QTIAssessmentItem {
 	 */
 	abstract protected function buildQTI();
 
-	/** showForm
-	 * This must replace $this->data with the $data argument if given and then 
-	 * output an authoring form (which should be blank if $this->data is empty).
-	 * Very little server side validation is necessary here since the Java 
-	 * validate application does everything important. Client side checking for 
-	 * likely mistakes (empty boxes etc) is sufficient.
-	 * The form should submit with "edititem" set and should also submit a 
-	 * "qtiid"
+	/** formHTML
+	 * This should return elements of an authoring form (which should be blank 
+	 * if $this->data is empty) specific to this item type (that is, no title, 
+	 * description, keywords or stimulus).
+	 * The HTML returned will be put into a definition list element and so 
+	 * should consist of <dt> and <dd> elements.
 	 */
-	abstract public function showForm($data = null);
+	abstract protected function formHTML();
+
+	/** headerJS
+	 * This can optionally be overridden to return a string of Javascript which 
+	 * should be added to the page header
+	 */
+	protected function headerJS() {
+		return null;
+	}
+
+	/** headerCSS
+	 * This can optionally be overridden to return a string of CSS which should 
+	 * be added to the page header
+	 */
+	protected function headerCSS() {
+		return null;
+	}
 
 	/** fromXML
 	 * This must attempt to parse the given SimpleXML element to whatever kind 
@@ -48,6 +62,42 @@ abstract class QTIAssessmentItem {
 	 * It can be assumed that $xml is valid QTI.
 	 */
 	abstract public function fromXML(SimpleXMLElement $xml);
+
+	// render the authoring form
+	public function showForm($data = null) {
+		if (!is_null($data))
+			$this->data = $data;
+
+		$GLOBALS["headerjs"] = $this->headerJS();
+		$GLOBALS["headercss"] = $this->headerCSS();
+		include "htmlheader.php";
+		?>
+			<h2>Edit an assessment item</h2>
+			<?php $this->showmessages(); ?>
+			<form id="edititem" action="?page=editAssessmentItem" method="post">
+				<input type="hidden" name="qtiid" value="<?php echo $this->getQTIID(); ?>">
+				<dl>
+					<dt><label for="title">Title</label></dt>
+					<dd><input size="64" type="text" name="title" id="title"<?php if (isset($this->data["title"])) { ?> value="<?php echo htmlspecialchars($this->data["title"]); ?>"<?php } ?>></dd>
+
+					<dt><label for="description">Description</label></dt>
+					<dd><textarea rows="8" cols="64" name="description" id="description"><?php if (isset($this->data["description"])) echo htmlspecialchars($this->data["description"]); ?></textarea></dd>
+
+					<dt>Keywords (comma-separated)</dt>
+					<dd><textarea id="keywords" name="keywords" rows="4" cols="64"><?php if (isset($this->data["keywords"])) echo htmlspecialchars($this->data["keywords"]); ?></textarea></dd>
+
+					<dt><label for="stimulus">Stimulus</label></dt>
+					<dd><textarea class="qtitinymce resizable" rows="8" cols="64" name="stimulus" id="stimulus"><?php if (isset($this->data["stimulus"])) echo htmlspecialchars($this->data["stimulus"]); ?></textarea></dd>
+
+					<?php echo $this->formHTML(); ?>
+
+				</dl>
+				<div><input id="submit" type="submit" name="edititem" value="Submit"></div>
+			</form>
+
+		<?php
+		include "htmlfooter.php";
+	}
 
 	// get QTI
 	public function getQTI($data = null) {
@@ -172,6 +222,16 @@ abstract class QTIAssessmentItem {
 	// get modification time
 	public function getModified() {
 		return $this->modified;
+	}
+
+	// get the data or one element from the data
+	public function data($key = null) {
+		if (isset($key)) {
+			if (array_key_exists($key, $this->data))
+				return $this->data[$key];
+			return null;
+		}
+		return $this->data;
 	}
 
 	// compare items by title or ID

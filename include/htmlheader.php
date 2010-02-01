@@ -59,8 +59,15 @@ header("Content-Script-Type: text/javascript");
 					tinyMCE.execCommand("mceRemoveControl", false, $(this).attr("id"));
 			});
 		};
+
+		<?php if (isset($GLOBALS["headerjs"])) echo $GLOBALS["headerjs"]; ?>
 	</script>
 	<link rel="stylesheet" href="<?php echo SITEROOT_WEB; ?>include/styles.css">
+	<?php if (isset($GLOBALS["headercss"])) { ?>
+		<style type="text/css">
+			<?php echo $GLOBALS["headercss"]; ?>
+		</style>
+	<?php } ?>
 </head>
 <body>
 <h1>QTI authoring tool</h1>
