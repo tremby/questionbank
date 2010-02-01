@@ -32,8 +32,8 @@ $md = $r->addChild("metadata");
 // resource qti metadata
 $qmd = $md->addChild("qtiMetadata", null, $imsqti);
 $qmd->addChild("timeDependent", "false", $imsqti);
-$qmd->addChild("interactionType", "choiceInteraction", $imsqti); //TODO: get this from item object
-$qmd->addChild("feedbackType", "none", $imsqti); //TODO: change this when feedback is available
+$qmd->addChild("interactionType", $ai->interactionType(), $imsqti);
+$qmd->addChild("feedbackType", is_null($ai->data("feedback")) ? "none" : "nonadaptive", $imsqti);
 $qmd->addChild("solutionAvailable", "true", $imsqti);
 
 // resource LOM metadata
