@@ -53,16 +53,14 @@ if (isset($_POST["edititem"])) {
 	?>
 	<h3>QTIEngine preview</h3>
 	<iframe width="80%" height="400" src="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>"></iframe>
-	<p>You can <a href="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">preview the item full screen</a>.<p>
 
-	<h3>Download the item</h3>
-	<p>You can <a href="?page=downloadAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">download the QTI item as an XML file</a>.</p>
-
-	<h3>Make a content package</h3>
-	<p>You can <a href="?page=makeContentPackage&amp;qtiid=<?php echo $ai->getQTIID(); ?>">package this item</a> to include metadata.</p>
-
-	<h3>Edit the item</h3>
-	<p>You can <a href="?page=editAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">edit this item</a> further.</p>
+	<h3>Actions</h3>
+	<ul>
+		<li><a href="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Preview the item full screen</a></li>
+		<li><a href="?page=downloadAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Download the QTI item as an XML file</a></li>
+		<li><a href="?page=makeContentPackage&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Download the QTI item as a content package</a> to include its metadata</li>
+		<li><a href="?page=editAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Edit this item</a> further</li>
+	</ul>
 
 	<?php
 	include "htmlfooter.php";
