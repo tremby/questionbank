@@ -48,7 +48,9 @@ $items = array_reverse($items);
 	<p>No items are in memory for this session</p>
 <?php } else { ?>
 	<p>There follows a list of items you are currently editing. They are not 
-	permanent so ensure you save them manually before logging out.</p>
+	permanent (they will disappear after <?php echo round(ini_get("session.gc_maxlifetime") / 60); ?> 
+	minutes of inactivity) so ensure you save them manually before logging 
+	off.</p>
 	<table>
 		<tr>
 			<th>Modified</th>
