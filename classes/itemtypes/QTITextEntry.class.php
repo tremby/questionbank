@@ -227,6 +227,7 @@ class QTITextEntry extends QTIAssessmentItem {
 				$("table.responses tr.response", this).each(function() {
 					$("input.responsetext", this).attr("id", "gap_" + gapid + "_response_" + responseid).attr("name", "gap_" + gapid + "_response_" + responseid);
 					$("input.responsescore", this).attr("id", "gap_" + gapid + "_response_" + responseid + "_score").attr("name", "gap_" + gapid + "_response_" + responseid + "_score");
+					$(this).removeClass("row" + ((responseid + 1) % 2)).addClass("row" + (responseid % 2));
 					responseid++;
 				});
 				gapid++;
@@ -358,7 +359,7 @@ class QTITextEntry extends QTIAssessmentItem {
 								<th>Score</th>
 								<th>Actions</th>
 							</tr>
-							<tr class="response">
+							<tr class="response row0">
 								<td><input class="responsetext" type="text" name="gap_-1_response_0" id="gap_-1_response_0" size="32"></td>
 								<td><input class="responsescore" type="text" name="gap_-1_response_0_score" id="gap_-1_response_0_score" size="3" value="1"></td>
 								<td><input style="display: none;" type="button" class="removeresponse" value="Remove"></td>
@@ -377,8 +378,8 @@ class QTITextEntry extends QTIAssessmentItem {
 									<th>Score</th>
 									<th>Actions</th>
 								</tr>
-								<?php for ($j = 0; array_key_exists("gap_{$i}_response_{$j}", $this->data); $j++) { ?>
-									<tr class="response">
+								<?php for ($j = 0; array_key_exists("gap_{$i}_response_{$j}", $this->data); $j++) { $odd = $j % 2; ?>
+									<tr class="response row<?php echo $odd; ?>">
 										<td><input type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" size="32" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}"]); ?>"></td>
 										<td><input type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" size="3" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}_score"]); ?>"></td>
 										<td><input <?php if ($j == 0) { ?>style="display: none;" <?php } ?>type="button" class="removequestion" value="Remove"></td>

@@ -27,6 +27,9 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			$(".optionid", newoption).text(alphaChars.charAt(newid));
 			$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("").removeClass("error warning");
 
+			// stripe it
+			newoption.removeClass("row" + (oldid % 2)).addClass("row" + (newid % 2));
+
 			// reinstate the remove action
 			$("input.removeoption", newoption).click(removeoption);
 
@@ -58,12 +61,13 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			// remove it
 			row.remove();
 
-			// renumber the remaining options
+			// renumber and restripe the remaining options
 			var i = 0;
 			$("#options tr.option").each(function() {
 				$(this).attr("id", "option_" + i);
 				$(".optionid", this).text(alphaChars.charAt(i));
 				$("input.optiontext", this).attr("id", "option_" + i + "_optiontext").attr("name", "option_" + i + "_optiontext");
+				$(this).removeClass("row" + ((i + 1) % 2)).addClass("row" + (i % 2));
 				i++;
 			});
 
@@ -104,6 +108,9 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 				i++;
 			});
 
+			// stripe it
+			newquestion.removeClass("row" + (oldid % 2)).addClass("row" + (newid % 2));
+
 			// reinstate the remove action
 			$("input.removequestion", newquestion).click(removequestion);
 
@@ -130,6 +137,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 					$("input.correct", this).attr("id", "question_" + i + "_option_" + j + "_correct").attr("name", "question_" + i + "_option_" + j + "_correct");
 					j++;
 				});
+				$(this).removeClass("row" + ((i + 1) % 2)).addClass("row" + (i % 2));
 				i++;
 			});
 		};
@@ -251,8 +259,8 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 					$this->data["option_0_optiontext"] = "";
 					$this->data["option_1_optiontext"] = "";
 				}
-				for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) { ?>
-					<tr class="option" id="option_<?php echo $i; ?>">
+				for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) { $odd = $i % 2; ?>
+					<tr class="option row<?php echo $odd; ?>" id="option_<?php echo $i; ?>">
 						<td class="optionid"><?php echo chr(ord("A") + $i); ?></td>
 						<td><input size="48" type="text" id="option_<?php echo $i; ?>_optiontext" name="option_<?php echo $i; ?>_optiontext" class="optiontext" value="<?php echo htmlspecialchars($this->data["option_{$i}_optiontext"]); ?>"></td>
 						<td><input type="button" class="removeoption" value="Remove"></td>
@@ -275,8 +283,8 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 					$this->data["question_0_prompt"] = "";
 					$this->data["question_1_prompt"] = "";
 				}
-				for ($i = 0; array_key_exists("question_{$i}_prompt", $this->data); $i++) { ?>
-					<tr class="question" id="question_<?php echo $i; ?>">
+				for ($i = 0; array_key_exists("question_{$i}_prompt", $this->data); $i++) { $odd = $i % 2; ?>
+					<tr class="question row<?php echo $odd; ?>" id="question_<?php echo $i; ?>">
 						<td><textarea class="prompt" rows="2" cols="48" name="question_<?php echo $i; ?>_prompt" id="question_<?php echo $i; ?>_prompt"><?php if (isset($this->data["question_{$i}_prompt"])) echo htmlspecialchars($this->data["question_{$i}_prompt"]); ?></textarea></td>
 						<td class="correctresponses">
 							<?php for ($j = 0; array_key_exists("option_{$j}_optiontext", $this->data); $j++) { ?>

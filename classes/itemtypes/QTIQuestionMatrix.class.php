@@ -30,6 +30,9 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 			$("td.answer label.false", newquestion).attr("id", "question_" + newid + "_false");
 			$("td.answer label input", newquestion).attr("name", "question_" + newid + "_answer");
 
+			// stripe it
+			newquestion.removeClass("row" + (oldid % 2)).addClass("row" + (newid % 2));
+
 			// reinstate the remove action
 			$("input.removequestion", newquestion).click(removequestion);
 
@@ -53,6 +56,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 				$("td.answer label.true", this).attr("id", "question_" + i + "_true");
 				$("td.answer label.false", this).attr("id", "question_" + i + "_false");
 				$("td.answer label input", this).attr("name", "question_" + i + "_answer");
+				$(this).removeClass("row" + ((i + 1) % 2)).addClass("row" + (i % 2));
 				i++;
 			});
 		};
@@ -152,8 +156,8 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 					$this->data["question_0_prompt"] = "";
 					$this->data["question_1_prompt"] = "";
 				}
-				for ($i = 0; array_key_exists("question_{$i}_prompt", $this->data); $i++) { ?>
-					<tr class="question" id="question_<?php echo $i; ?>">
+				for ($i = 0; array_key_exists("question_{$i}_prompt", $this->data); $i++) { $odd = $i % 2; ?>
+					<tr class="question row<?php echo $odd; ?>" id="question_<?php echo $i; ?>">
 						<td><textarea class="prompt" rows="2" cols="48" name="question_<?php echo $i; ?>_prompt" id="question_<?php echo $i; ?>_prompt"><?php if (isset($this->data["question_{$i}_prompt"])) echo htmlspecialchars($this->data["question_{$i}_prompt"]); ?></textarea></td>
 						<td class="answer">
 							<label id="question_<?php echo $i; ?>_true" class="true">

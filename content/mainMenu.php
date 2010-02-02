@@ -60,8 +60,8 @@ $items = array_reverse($items);
 			<th>Status</th>
 			<th>Actions</th>
 		</tr>
-		<?php foreach ($items as $item) { ?>
-			<tr id="item_<?php echo $item->getQTIID(); ?>">
+		<?php $i = 0; foreach ($items as $item) { $odd = $i++ % 2; ?>
+			<tr class="row<?php echo $odd; ?>" id="item_<?php echo $item->getQTIID(); ?>">
 				<td><?php echo friendlydate_html($item->getModified()); ?></td>
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
 				<td><?php echo htmlspecialchars($item->data("description")); ?></td>

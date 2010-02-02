@@ -34,5 +34,9 @@ td.warning, div.warning, input.warning, textarea.warning {
 }
 
 .highlight {
-	background-color: #ffffcc;
+	background-color: #ffc;
+}
+
+tr.row0 {
+	background-color: #f4f4f4;
 }
