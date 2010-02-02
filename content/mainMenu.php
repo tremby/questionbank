@@ -48,20 +48,22 @@ $items = array_reverse($items);
 	<p>No items are in memory for this session</p>
 <?php } else { ?>
 	<p>There follows a list of items you are currently editing. They are not 
-permanent so ensure you save them manually before logging out.</p>
+	permanent so ensure you save them manually before logging out.</p>
 	<table>
 		<tr>
 			<th>Modified</th>
-			<th>Title</th>
 			<th>Item type</th>
+			<th>Title</th>
+			<th>Description</th>
 			<th>Status</th>
 			<th>Actions</th>
 		</tr>
 		<?php foreach ($items as $item) { ?>
 			<tr id="item_<?php echo $item->getQTIID(); ?>">
 				<td><?php echo friendlydate_html($item->getModified()); ?></td>
-				<td><?php echo $item->getTitle() === false ? "[untitled]" : htmlspecialchars($item->getTitle()); ?></td>
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
+				<td><?php echo htmlspecialchars($item->data("description")); ?></td>
+				<td><?php echo $item->getTitle() === false ? "[untitled]" : htmlspecialchars($item->getTitle()); ?></td>
 				<td class="<?php echo count($item->getErrors()) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
 					<?php echo count($item->getErrors()); ?> error<?php echo plural($item->getErrors()); ?>
 					<br />
