@@ -16,15 +16,18 @@ if (isset($_SESSION["items"]["new"]))
 	$items[] = $_SESSION["items"]["new"];
 $items = array_reverse($items);
 
+ob_start();
 ?>
-<?php include "htmlheader.php"; ?>
-
-<script type="text/javascript">
-	$(document).ready(function() {
-		if (location.hash.substr(0, 6) == "#item_")
-			$(location.hash).addClass("highlight");
-	});
-</script>
+//<script type="text/javascript"> (get vim to highlight this properly)
+$(document).ready(function() {
+	if (location.hash.substr(0, 6) == "#item_")
+		$(location.hash).addClass("highlight");
+});
+//</script>
+<?php
+$GLOBALS["headerjs"] = ob_get_clean();
+include "htmlheader.php";
+?>
 
 <h2>Main menu</h2>
 <dl>
