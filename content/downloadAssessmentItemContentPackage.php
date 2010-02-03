@@ -1,7 +1,7 @@
 <?php
 
-if (!isset($_REQUEST["qtiid"])) die("No QTI ID specified");
-if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) die("No QTI found in session data for specified QTI ID");
+if (!isset($_REQUEST["qtiid"])) badrequest("No QTI ID specified");
+if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) badrequest("No QTI found in session data for specified QTI ID");
 
 $ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 
@@ -59,7 +59,7 @@ $r->addChild("file")->addAttribute("href", "{$ai->getTitleFS()}.xml");
 $zip = new ZipArchive();
 $filename = "/tmp/" . uniqid("zip");
 if ($zip->open($filename, ZIPARCHIVE::CREATE) !== true)
-	die("couldn't make zip file");
+	servererror("couldn't make zip file");
 $zip->addFromString("imsmanifest.xml", simplexml_indented_string($manifest));
 $zip->addFromString("{$ai->getTitleFS()}.xml", $ai->getQTIIndentedString());
 $zip->close();

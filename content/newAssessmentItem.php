@@ -7,7 +7,7 @@ if (isset($_REQUEST["itemtype"])) {
 	$classname = "QTI" . ucfirst($_REQUEST["itemtype"]);
 
 	if (!@class_exists($classname) || !is_subclass_of($classname, "QTIAssessmentItem"))
-		die("Item type doesn't exist or not implemented");
+		servererror("Item type doesn't exist or not implemented");
 
 	$ai = new $classname;
 

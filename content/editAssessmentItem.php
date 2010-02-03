@@ -1,7 +1,7 @@
 <?php
 
-if (!isset($_REQUEST["qtiid"])) die("No QTI ID specified");
-if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) die("No QTI found in session data for specified QTI ID");
+if (!isset($_REQUEST["qtiid"])) badrequest("No QTI ID specified");
+if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) badrequest("No QTI found in session data for specified QTI ID");
 
 $ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 
@@ -15,7 +15,7 @@ if (isset($_POST["edititem"])) {
 		$classname = "QTI" . ucfirst($_POST["itemtype"]);
 
 		if (!@class_exists($classname) || !is_subclass_of($classname, "QTIAssessmentItem"))
-			die("Item type doesn't exist or not implemented");
+			badrequest("Item type doesn't exist or not implemented");
 
 		$ai = new $classname;
 

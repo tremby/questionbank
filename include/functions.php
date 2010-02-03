@@ -196,7 +196,7 @@ function qti_get_stimulus(SimpleXMLElement $ib) {
 // get array of items, one of each type
 function item_types() {
 	// look for item type classes
-	$dh = opendir(SITEROOT_LOCAL . "classes/itemtypes") or die("Couldn't open item types dir");
+	$dh = opendir(SITEROOT_LOCAL . "classes/itemtypes") or servererror("Couldn't open item types dir");
 	$items = array();
 	while (($file = readdir($dh)) !== false) {
 		if (!preg_match('%^QTI.*\.class\.php$%', $file))

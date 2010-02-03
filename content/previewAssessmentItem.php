@@ -1,7 +1,7 @@
 <?php
 
-if (!isset($_REQUEST["qtiid"])) die("No QTI ID specified");
-if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) die("No QTI found in session data for specified QTI ID");
+if (!isset($_REQUEST["qtiid"])) badrequest("No QTI ID specified");
+if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) badrequest("No QTI found in session data for specified QTI ID");
 
 $ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 
@@ -42,7 +42,7 @@ while (true) {
 	// open socket
 	$sock = fsockopen(QTIENGINE_HOST, 80, $errno, $errstr, 30);
 	if (!$sock)
-		die("Couldn't connect to QTIEngine (" . QTIENGINE_HOST . ")");
+		servererror("Couldn't connect to QTIEngine (" . QTIENGINE_HOST . ")");
 
 	// send data
 	$reqheaderstrings = array();
@@ -99,7 +99,7 @@ while (true) {
 	// loop...
 }
 if (!is_null($error))
-	die($error);
+	servererror($error);
 
 redirect($header["Location"]);
 

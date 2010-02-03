@@ -1,7 +1,7 @@
 <?php
 
-if (!isset($_REQUEST["qtiid"])) die("No QTI ID specified");
-if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) die("No QTI found in session data for specified QTI ID");
+if (!isset($_REQUEST["qtiid"])) badrequest("No QTI ID specified");
+if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) badrequest("No QTI found in session data for specified QTI ID");
 
 $ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 $title = $ai->getTitle();
