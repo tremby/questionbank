@@ -8,6 +8,8 @@ $title = $ai->getTitle();
 
 unset($_SESSION["items"][$_REQUEST["qtiid"]]);
 
+if (isset($_REQUEST["async"])) ok();
+
 include "htmlheader.php";
 ?>
 

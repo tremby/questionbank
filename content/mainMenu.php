@@ -22,6 +22,19 @@ ob_start();
 $(document).ready(function() {
 	if (location.hash.substr(0, 6) == "#item_")
 		$(location.hash).addClass("highlight");
+
+	$(".deleteitem").click(function(e) {
+		e.preventDefault();
+		jQuery.ajax({
+			"cache": false,
+			"context": $(this).parents("tr:first").get(0),
+			"data": { "async": true, "qtiid": $(this).parents("tr:first").attr("id").split("_").splice(1).join("_"), },
+			"error": function(xhr, text, error) { console.error(error); },
+			"success": function() { $(this.context).remove(); },
+			"type": "POST",
+			"url": "<?php echo SITEROOT_WEB; ?>?page=deleteAssessmentItem",
+		});
+	});
 });
 //</script>
 <?php
@@ -81,7 +94,7 @@ include "htmlheader.php";
 						<li><a href="?page=downloadAssessmentItemXML&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download XML</a></li>
 						<li><a href="?page=downloadAssessmentItemContentPackage&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download content package</a></li>
 					<?php } ?>
-					<li><a href="?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a></li>
+					<li><a class="deleteitem" href="?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a></li>
 				</ul></td>
 			</tr>
 		<?php } ?>
