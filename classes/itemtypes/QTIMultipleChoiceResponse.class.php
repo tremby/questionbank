@@ -151,17 +151,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			}
 		};
 
-		submitcheck = function() {
-			// clear any previously set background colours
-			$("input, textarea").removeClass("error warning");
-
-			// title must be set
-			if ($("#title").val().length == 0) {
-				$("#title").addClass("error");
-				alert("A title must be set for this item");
-				return false;
-			}
-
+		edititemsubmitcheck_itemspecificerrors = function() {
 			// if multiple choice, one option must be correct
 			if ($("input.itemtype:checked").attr("id") == "itemtype_mc") {
 				if ($("input.correct:checked").size() == 0) {
@@ -213,9 +203,10 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					return false;
 				}
 			}
+			return true;
+		};
 
-			// issue warnings if applicable
-
+		edititemsubmitcheck_itemspecificwarnings = function() {
 			// maximum choices 1 for a multiple response is strange
 			if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
 				if ($("#maxchoices").val() == 1) {
@@ -244,15 +235,6 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					else
 						$("#minchoices").removeClass("error warning");
 				}
-			}
-
-			// confirm the user wanted an empty stimulus
-			if ($("#stimulus").val().length == 0) {
-				$("#stimulus").addClass("warning");
-				if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
-					return false;
-				else
-					$("#stimulus").removeClass("error warning");
 			}
 
 			// confirm the user wanted an empty question prompt
@@ -312,7 +294,6 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			$("#shuffle").click(toggleshuffle);
 			$("#feedback").click(togglefeedback);
 			$("input.itemtype").click(switchitemtype);
-			$("#submit").click(submitcheck);
 			$("input.optiontext").change(updatefeedback);
 		});
 		<?php

@@ -61,17 +61,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 			});
 		};
 
-		submitcheck = function() {
-			// clear any previously set background colours
-			$("input, textarea, td.answer").removeClass("error warning");
-
-			// title must be set
-			if ($("#title").val().length == 0) {
-				$("#title").addClass("error");
-				alert("A title must be set for this item");
-				return false;
-			}
-
+		edititemsubmitcheck_itemspecificerrors = function() {
 			// true or false must be chosen for each question
 			var ok = true;
 			$("#questions tr.question td.answer").each(function(n) {
@@ -84,18 +74,12 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 			});
 			if (!ok) return false;
 
-			// issue warnings if applicable
+			return true;
+		};
 
-			// confirm the user wanted an empty stimulus
-			if ($("#stimulus").val().length == 0) {
-				$("#stimulus").addClass("warning");
-				if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
-					return false;
-				else
-					$("#stimulus").removeClass("error warning");
-			}
-
+		edititemsubmitcheck_itemspecificwarnings = function() {
 			// confirm the user wanted any empty boxes
+			var ok = true;
 			$("textarea.prompt").each(function(n) {
 				if ($(this).val().length == 0) {
 					$(this).addClass("warning");
@@ -134,7 +118,6 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 		$(document).ready(function() {
 			$("#addquestion").click(addquestion);
 			$(".removequestion").click(removequestion);
-			$("#submit").click(submitcheck);
 		});
 		<?php
 		return ob_get_clean();

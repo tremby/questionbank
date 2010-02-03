@@ -2,6 +2,8 @@
 include "constants.php";
 header("Content-Type: text/javascript");
 ?>
+
+// tinyMCE stuff
 qtitinymceoptions = {
 	script_url: "<?php echo SITEROOT_WEB; ?>include/tiny_mce/tiny_mce.js",
 	theme: "advanced",
@@ -51,3 +53,46 @@ removetinymces = function() {
 			tinyMCE.execCommand("mceRemoveControl", false, $(this).attr("id"));
 	});
 };
+
+// check edit item form
+edititemsubmitcheck = function() {
+	// do any pre-check logic
+	if (typeof edititemsubmitcheck_pre == "function")
+		edititemsubmitcheck_pre();
+
+	// clear any previously set background colours
+	$("input, textarea").removeClass("error warning");
+
+	// common errors
+
+	// title must be set
+	if ($("#title").val().length == 0) {
+		$("#title").addClass("error");
+		alert("A title must be set for this item");
+		return false;
+	}
+
+	// item-specific errors
+	if (typeof edititemsubmitcheck_itemspecificerrors == "function" && !edititemsubmitcheck_itemspecificerrors())
+		return false;
+
+	// common warnings
+
+	// confirm the user wanted an empty stimulus
+	if ($("#stimulus").val().length == 0) {
+		$("#stimulus").addClass("warning");
+		if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
+			return false;
+		else
+			$("#stimulus").removeClass("error warning");
+	}
+
+	// item-specific warnings
+	if (typeof edititemsubmitcheck_itemspecificwarnings == "function" && !edititemsubmitcheck_itemspecificwarnings())
+		return false;
+
+	return true;
+}
+$(document).ready(function() {
+	$("#edititemsubmit").click(edititemsubmitcheck);
+});

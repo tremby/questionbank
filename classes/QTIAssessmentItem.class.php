@@ -40,6 +40,17 @@ abstract class QTIAssessmentItem {
 	/** headerJS
 	 * This can optionally be overridden to return a string of Javascript which 
 	 * should be added to the page header
+	 * The normal client-side warning and error checking can be extended by 
+	 * implementing the functions
+	 * 	edititemsubmitcheck_itemspecificwarnings
+	 * 	edititemsubmitcheck_itemspecificerrors
+	 * which should return show any warning or error messages and then return 
+	 * true if submission should continue or false if it should be aborted.
+	 * If possible, indicate the elements on which warnings or errors occured by 
+	 * adding the appropriate CSS class ("warning" or "error").
+	 * Additionally, if defined the function
+	 *	edititemsubmitcheck_pre
+	 * is called before all the warning and error checking is done.
 	 */
 	protected function headerJS() {
 		return null;
@@ -92,7 +103,7 @@ abstract class QTIAssessmentItem {
 					<?php echo $this->formHTML(); ?>
 
 				</dl>
-				<div><input id="submit" type="submit" name="edititem" value="Submit"></div>
+				<div><input id="edititemsubmit" type="submit" name="edititem" value="Submit"></div>
 			</form>
 
 		<?php

@@ -142,28 +142,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			});
 		};
 
-		submitcheck = function() {
-			// clear any previously set background colours
-			$("input, textarea").removeClass("error warning");
-
-			// title must be set
-			if ($("#title").val().length == 0) {
-				$("#title").addClass("error");
-				alert("A title must be set for this item");
-				return false;
-			}
-
-			// issue warnings if applicable
-
-			// confirm the user wanted an empty stimulus
-			if ($("#stimulus").val().length == 0) {
-				$("#stimulus").addClass("warning");
-				if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
-					return false;
-				else
-					$("#stimulus").removeClass("error warning");
-			}
-
+		edititemsubmitcheck_itemspecificwarnings = function() {
 			// confirm the user wanted any empty boxes
 			var ok = true;
 			$("input.optiontext").each(function(n) {
@@ -237,7 +216,6 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			$(".removeoption").click(removeoption);
 			$("#addquestion").click(addquestion);
 			$(".removequestion").click(removequestion);
-			$("#submit").click(submitcheck);
 		});
 		<?php
 		return ob_get_clean();

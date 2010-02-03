@@ -234,20 +234,12 @@ class QTITextEntry extends QTIAssessmentItem {
 			});
 		};
 
-		submitcheck = function() {
+		edititemsubmitcheck_pre = function() {
 			// ensure the gaps table is up to date
 			updategapstable();
+		};
 
-			// clear any previously set background colours
-			$("input, textarea").removeClass("error warning");
-
-			// title must be set
-			if ($("#title").val().length == 0) {
-				$("#title").addClass("error");
-				alert("A title must be set for this item");
-				return false;
-			}
-
+		edititemsubmitcheck_itemspecificerrors = function() {
 			// must have at least one gap
 			if ($("div.gap:visible").size() == 0) {
 				$("#textbody").addClass("error");
@@ -282,18 +274,12 @@ class QTITextEntry extends QTIAssessmentItem {
 				}
 			};
 
-			// issue warnings if applicable
+			return true;
+		};
 
-			// confirm the user wanted an empty stimulus
-			if ($("#stimulus").val().length == 0) {
-				$("#stimulus").addClass("warning");
-				if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
-					return false;
-				else
-					$("#stimulus").removeClass("error warning");
-			}
-
+		edititemsubmitcheck_itemspecificwarnings = function() {
 			// confirm the user wanted any empty boxes
+			var ok = true;
 			$("input.responsetext:visible").each(function(n) {
 				if ($(this).val().length == 0) {
 					var gapid = parseInt($(this).attr("id").split("_")[1]);
@@ -331,7 +317,6 @@ class QTITextEntry extends QTIAssessmentItem {
 			$("input.addresponse:visible").click(addresponse);
 			$("input.removeresponse:visible").click(removeresponse);
 			$("input.responsetext:visible").change(updatetextgap);
-			$("#submit").click(submitcheck);
 		});
 		<?php
 		return ob_get_clean();
