@@ -204,7 +204,13 @@ function item_types() {
 
 		$classname = substr($file, 0, -10);
 
+		// skip classes which aren't QTIAssessmentItems
 		if (!is_subclass_of($classname, "QTIAssessmentItem"))
+			continue;
+
+		// skip abstract classes
+		$rc = new ReflectionClass($classname);
+		if ($rc->isAbstract())
 			continue;
 
 		$items[] = new $classname;
