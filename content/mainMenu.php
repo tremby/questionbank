@@ -80,8 +80,8 @@ include "htmlheader.php";
 			<tr class="row<?php echo $odd; ?>" id="item_<?php echo $item->getQTIID(); ?>">
 				<td><?php echo friendlydate_html($item->getModified()); ?></td>
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
-				<td><?php echo htmlspecialchars($item->data("description")); ?></td>
 				<td><?php echo $item->getTitle() === false ? "[untitled]" : htmlspecialchars($item->getTitle()); ?></td>
+				<td><?php echo htmlspecialchars($item->data("description")); ?></td>
 				<td class="<?php echo count($item->getErrors()) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
 					<?php echo count($item->getErrors()); ?> error<?php echo plural($item->getErrors()); ?>
 					<br />
