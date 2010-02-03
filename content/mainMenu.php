@@ -75,8 +75,8 @@ $items = array_reverse($items);
 					<li><a href="?page=editAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Edit</a></li>
 					<?php if (!count($item->getErrors())) { ?>
 						<li><a href="?page=previewAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Preview</a></li>
-					<li><a href="?page=downloadAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download</a></li>
-					<li><a href="?page=makeContentPackage&amp;qtiid=<?php echo $item->getQTIID(); ?>">Package</a></li>
+						<li><a href="?page=downloadAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download XML</a></li>
+						<li><a href="?page=makeContentPackage&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download content package</a></li>
 					<?php } ?>
 					<li><a href="?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a></li>
 				</ul></td>
