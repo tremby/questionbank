@@ -8,7 +8,7 @@ abstract class QTIAssessmentItem {
 	protected $data = array();
 	protected $qti = null; //XML string (can't store SimpleXML element in session data)
 
-	private $modified = null;
+	private $modified;
 
 	// the following are set by child classes' constructors
 	protected $itemtype = null;
@@ -22,6 +22,7 @@ abstract class QTIAssessmentItem {
 	 * Child classes must call parent::__construct()
 	 */
 	public function __construct() {
+		$this->modified = time();
 		$this->setQTIID();
 	}
 
