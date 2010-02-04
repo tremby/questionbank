@@ -32,7 +32,8 @@ $md = $r->addChild("metadata");
 // resource qti metadata
 $qmd = $md->addChild("qtiMetadata", null, $imsqti);
 $qmd->addChild("timeDependent", "false", $imsqti);
-$qmd->addChild("interactionType", $ai->interactionType(), $imsqti);
+foreach ($ai->interactionTypes() as $it)
+	$qmd->addChild("interactionType", $it, $imsqti);
 $qmd->addChild("feedbackType", is_null($ai->data("feedback")) ? "none" : "nonadaptive", $imsqti);
 $qmd->addChild("solutionAvailable", "true", $imsqti);
 

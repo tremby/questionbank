@@ -10,21 +10,27 @@ abstract class QTIAssessmentItem {
 
 	private $modified;
 
-	// the following are set by child classes' constructors
-	protected $itemtype = null;
-	protected $itemtypeprint = null;
-	protected $itemtypedescription = null;
-	protected $interactionType = null;
-
 	protected $identifier;
 
 	/** constructor
-	 * Child classes must call parent::__construct()
+	 * Child classes' constructors, if implemented, must call this
 	 */
 	public function __construct() {
 		$this->modified = time();
 		$this->setQTIID();
 	}
+
+	/** itemTypePrint
+	 * This must return the item type as a string starting with lowercase. The 
+	 * string can contain spaces.
+	 */
+	abstract public function itemTypePrint();
+
+	/** itemTypeDescription
+	 * This must return a description of the item type as a string starting with 
+	 * uppercase. The string can contain multiple sentences if necessary.
+	 */
+	abstract public function itemTypeDescription();
 
 	/** buildQTI
 	 * This must build and return the QTI from the $data property. It should 
@@ -186,22 +192,51 @@ abstract class QTIAssessmentItem {
 			showmessages($messages, ucfirst($type), $type);
 	}
 
-	// get item type string
+	// get item type string (same as the class name but without QTI prefix and 
+	// starting with a small letter)
 	public function itemType() {
-		return $this->itemtype;
+		return lcfirst(substr(get_class($this), 3));
 	}
 
-	// get printable item type string
-	public function itemTypePrint() {
-		return $this->itemtypeprint;
-	}
-	// get item type description string
-	public function itemTypeDescription() {
-		return $this->itemtypedescription;
-	}
-	// get interaction type string
-	public function interactionType() {
-		return $this->interactionType;
+	// return an array of interaction types present in the QTI
+	// see http://imsglobal.org/question/qtiv2p1pd2/imsqti_bindv2p1pd2.html#binding_interactionType
+	public function interactionTypes() {
+		$qti = $this->getQTI();
+
+		// php5's support for default namespace is useless so we have to define 
+		// it manually
+		$namespaces = $qti->getDocNamespaces();
+		$defaultnamespace = $namespaces[""];
+		$qti->registerXPathNamespace("n", $defaultnamespace);
+
+		$types = array();
+		foreach (array(
+			"associateInteraction",
+			"choiceInteraction",
+			"customInteraction",
+			"drawingInteraction",
+			"endAttemptInteraction",
+			"extendedTextInteraction",
+			"gapMatchInteraction",
+			"graphicAssociateInteraction",
+			"graphicGapMatchInteraction",
+			"graphicOrderInteraction",
+			"hotspotInteraction",
+			"hottextInteraction",
+			"inlineChoiceInteraction",
+			"matchInteraction",
+			"orderInteraction",
+			"positionObjectInteraction",
+			"selectPointInteraction",
+			"sliderInteraction",
+			"textEntryInteraction",
+			"uploadInteraction",
+		) as $it) {
+			$nodes = $qti->xpath("//n:$it");
+			if ($nodes !== false && count($nodes))
+				$types[] = $it;
+		}
+		return $types;
 	}
 
 	// get errors

@@ -304,4 +304,13 @@ function wrapindiv($string) {
 	return $string;
 }
 
+// return a string with its first letter changed to lowercase (this already 
+// exists in PHP >= 5.3.0 which is not yet standard)
+if (!function_exists("lcfirst")) {
+	function lcfirst($string) {
+		$string[0] = strtolower($string[0]);
+		return $string;
+	}
+}
+
 ?>

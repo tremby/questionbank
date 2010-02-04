@@ -21,8 +21,6 @@ webtool
 	marking gaps
 -	client side errors/warnings for feedback?
 -	content package import
--	make item type, item type print etc strings abstract functions rather than 
-	properties
 Edshare plugin
 -	previewable for each document of an eprint, not just the first
 -	import metadata from content package manifest when uploading?

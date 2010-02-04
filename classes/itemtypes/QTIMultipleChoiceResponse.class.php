@@ -1,12 +1,6 @@
 <?php
 
 abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
-	public function __construct() {
-		parent::__construct();
-
-		$this->interactionType = "choiceInteraction";
-	}
-
 	protected function headerJS() {
 		ob_start();
 		?>

@@ -1,13 +1,11 @@
 <?php
 
 class QTITextEntry extends QTIAssessmentItem {
-	public function __construct() {
-		parent::__construct();
-
-		$this->itemtype = "textEntry";
-		$this->itemtypeprint = "text entry";
-		$this->itemtypedescription = "A stimulus or question prompt followed by a body of text with gaps. The candidate enters the appropriate words to complete the text.";
-		$this->interactionType = "textEntryInteraction";
+	public function itemTypePrint() {
+		return "text entry";
+	}
+	public function itemTypeDescription() {
+		return "A stimulus or question prompt followed by a body of text with gaps. The candidate enters the appropriate words to complete the text.";
 	}
 
 	protected function headerJS() {
