@@ -265,6 +265,11 @@ abstract class QTIAssessmentItem {
 
 		return strcasecmp($ta, $tb);
 	}
+
+	// compare items by modification date
+	public static function compare_by_modification_date(QTIAssessmentItem $a, QTIAssessmentItem $b) {
+		return $a->getModified() - $b->getModified();
+	}
 }
 
 ?>
