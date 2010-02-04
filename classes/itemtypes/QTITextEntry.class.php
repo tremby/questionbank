@@ -365,8 +365,8 @@ class QTITextEntry extends QTIAssessmentItem {
 								</tr>
 								<?php for ($j = 0; array_key_exists("gap_{$i}_response_{$j}", $this->data); $j++) { $odd = $j % 2; ?>
 									<tr class="response row<?php echo $odd; ?>">
-										<td><input type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" size="32" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}"]); ?>"></td>
-										<td><input type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" size="3" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}_score"]); ?>"></td>
+										<td><input class="responsetext" type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" size="32" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}"]); ?>"></td>
+										<td><input class="responsescore" type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" size="3" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}_score"]); ?>"></td>
 										<td><input <?php if ($j == 0) { ?>style="display: none;" <?php } ?>type="button" class="removequestion" value="Remove"></td>
 									</tr>
 								<?php } ?>
