@@ -1,19 +1,12 @@
 <?php
 
 // get sorted array of items
-// new one at the top
-// then those which have titles in alphabetical order
+// those which have titles in alphabetical order
 // then others in identifier order
 $items = array();
-if (isset($_SESSION["items"])) foreach ($_SESSION["items"] as $id => $item) {
-	// skip new item for now -- we want that at the top of the list
-	if ($id == "new")
-		continue;
+if (isset($_SESSION["items"])) foreach ($_SESSION["items"] as $id => $item)
 	$items[] = $item;
-}
 usort($items, array("QTIAssessmentItem", "compare_by_title"));
-if (isset($_SESSION["items"]["new"]))
-	$items[] = $_SESSION["items"]["new"];
 $items = array_reverse($items);
 
 ob_start();
@@ -45,12 +38,7 @@ include "htmlheader.php";
 <h2>Main menu</h2>
 <dl>
 	<dt><a href="?page=newAssessmentItem">New assessment item</a></dt>
-	<dd>
-		Write a new assessment item
-		<?php if (isset($_SESSION["items"]["new"])) { ?>
-			(note that starting a new item will clear <a href="?page=editAssessmentItem&amp;qtiid=new">your current unfinished item</a>)
-		<?php } ?>
-	</dd>
+	<dd>Write a new assessment item</dd>
 
 	<dl><a href="?page=uploadAssessmentItem">Upload an existing assessment item</a></dl>
 	<dd>Upload an existing assessment item so it can be edited and packaged</dd>
@@ -78,7 +66,7 @@ include "htmlheader.php";
 		</tr>
 		<?php $i = 0; foreach ($items as $item) { $odd = $i++ % 2; ?>
 			<tr class="row<?php echo $odd; ?>" id="item_<?php echo $item->getQTIID(); ?>">
-				<td><?php echo friendlydate_html($item->getModified()); ?></td>
+				<td><?php if (!is_null($item->getModified())) echo friendlydate_html($item->getModified()); ?></td>
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
 				<td><?php echo $item->getTitle() === false ? "[untitled]" : htmlspecialchars($item->getTitle()); ?></td>
 				<td><?php echo htmlspecialchars($item->data("description")); ?></td>

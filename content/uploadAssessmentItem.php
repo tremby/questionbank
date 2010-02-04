@@ -45,6 +45,10 @@ function handleupload(&$errors, &$warnings, &$messages) {
 		}
 	}
 
+	// give it a new identifier if appropriate
+	if (isset($_POST["newidentifier"]))
+		$ai->setQTIID();
+
 	// put it in session data
 	if (!isset($_SESSION["items"]))
 		$_SESSION["items"] = array();
@@ -78,6 +82,12 @@ foreach(array("error" => $errors, "warning" => $warnings, "message" => $messages
 	<dl>
 		<dt><label for="file">File</label></dt>
 		<dd><input id="file" type="file" name="file"></dd>
+
+		<dt><label for="newidentifier">Give the item a new identifier</label></dt>
+		<dd>
+			<input type="checkbox" id="newidentifier" name="newidentifier" value="true">
+			<span class="hint">Leave this box clear if you are updating or correcting an item; check it if you are making a new item using the uploaded one as a template</span>
+		<dd>
 	</dl>
 	<div>
 		<input type="hidden" name="MAX_FILE_SIZE" value="262144">

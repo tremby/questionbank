@@ -19,6 +19,9 @@ if (isset($_POST["edititem"])) {
 
 		$ai = new $classname;
 
+		// keep the old identifier
+		$ai->setQTIID($olditem->getQTIID());
+
 		// replace old object in session data
 		if (!isset($_SESSION["items"]))
 			$_SESSION["items"] = array();
@@ -26,6 +29,8 @@ if (isset($_POST["edititem"])) {
 			foreach($_SESSION["items"] as $id => $item)
 				if ($olditem == $_SESSION["items"][$id])
 					$_SESSION["items"][$id] = $ai;
+
+		unset($olditem);
 	}
 
 	if ($ai->getQTI($_POST) === false) {

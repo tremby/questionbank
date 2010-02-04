@@ -177,7 +177,7 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 		');
 		$ai->addAttribute("adaptive", "false");
 		$ai->addAttribute("timeDependent", "false");
-		$ai->addAttribute("identifier", "qm_" . md5(uniqid()));
+		$ai->addAttribute("identifier", $this->getQTIID());
 		if (isset($this->data["title"]))
 			$ai->addAttribute("title", $this->data["title"]);
 
@@ -348,8 +348,9 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 			$q++;
 		}
 
-		// happy with that -- set data property
+		// happy with that -- set data property and identifier
 		$this->data = $data;
+		$this->setQTIID((string) $xml["identifier"]);
 
 		// rather strange question matrix if it's only one question
 		if ($questioncount == 1)

@@ -16,8 +16,14 @@ abstract class QTIAssessmentItem {
 	protected $itemtypedescription = null;
 	protected $interactionType = null;
 
-	// constructor
-	public function __construct() {}
+	protected $identifier;
+
+	/** constructor
+	 * Child classes must call parent::__construct()
+	 */
+	public function __construct() {
+		$this->setQTIID();
+	}
 
 	/** buildQTI
 	 * This must build and return the QTI from the $data property. It should 
@@ -131,16 +137,6 @@ abstract class QTIAssessmentItem {
 		// store the QTI string in a property
 		$this->qti = simplexml_indented_string($qti);
 
-		// this will now have a new identifier, so unset the old one (which may 
-		// have been "new" in session data and store the new
-		if (!isset($_SESSION["items"]))
-			$_SESSION["items"] = array();
-		else
-			foreach($_SESSION["items"] as $id => $item)
-				if ($this == $_SESSION["items"][$id])
-					unset($_SESSION["items"][$id]);
-		$_SESSION["items"][$this->getQTIID()] = $this;
-
 		return $qti;
 	}
 
@@ -154,12 +150,15 @@ abstract class QTIAssessmentItem {
 
 	// get QTI identifier
 	public function getQTIID() {
-		$qti = $this->getQTI();
+		return $this->identifier;
+	}
 
-		if (!$qti)
-			return "new";
-
-		return (string) $qti["identifier"];
+	// set QTI identifier or generate a new one if none given
+	public function setQTIID($identifier = null) {
+		if (is_null($identifier))
+			$this->identifier = "item_" . md5(uniqid());
+		else
+			$this->identifier = $identifier;
 	}
 
 	// get item title
