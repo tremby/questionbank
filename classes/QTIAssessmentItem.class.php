@@ -108,7 +108,7 @@ abstract class QTIAssessmentItem {
 					<dd><textarea rows="8" cols="64" name="description" id="description"><?php if (isset($this->data["description"])) echo htmlspecialchars($this->data["description"]); ?></textarea></dd>
 
 					<dt>Keywords (comma-separated)</dt>
-					<dd><textarea id="keywords" name="keywords" rows="4" cols="64"><?php if (isset($this->data["keywords"])) echo htmlspecialchars($this->data["keywords"]); ?></textarea></dd>
+					<dd><textarea id="keywords" name="keywords" rows="4" cols="64"><?php echo htmlspecialchars(implode(", ", $this->getKeywords())); ?></textarea></dd>
 
 					<dt><label for="stimulus">Stimulus</label></dt>
 					<dd><textarea class="qtitinymce resizable" rows="8" cols="64" name="stimulus" id="stimulus"><?php if (isset($this->data["stimulus"])) echo htmlspecialchars($this->data["stimulus"]); ?></textarea></dd>
@@ -278,6 +278,28 @@ abstract class QTIAssessmentItem {
 			return null;
 		}
 		return $this->data;
+	}
+
+	// get an array of unique keywords based on the comma-separated string in 
+	// data
+	public function getKeywords() {
+		$keywords = array();
+
+		$str = $this->data("keywords");
+
+		if (is_null($str))
+			return $keywords;
+
+		$bits = array_map("trim", explode(",", $str));
+		foreach ($bits as $keyword) {
+			if (empty($keyword))
+				continue;
+			$keywords[] = $keyword;
+		}
+
+		sort($keywords);
+
+		return array_unique($keywords);
 	}
 
 	// compare items by title or ID

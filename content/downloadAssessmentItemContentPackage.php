@@ -43,15 +43,8 @@ $g = $lom->addChild("general", null, $imsmd);
 $g->addChild("title", null, $imsmd)->addChild("langstring", $ai->getTitle(), $imsmd);
 if (!is_null($ai->data("description")))
 	$g->addChild("description", null, $imsmd)->addChild("langstring", $ai->data("description"), $imsmd);
-if (!is_null($ai->data("keywords"))) {
-	$keywords = explode(",", $ai->data("keywords"));
-	$keywords = array_map("trim", $keywords);
-	foreach ($keywords as $keyword) {
-		if (strlen($keyword) == 0)
-			continue;
-		$g->addChild("keyword", null, $imsmd)->addChild("langstring", $keyword, $imsmd);
-	}
-}
+foreach ($ai->getKeywords() as $keyword)
+	$g->addChild("keyword", null, $imsmd)->addChild("langstring", $keyword, $imsmd);
 
 // file element
 $r->addChild("file")->addAttribute("href", "{$ai->getTitleFS()}.xml");

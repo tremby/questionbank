@@ -61,6 +61,7 @@ include "htmlheader.php";
 			<th>Item type</th>
 			<th>Title</th>
 			<th>Description</th>
+			<th>Keywords</th>
 			<th>Status</th>
 			<th>Actions</th>
 		</tr>
@@ -70,6 +71,7 @@ include "htmlheader.php";
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
 				<td><?php echo $item->getTitle() === false ? "[untitled]" : htmlspecialchars($item->getTitle()); ?></td>
 				<td><?php echo htmlspecialchars($item->data("description")); ?></td>
+				<td><?php $keywords = $item->getKeywords(); if (!empty($keywords)) { ?><ul><?php foreach($keywords as $keyword) { ?><li><?php echo htmlspecialchars($keyword); ?></li><?php } ?></ul><?php } ?></td>
 				<td class="<?php echo count($item->getErrors()) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
 					<?php echo count($item->getErrors()); ?> error<?php echo plural($item->getErrors()); ?>
 					<br />
