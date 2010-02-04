@@ -1,6 +1,8 @@
 html, body {
 	background-color: white;
 	color: black;
+	font-family: sans-serif;
+	font-size: 10pt;
 }
 
 .disabled {
@@ -39,4 +41,14 @@ td.warning, div.warning, input.warning, textarea.warning {
 
 .highlight {
 	background-color: #ffc;
+}
+
+ul, ol {
+	margin: 0;
+	padding: 0;
+}
+
+ul li, ol li {
+	margin: 0 0 0 1.5em;
+	padding: 0;
 }
