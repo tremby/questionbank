@@ -23,3 +23,5 @@ webtool
 Edshare plugin
 -	previewable for each document of an eprint, not just the first
 -	import metadata from content package manifest when uploading?
+
+-	split validate and edshare plugin from git repo
