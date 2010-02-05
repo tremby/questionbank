@@ -1,0 +1,4 @@
+In here should be
+-	SLF4J API and NOP jars (http://www.slf4j.org) -- tested using the version 
+	supplied, 1.5.10
+-	JQTI (http://jqti.qtitools.org) -- tested using the version supplied, 2.0a4
