@@ -22,6 +22,10 @@ abstract class QTIAssessmentItem {
 		$this->setMID();
 	}
 
+	/* --------------------------------------------------------------------- */
+	/* abstract methods which must be implemented for each item type         */
+	/* --------------------------------------------------------------------- */
+
 	/** itemTypePrint
 	 * This must return the item type as a string starting with lowercase. The 
 	 * string can contain spaces.
@@ -52,6 +56,20 @@ abstract class QTIAssessmentItem {
 	 */
 	abstract protected function formHTML();
 
+	/** fromXML
+	 * This must attempt to parse the given SimpleXML element to whatever kind 
+	 * of item type is being implemented. Return a score where 0 is "given XML 
+	 * is definitely not this question type" and 255 is "given XML is definitely 
+	 * this question type". If the parsing was successful (even if not ideal) 
+	 * the $data property should be populated.
+	 * It can be assumed that $xml is valid QTI.
+	 */
+	abstract public function fromXML(SimpleXMLElement $xml);
+
+	/* --------------------------------------------------------------------- */
+	/* methods specifically for optional overriding                          */
+	/* --------------------------------------------------------------------- */
+
 	/** headerJS
 	 * This can optionally be overridden to return a string of Javascript which 
 	 * should be added to the page header
@@ -79,15 +97,9 @@ abstract class QTIAssessmentItem {
 		return null;
 	}
 
-	/** fromXML
-	 * This must attempt to parse the given SimpleXML element to whatever kind 
-	 * of item type is being implemented. Return a score where 0 is "given XML 
-	 * is definitely not this question type" and 255 is "given XML is definitely 
-	 * this question type". If the parsing was successful (even if not ideal) 
-	 * the $data property should be populated.
-	 * It can be assumed that $xml is valid QTI.
-	 */
-	abstract public function fromXML(SimpleXMLElement $xml);
+	/* --------------------------------------------------------------------- */
+	/* public utility methods                                                */
+	/* --------------------------------------------------------------------- */
 
 	// render the authoring form
 	public function showForm($data = null) {
@@ -125,7 +137,7 @@ abstract class QTIAssessmentItem {
 		include "htmlfooter.php";
 	}
 
-	// get QTI
+	// get QTI as SimpleXML object
 	public function getQTI($data = null) {
 		if (is_null($data)) {
 			if (!is_null($this->qti))
@@ -331,6 +343,10 @@ abstract class QTIAssessmentItem {
 
 		return array_unique($keywords);
 	}
+
+	/* --------------------------------------------------------------------- */
+	/* static utility methods                                                */
+	/* --------------------------------------------------------------------- */
 
 	// compare items by title or ID
 	public static function compare_by_title(QTIAssessmentItem $a, QTIAssessmentItem $b) {
