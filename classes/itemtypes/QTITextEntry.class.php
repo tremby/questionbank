@@ -619,7 +619,7 @@ class QTITextEntry extends QTIAssessmentItem {
 	// with [ and ending with ] holds the identifier of a textEntryInteraction.
 	private static function getTextEntryInteractionsAndText(DOMNode $node) {
 		$fragments = array();
-		foreach($node->childNodes as $child) {
+		foreach ($node->childNodes as $child) {
 			switch ($child->nodeType) {
 				case XML_TEXT_NODE:
 					$fragments[] = $child->wholeText;
