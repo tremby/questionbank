@@ -216,7 +216,7 @@ abstract class QTIAssessmentItem {
 	// output nice HTML for any errors, warnings and messages
 	public function showMessages() {
 		foreach(array("error" => $this->errors, "warning" => $this->warnings, "message" => $this->messages) as $type => $messages)
-			showmessages($messages, ucfirst($type), $type);
+			showmessages($messages, ucfirst($type) . plural($messages), $type);
 	}
 
 	// get item type string (same as the class name but without QTI prefix and 
