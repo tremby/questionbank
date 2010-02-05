@@ -285,14 +285,29 @@ abstract class QTIAssessmentItem {
 		return $this->modified;
 	}
 
-	// get the data or one element from the data
-	public function data($key = null) {
-		if (isset($key)) {
-			if (array_key_exists($key, $this->data))
-				return $this->data[$key];
+	// get the data, get one element from the data or set on element in the data
+	public function data() {
+		$args = func_get_args();
+
+		// no arguments -- return the data array
+		if (count($args) == 0)
+			return $this->data();
+
+		// one argument -- return the corresponding item in the data array
+		if (count($args) == 1) {
+			if (array_key_exists($args[0], $this->data))
+				return $this->data[$args[0]];
 			return null;
 		}
-		return $this->data;
+
+		// two arguments -- set the data item indicated by the first argument to 
+		// the value in the second argument
+		if (count($args) == 2)
+			return $this->data[$args[0]] = $args[1];
+
+		// more than two arguments -- error
+		trigger_error("Too many arguments to QTIAssessmentItem::data -- expected 0, 1 or 2", E_USER_ERROR);
+		return false;
 	}
 
 	// get an array of unique keywords based on the comma-separated string in 

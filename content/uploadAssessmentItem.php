@@ -10,15 +10,99 @@ function handleupload(&$errors, &$warnings, &$messages) {
 		return;
 	}
 
-	$xml = file_get_contents($_FILES["file"]["tmp_name"]);
+	switch ($_FILES["file"]["type"]) {
+		case "application/xml":
+		case "text/xml":
+		case "application/qti+xml":
+			$metadata = array();
+			$filename = $_FILES["file"]["name"];
+			$xml = file_get_contents($_FILES["file"]["tmp_name"]);
+			break;
+		case "application/zip":
+			// open zip file
+			$zip = new ZipArchive();
+			if ($zip->open($_FILES["file"]["tmp_name"]) !== true) {
+				$errors[] = "Failed to open the zip file. Ensure it is not corrupt and try again.";
+				return;
+			}
 
-	if (!validateQTI($xml, $errors, $warnings, $messages)) {
-		$errors[] = "The uploaded file is not valid QTI";
+			// get manifest, make sure it's valid XML
+			$mxml = $zip->getfromName("imsmanifest.xml");
+			if ($mxml === false) {
+				$errors[] = "Error getting manifest file -- are you sure this is a content package?";
+				return;
+			}
+			$mxml = simplexml_load_string($mxml);
+			if ($mxml === false) {
+				$errors[] = "The manifest file in the uploaded content package is not valid XML";
+				return;
+			}
+
+			$metadata = array();
+
+			// get manifest identifier
+			$metadata["midentifier"] = (string) $mxml["identifier"];
+
+			// ensure there's only one resource
+			$resource = $mxml->resources->resource;
+			if (count($resource) > 1) {
+				$errors[] = "More than one resource element found in the manifest -- this is not a single-item content package";
+				return;
+			}
+			if (count($resource) == 0) {
+				$errors[] = "No resource elements found in the manifest -- this is not a single-item content package";
+				return;
+			}
+
+			// ensure it's an item rather than an assessment
+			if (!preg_match('%^imsqti_item_%', (string) $resource["type"])) {
+				$errors[] = "This content package contains an assessment test rather than an assessment item";
+				return;
+			}
+
+			// get the metadata
+			$imsmd = $resource->metadata->children(NS_IMSMD);
+			if (isset($imsmd->lom->general->description->langstring[0])) {
+				$metadata["description"] = (string) $imsmd->lom->general->description->langstring[0];
+			}
+			$metadata["keywords"] = array();
+			foreach ($imsmd->lom->general->keyword as $keyword)
+				$metadata["keywords"][] = (string) $keyword->langstring[0];
+
+			// get the file pointed to
+			$filename = (string) $resource["href"];
+			$xml = $zip->getfromName($filename);
+			if ($xml === false) {
+				$errors[] = "Error getting item file \"$filename\" from archive";
+				return;
+			}
+
+			break;
+		default:
+			$errors[] = "The uploaded file (of type " . $_FILES["file"]["type"] . ") was not recognized as a content package (zip) or QTI XML file.";
+			return;
+	}
+
+	// make sure it's valid XML
+	$xml = simplexml_load_string($xml);
+	if ($xml === false) {
+		$errors[] = "The file \"$filename\" is not valid XML";
 		return;
 	}
 
-	$xml = simplexml_load_string($xml);
+	// make sure it's an assessment item
+	if ($xml->getName() != "assessmentItem") {
+		$errors[] = "The file \"$filename\" is not a QTI assessment item";
+		return;
+	}
 
+	// make sure it's valid QTI
+	if (!validateQTI($xml, $errors, $warnings, $messages)) {
+		$errors[] = "The file \"$filename\" is not valid QTI";
+		return;
+	}
+
+	// test against supported item types
 	$items = item_types();
 
 	$scores = array();
@@ -45,9 +129,18 @@ function handleupload(&$errors, &$warnings, &$messages) {
 		}
 	}
 
-	// give it a new identifier if appropriate
+	// give it a new identifier if appropriate, restore manifest identifier if 
+	// no new identifier is wanted
 	if (isset($_POST["newidentifier"]))
 		$ai->setQTIID();
+	else if (array_key_exists("midentifier", $metadata))
+		$ai->setMID($metadata["midentifier"]);
+
+	// restore the metadata taken from the manifest
+	if (array_key_exists("description", $metadata))
+		$ai->data("description", $metadata["description"]);
+	if (array_key_exists("keywords", $metadata))
+		$ai->data("keywords", implode(", ", $metadata["keywords"]));
 
 	// put it in session data
 	if (!isset($_SESSION["items"]))
@@ -70,8 +163,8 @@ include "htmlheader.php";
 <h2>Upload an assessment item</h2>
 
 <p>This form allows you to upload an existing assessment item so it can be 
-edited or packaged. At present content packages are not accepted, only QTI 
-XML.</p>
+edited or repackaged. The file uploaded must be either an assessment item in QTI 
+XML format or an IMS content package containing a single assessment item.</p>
 
 <?php
 foreach(array("error" => $errors, "warning" => $warnings, "message" => $messages) as $type => $messages)
