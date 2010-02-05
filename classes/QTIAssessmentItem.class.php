@@ -121,7 +121,7 @@ abstract class QTIAssessmentItem {
 					<dt><label for="description">Description</label></dt>
 					<dd><textarea rows="8" cols="64" name="description" id="description"><?php if (isset($this->data["description"])) echo htmlspecialchars($this->data["description"]); ?></textarea></dd>
 
-					<dt>Keywords (comma-separated)</dt>
+					<dt><label for="keywords">Keywords (comma-separated)</label></dt>
 					<dd><textarea id="keywords" name="keywords" rows="4" cols="64"><?php echo htmlspecialchars(implode(", ", $this->getKeywords())); ?></textarea></dd>
 
 					<dt><label for="stimulus">Stimulus</label></dt>
