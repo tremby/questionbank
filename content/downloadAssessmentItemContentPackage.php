@@ -16,7 +16,7 @@ $manifest = simplexml_load_string('<manifest
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd http://www.imsglobal.org/xsd/imsmd_v1p2 imsmd_v1p2p4.xsd http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
 />');
-$manifest->addAttribute("identifier", "MANIFEST-" . $ai->getQTIID());
+$manifest->addAttribute("identifier", $ai->getMID());
 
 // organizations element
 $manifest->addChild("organizations");

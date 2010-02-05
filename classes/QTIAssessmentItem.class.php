@@ -11,6 +11,7 @@ abstract class QTIAssessmentItem {
 	private $modified;
 
 	protected $identifier;
+	protected $midentifier;
 
 	/** constructor
 	 * Child classes' constructors, if implemented, must call this
@@ -18,6 +19,7 @@ abstract class QTIAssessmentItem {
 	public function __construct() {
 		$this->modified = time();
 		$this->setQTIID();
+		$this->setMID();
 	}
 
 	/** itemTypePrint
@@ -160,10 +162,23 @@ abstract class QTIAssessmentItem {
 		return $this->identifier;
 	}
 
+	// get manifest identifier
+	public function getMID() {
+		return $this->midentifier;
+	}
+
 	// set QTI identifier or generate a new one if none given
 	public function setQTIID($identifier = null) {
 		if (is_null($identifier))
 			$this->identifier = "item_" . md5(uniqid());
+		else
+			$this->identifier = $identifier;
+	}
+
+	// set manifest identifier or generate a new one if none given
+	public function setMID($identifier = null) {
+		if (is_null($identifier))
+			$this->identifier = "MANIFEST_" . md5(uniqid());
 		else
 			$this->identifier = $identifier;
 	}
