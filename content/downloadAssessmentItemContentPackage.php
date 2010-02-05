@@ -7,12 +7,10 @@ $ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 
 // build the manifest
 
-$imsqti = "http://www.imsglobal.org/xsd/imsqti_v2p1";
-$imsmd = "http://www.imsglobal.org/xsd/imsmd_v1p2";
 $manifest = simplexml_load_string('<manifest
 	xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
-	xmlns:imsmd="' . $imsmd . '"
-	xmlns:imsqti="' . $imsqti . '"
+	xmlns:imsmd="' . NS_IMSMD . '"
+	xmlns:imsqti="' . NS_IMSQTI . '"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd http://www.imsglobal.org/xsd/imsmd_v1p2 imsmd_v1p2p4.xsd http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
 />');
@@ -30,21 +28,21 @@ $r->addAttribute("href", "{$ai->getTitleFS()}.xml");
 $md = $r->addChild("metadata");
 
 // resource qti metadata
-$qmd = $md->addChild("qtiMetadata", null, $imsqti);
-$qmd->addChild("timeDependent", "false", $imsqti);
+$qmd = $md->addChild("qtiMetadata", null, NS_IMSQTI);
+$qmd->addChild("timeDependent", "false", NS_IMSQTI);
 foreach ($ai->interactionTypes() as $it)
-	$qmd->addChild("interactionType", $it, $imsqti);
-$qmd->addChild("feedbackType", is_null($ai->data("feedback")) ? "none" : "nonadaptive", $imsqti);
-$qmd->addChild("solutionAvailable", "true", $imsqti);
+	$qmd->addChild("interactionType", $it, NS_IMSQTI);
+$qmd->addChild("feedbackType", is_null($ai->data("feedback")) ? "none" : "nonadaptive", NS_IMSQTI);
+$qmd->addChild("solutionAvailable", "true", NS_IMSQTI);
 
 // resource LOM metadata
-$lom = $md->addChild("lom", null, $imsmd);
-$g = $lom->addChild("general", null, $imsmd);
-$g->addChild("title", null, $imsmd)->addChild("langstring", $ai->getTitle(), $imsmd);
+$lom = $md->addChild("lom", null, NS_IMSMD);
+$g = $lom->addChild("general", null, NS_IMSMD);
+$g->addChild("title", null, NS_IMSMD)->addChild("langstring", $ai->getTitle(), NS_IMSMD);
 if (!is_null($ai->data("description")))
-	$g->addChild("description", null, $imsmd)->addChild("langstring", $ai->data("description"), $imsmd);
+	$g->addChild("description", null, NS_IMSMD)->addChild("langstring", $ai->data("description"), NS_IMSMD);
 foreach ($ai->getKeywords() as $keyword)
-	$g->addChild("keyword", null, $imsmd)->addChild("langstring", $keyword, $imsmd);
+	$g->addChild("keyword", null, NS_IMSMD)->addChild("langstring", $keyword, NS_IMSMD);
 
 // file element
 $r->addChild("file")->addAttribute("href", "{$ai->getTitleFS()}.xml");
