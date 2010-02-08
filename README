@@ -13,7 +13,7 @@ REQUIREMENTS
 -	PHP 5 (tested on PHP 5.2.4)
 -	An instance of QTIEngine to call (uses the demonstration version at 
 	qtiengine.qtitools.org by default)
--	validate, the Java commandline QTI validator
+-	validate, the Java commandline QTI validator (imported as a subdirectory)
 -	Web server such as Apache
 
 COMPILATION
