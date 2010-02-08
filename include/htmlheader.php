@@ -1,7 +1,15 @@
 <?php
+
+/*------------------------------------------------------------------------------
+(c) 2010 JISC-funded EASiHE project, University of Southampton
+Licensed under the Creative Commons 'Attribution non-commercial share alike' 
+licence -- see the LICENCE file for more details
+------------------------------------------------------------------------------*/
+
 header("Content-Language: en");
 header("Content-Style-Type: text/css");
 header("Content-Script-Type: text/javascript");
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C/DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>

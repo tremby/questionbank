@@ -1,5 +1,11 @@
 <?php
 
+/*------------------------------------------------------------------------------
+(c) 2010 JISC-funded EASiHE project, University of Southampton
+Licensed under the Creative Commons 'Attribution non-commercial share alike' 
+licence -- see the LICENCE file for more details
+------------------------------------------------------------------------------*/
+
 class QTIQuestionMatrix extends QTIAssessmentItem {
 	public function itemTypePrint() {
 		return "question matrix";

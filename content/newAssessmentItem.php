@@ -1,5 +1,11 @@
 <?php
 
+/*------------------------------------------------------------------------------
+(c) 2010 JISC-funded EASiHE project, University of Southampton
+Licensed under the Creative Commons 'Attribution non-commercial share alike' 
+licence -- see the LICENCE file for more details
+------------------------------------------------------------------------------*/
+
 if (isset($_REQUEST["itemtype"])) {
 	// item type chosen
 	// look for a item type class with this name
