@@ -1,6 +1,3 @@
-validate
--	figure out why Sax is outputting its error messages to stderr and stop it
-webtool
 -	feedback
 	-	EMI
 	-	question matrix
@@ -20,10 +17,3 @@ webtool
 	marking gaps
 -	client side errors/warnings for feedback?
 -	style it a bit
-Edshare plugin
--	previewable for each document of an eprint, not just the first
--	import metadata from content package manifest when uploading?
--	move the QTI box to the top
--	get rid of whitespace in player view?
-
--	split validate and edshare plugin from git repo
