@@ -64,6 +64,15 @@ or standard error. However, any XML errors (as opposed to QTI ones) are being
 output to standard error as well as by us to standard output. I'm not sure why 
 this is -- whether it's a fault of JQTI, SLF4J or Sax.
 
+COPYRIGHT
+
+(c) 2010 JISC-funded EASiHE project, University of Southampton
+
+LICENCE
+
+Licensed under the Creative Commons 'Attribution non-commercial share alike' 
+licence -- see the LICENCE file for more details
+
 AUTHOR
 
-Bart Nagel (bjn@ecs.soton.ac.uk)
+Bart Nagel <bjn@ecs.soton.ac.uk>

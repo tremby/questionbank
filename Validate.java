@@ -1,7 +1,10 @@
-/*	Commandline QTI validator
- *	Written in 2009 November by Bart Nagel (bjn@ecs.soton.ac.uk)
- *	Proper University of Southampton copyright notice coming soon
- */
+/* Commandline QTI validator */
+
+/*------------------------------------------------------------------------------
+(c) 2009 JISC-funded EASiHE project, University of Southampton
+Licensed under the Creative Commons 'Attribution non-commercial share alike' 
+licence -- see the LICENCE file for more details
+------------------------------------------------------------------------------*/
 
 import java.io.*;
 import java.util.List;
