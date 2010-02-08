@@ -19,6 +19,7 @@ webtool
 -	issue: can't have square brackets in text entry since they're used for 
 	marking gaps
 -	client side errors/warnings for feedback?
+-	style it a bit
 Edshare plugin
 -	previewable for each document of an eprint, not just the first
 -	import metadata from content package manifest when uploading?

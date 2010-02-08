@@ -1,1 +1,1 @@
-authoringtool.php
+eqiat.php

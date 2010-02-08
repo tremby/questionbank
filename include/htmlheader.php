@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Eqiat
+ * Easy QTI Item Authoring Tool
+ */
+
 /*------------------------------------------------------------------------------
 (c) 2010 JISC-funded EASiHE project, University of Southampton
 Licensed under the Creative Commons 'Attribution non-commercial share alike' 
@@ -31,7 +36,7 @@ header("Content-Script-Type: text/javascript");
 	<?php } ?>
 </head>
 <body>
-<h1>QTI authoring tool</h1>
+<h1>Eqiat</h1>
 <ul>
 	<li><a href="?">Back to main menu</a></li>
 </ul>
