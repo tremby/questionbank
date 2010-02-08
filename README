@@ -6,7 +6,12 @@ SUMMARY
 
 A commandline QTI validator.
 
-COMPILING
+REQUIREMENTS
+
+-	Jars for SLF4J and JQTI (see README file in the lib subdirectory)
+-	Java and a Java compiler (tested on Sun Java 1.6)
+
+COMPILATION
 
 On a unix-like environment it should be possible to just run the provided 
 make.sh script, which just sources the classpath.sh script (which sets up the 
@@ -55,7 +60,7 @@ EXIT CODES
 254	Unknown QTI parsing error
 255	Unexpected arguments
 
-CAVEATS
+BUGS
 
 JQTI uses SLF4J for logging. This validator uses SLF4J's NOP implementation 
 which is supposed to suppress all error output -- we want to handle that 
