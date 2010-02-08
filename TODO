@@ -15,7 +15,6 @@ webtool
 -	improve question matrix view somehow
 -	bug: QTIEngine JSESSIONID cookie overrides request var so if the user has 
 	such a cookie they won't see the correct preview
--	remove debug stuff from the footer
 -	test in non-Firefox
 -	issue: can't have square brackets in text entry since they're used for 
 	marking gaps
