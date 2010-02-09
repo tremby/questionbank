@@ -6,6 +6,10 @@ SUMMARY
 
 A commandline QTI validator.
 
+SOURCE
+
+The source is available at <http://github.com/tremby/validate>.
+
 REQUIREMENTS
 
 -	Jars for SLF4J and JQTI (see README file in the lib subdirectory)
@@ -68,6 +72,8 @@ ourselves rather than having it logged automatically to a file, standard output
 or standard error. However, any XML errors (as opposed to QTI ones) are being 
 output to standard error as well as by us to standard output. I'm not sure why 
 this is -- whether it's a fault of JQTI, SLF4J or Sax.
+
+Bugs should be reported at <http://github.com/tremby/validate/issues>.
 
 COPYRIGHT
 
