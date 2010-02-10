@@ -140,3 +140,10 @@ h2 {
 	border-width: 1px;
 	border-color: #ddd;
 }
+
+a {
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
