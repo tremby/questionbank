@@ -69,7 +69,7 @@ if (isset($_POST["edititem"])) {
 	// show preview and download links
 	?>
 	<h3>QTIEngine preview</h3>
-	<iframe width="80%" height="400" src="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>"></iframe>
+	<iframe width="100%" height="400" src="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>"></iframe>
 
 	<h3>Actions</h3>
 	<ul>
