@@ -355,7 +355,7 @@ class QTITextEntry extends QTIAssessmentItem {
 							</tr>
 							<tr class="response row0">
 								<td><input class="responsetext" type="text" name="gap_-1_response_0" id="gap_-1_response_0" size="32"></td>
-								<td><input class="responsescore" type="text" name="gap_-1_response_0_score" id="gap_-1_response_0_score" size="3" value="1"></td>
+								<td><input class="responsescore small" type="text" name="gap_-1_response_0_score" id="gap_-1_response_0_score" size="3" value="1"></td>
 								<td><input style="display: none;" type="button" class="removeresponse" value="Remove"></td>
 							</tr>
 						</table>

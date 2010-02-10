@@ -104,3 +104,27 @@ ul li, ol li {
 div.error, div.good, div.warning {
 	padding: 0.5em;
 }
+
+dt {
+	font-weight: bold;
+	border-top: 1px dotted #ddd;
+	margin-top: 1em;
+	padding-top: 0.2em;
+}
+
+input[type=text] {
+	width: 100%;
+}
+input[type=text].small {
+	width: auto;
+}
+textarea {
+	width: 100%;
+}
+table {
+	width: 100%;
+}
+input[type=submit] {
+	font-weight: bold;
+	padding: 0.3em 0.5em;
+}

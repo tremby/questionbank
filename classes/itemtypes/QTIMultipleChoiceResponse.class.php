@@ -394,12 +394,12 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			<dl>
 				<dt>Maximum choices</dt>
 				<dd>
-					<input type="text" name="maxchoices" id="maxchoices" value="<?php echo isset($this->data["maxchoices"]) ? htmlspecialchars($this->data["maxchoices"]) : "0"; ?>" size="4">
+					<input class="small" type="text" name="maxchoices" id="maxchoices" value="<?php echo isset($this->data["maxchoices"]) ? htmlspecialchars($this->data["maxchoices"]) : "0"; ?>" size="4">
 					<span class="hint">The maximum number of choices the candidate is allowed to select. 0 means no restriction.</span>
 				</dd>
 				<dt>Minimum choices</dt>
 				<dd>
-					<input type="text" name="minchoices" id="minchoices" value="<?php echo isset($this->data["minchoices"]) ? htmlspecialchars($this->data["minchoices"]) : "0"; ?>" size="4">
+					<input class="small" type="text" name="minchoices" id="minchoices" value="<?php echo isset($this->data["minchoices"]) ? htmlspecialchars($this->data["minchoices"]) : "0"; ?>" size="4">
 					<span class="hint">The minimum number of choices the candidate is required to select to form a valid response. 0 means the candidate is not required to select any choices.</span>
 				</dd>
 			</dl>
