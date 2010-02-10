@@ -51,6 +51,9 @@ td.warning, div.warning, input.warning, textarea.warning {
 .row0 {
 	background-color: #f4f4f4;
 }
+.row1 {
+	background-color: #e8e8e8;
+}
 
 .highlight {
 	background-color: #ffc;
@@ -86,7 +89,6 @@ ul li, ol li {
 }
 
 #body {
-	clear: both;
 	padding: 1em;
 	background-color: white;
 }
@@ -97,4 +99,8 @@ ul li, ol li {
 	font-size: 80%;
 	color: #999;
 	text-align: center;
+}
+
+div.error, div.good, div.warning {
+	padding: 0.5em;
 }
