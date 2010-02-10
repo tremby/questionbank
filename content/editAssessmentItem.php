@@ -58,9 +58,10 @@ if (isset($_POST["edititem"])) {
 	if (!empty($tmp)) $thingstosay[] = "warnings";
 	$tmp = $ai->getMessages();
 	if (!empty($tmp)) $thingstosay[] = "messages";
+	$title = "Item complete";
 	include "htmlheader.php";
 	?>
-	<h2>QTI item complete</h2>
+	<h2><?php echo $title; ?></h2>
 	<p>The item has been successfully validated<?php if (!empty($thingstosay)) { ?> with the following <?php echo implode(" and ", $thingstosay); ?>:<?php } ?></p>
 	<?php
 	$ai->showmessages();

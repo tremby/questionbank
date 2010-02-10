@@ -34,9 +34,10 @@ if (isset($_REQUEST["itemtype"])) {
 
 $items = item_types();
 
+$GLOBALS["title"] = "New assessment item";
 include "htmlheader.php";
 ?>
-<h2>Make a new item</h2>
+<h2><?php echo $GLOBALS["title"]; ?></h2>
 <p>The first stage is to choose an item type.</p>
 <dl>
 	<?php foreach ($items as $item) { ?>

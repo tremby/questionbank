@@ -169,9 +169,10 @@ $messages = array();
 if (isset($_POST["uploaditem"]))
 	handleupload($errors, $warnings, $messages);
 
+$GLOBALS["title"] = "Upload an assessment item";
 include "htmlheader.php";
 ?>
-<h2>Upload an assessment item</h2>
+<h2><?php echo $GLOBALS["title"]; ?></h2>
 
 <p>This form allows you to upload an existing assessment item so it can be 
 edited or repackaged. The file uploaded must be either an assessment item in QTI 

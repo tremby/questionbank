@@ -11,6 +11,7 @@ Licensed under the Creative Commons 'Attribution non-commercial share alike'
 licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
+header("Content-Type: text/html; charset=utf-8");
 header("Content-Language: en");
 header("Content-Style-Type: text/css");
 header("Content-Script-Type: text/javascript");
@@ -20,6 +21,7 @@ header("Content-Script-Type: text/javascript");
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title><?php echo SITE_TITLE; ?><?php if (isset($GLOBALS["title"])) { ?> &ndash; <?php echo $GLOBALS["title"]; ?><?php } ?></title>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/jquery.js"></script>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/tiny_mce/jquery.tinymce.js"></script>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/authoringtool.js.php"></script>
@@ -36,7 +38,12 @@ header("Content-Script-Type: text/javascript");
 	<?php } ?>
 </head>
 <body>
-<h1>Eqiat</h1>
-<ul>
-	<li><a href="?">Back to main menu</a></li>
-</ul>
+<div id="header">
+	<h1><?php echo SITE_TITLE; ?></h1>
+	<ul id="headermenu">
+		<?php if ($GLOBALS["page"] != "mainMenu") { ?>
+			<li><a href="?">Back to main menu</a></li>
+		<?php } ?>
+	</ul>
+</div>
+<div id="body">

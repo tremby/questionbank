@@ -119,9 +119,10 @@ abstract class QTIAssessmentItem {
 
 		$GLOBALS["headerjs"] = $this->headerJS();
 		$GLOBALS["headercss"] = $this->headerCSS();
+		$GLOBALS["title"] = "Edit an assessment item";
 		include "htmlheader.php";
 		?>
-			<h2>Edit an assessment item</h2>
+			<h2><?php echo $GLOBALS["title"]; ?></h2>
 			<?php $this->showmessages(); ?>
 			<form id="edititem" action="?page=editAssessmentItem" method="post">
 				<input type="hidden" name="qtiid" value="<?php echo $this->getQTIID(); ?>">
