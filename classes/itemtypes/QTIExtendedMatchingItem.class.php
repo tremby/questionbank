@@ -156,7 +156,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			var ok = true;
 			$("input.optiontext").each(function(n) {
 				if ($(this).val().length == 0) {
-					$(this).addClass("warning");
+					$.scrollTo($(this).addClass("warning"), scrollduration, scrolloptions);
 					ok = confirm("Option " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 					if (ok)
 						$(this).removeClass("error warning");
@@ -167,7 +167,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			if (!ok) return false;
 			$("textarea.prompt").each(function(n) {
 				if ($(this).val().length == 0) {
-					$(this).addClass("warning");
+					$.scrollTo($(this).addClass("warning"), scrollduration, scrolloptions);
 					ok = confirm("The prompt for question " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 					if (ok)
 						$(this).removeClass("error warning");
@@ -181,7 +181,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			for (var i = 0; i < $("input.optiontext").size(); i++) {
 				for (var j = i + 1; j < $("input.optiontext").size(); j++) {
 					if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
-						$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").addClass("warning");
+						$.scrollTo($("#option_" + i + "_optiontext, #option_" + j + "_optiontext").addClass("warning"), scrollduration, scrolloptions);
 						ok = confirm("Options " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
 						if (ok)
 							$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").removeClass("error warning");
@@ -197,7 +197,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			for (var i = 0; i < $("textarea.prompt").size(); i++) {
 				for (var j = i + 1; j < $("textarea.prompt").size(); j++) {
 					if ($("#question_" + i + "_prompt").val() == $("#question_" + j + "_prompt").val()) {
-						$("#question_" + i + "_prompt, #question_" + j + "_prompt").addClass("warning");
+						$.scrollTo($("#question_" + i + "_prompt, #question_" + j + "_prompt").addClass("warning"), scrollduration, scrolloptions);
 						ok = confirm("The prompts for questions " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
 						if (ok)
 							$("#question_" + i + "_prompt, #question_" + j + "_prompt").removeClass("error warning");

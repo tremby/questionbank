@@ -66,6 +66,12 @@ removetinymces = function() {
 	});
 };
 
+// scrolling options
+scrollduration = 0;
+scrolloptions = {
+	offset: -50,
+};
+
 // check edit item form
 edititemsubmitcheck = function() {
 	// do any pre-check logic
@@ -79,7 +85,7 @@ edititemsubmitcheck = function() {
 
 	// title must be set
 	if ($("#title").val().length == 0) {
-		$("#title").addClass("error");
+		$.scrollTo($("#title").addClass("error"), scrollduration, scrolloptions);
 		alert("A title must be set for this item");
 		return false;
 	}
@@ -92,7 +98,7 @@ edititemsubmitcheck = function() {
 
 	// confirm the user wanted an empty stimulus
 	if ($("#stimulus").val().length == 0) {
-		$("#stimulus").addClass("warning");
+		$.scrollTo($("#stimulus").addClass("warning"), scrollduration, scrolloptions);
 		if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
 			return false;
 		else
@@ -108,3 +114,7 @@ edititemsubmitcheck = function() {
 $(document).ready(function() {
 	$("#edititemsubmit").click(edititemsubmitcheck);
 });
+
+<?php
+// vi: ft=javascript
+?>

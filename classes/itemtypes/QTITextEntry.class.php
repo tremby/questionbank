@@ -251,7 +251,7 @@ class QTITextEntry extends QTIAssessmentItem {
 		edititemsubmitcheck_itemspecificerrors = function() {
 			// must have at least one gap
 			if ($("div.gap:visible").size() == 0) {
-				$("#textbody").addClass("error");
+				$.scrollTo($("#textbody").addClass("error"), scrollduration, scrolloptions);
 				alert("You must have at least one gap for the candidate to fill in");
 				return false;
 			}
@@ -262,7 +262,7 @@ class QTITextEntry extends QTIAssessmentItem {
 				if ($(this).val().length == 0 || isNaN($(this).val()) || parseFloat($(this).val()) < 0) {
 					var gapid = parseInt($(this).attr("id").split("_")[1]);
 					var responseid = parseInt($(this).attr("id").split("_")[3]);
-					$(this).addClass("error");
+					$.scrollTo($(this).addClass("error"), scrollduration, scrolloptions);
 					alert("Score for gap " + (gapid + 1) + " response " + (responseid + 1) + " must be a positive number");
 					ok = false;
 					return false;
@@ -275,7 +275,7 @@ class QTITextEntry extends QTIAssessmentItem {
 				for (var i = 0; i < $("#gap_" + gap + " input.responsetext").size(); i++) {
 					for (var j = i + 1; j < $("#gap_" + gap + " input.responsetext").size(); j++) {
 						if ($("#gap_" + gap + "_response_" + i).val() == $("#gap_" + gap + "_response_" + j).val()) {
-							$("#gap_" + gap + "_response_" + i + ", #gap_" + gap + "_response_" + j).addClass("error");
+							$.scrollTo($("#gap_" + gap + "_response_" + i + ", #gap_" + gap + "_response_" + j).addClass("error"), scrollduration, scrolloptions);
 							alert("No two responses can be the same but gap " + (gap + 1) + " responses " + (i + 1) + " and " + (j + 1) + " are equal");
 							return false;
 						}
@@ -293,7 +293,7 @@ class QTITextEntry extends QTIAssessmentItem {
 				if ($(this).val().length == 0) {
 					var gapid = parseInt($(this).attr("id").split("_")[1]);
 					var responseid = parseInt($(this).attr("id").split("_")[3]);
-					$(this).addClass("warning");
+					$.scrollTo($(this).addClass("warning"), scrollduration, scrolloptions);
 					ok = confirm("Gap " + (gapid + 1) + " response " + (responseid + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 					if (ok)
 						$(this).removeClass("error warning");
@@ -308,7 +308,7 @@ class QTITextEntry extends QTIAssessmentItem {
 				if (parseFloat($(this).val()) == 0.0) {
 					var gapid = parseInt($(this).attr("id").split("_")[1]);
 					var responseid = parseInt($(this).attr("id").split("_")[3]);
-					$(this).addClass("warning");
+					$.scrollTo($(this).addClass("warning"), scrollduration, scrolloptions);
 					ok = confirm("Score for gap " + (gapid + 1) + " response " + (responseid + 1) + " is zero but this is the default score for any response not listed -- click OK to continue regardless or cancel to edit it");
 					if (ok)
 						$(this).removeClass("error warning");

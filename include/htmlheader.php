@@ -23,6 +23,7 @@ header("Content-Script-Type: text/javascript");
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title><?php echo SITE_TITLE; ?><?php if (isset($GLOBALS["title"])) { ?> &ndash; <?php echo $GLOBALS["title"]; ?><?php } ?></title>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/jquery.js"></script>
+	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/jquery.scrollTo-1.4.2-min.js"></script>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/tiny_mce/jquery.tinymce.js"></script>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/eqiat.js.php"></script>
 	<?php if (isset($GLOBALS["headerjs"])) { ?>

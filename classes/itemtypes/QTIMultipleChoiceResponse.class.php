@@ -169,41 +169,41 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
 				// maximum choices
 				if ($("#maxchoices").val().length == 0 || isNaN($("#maxchoices").val())) {
-					$("#maxchoices").addClass("error");
+					$.scrollTo($("#maxchoices").addClass("error"), scrollduration, scrolloptions);
 					alert("Value for maximum choices is not a number");
 					return false;
 				}
 				if ($("#maxchoices").val() < 0 || $("#maxchoices").val().indexOf(".") != -1) {
-					$("#maxchoices").addClass("error");
+					$.scrollTo($("#maxchoices").addClass("error"), scrollduration, scrolloptions);
 					alert("Value for maximum choices must be zero (no restriction) or a positive integer");
 					return false;
 				}
 				if ($("#maxchoices").val() > $("#options tr.option").size()) {
-					$("#maxchoices").addClass("error");
+					$.scrollTo($("#maxchoices").addClass("error"), scrollduration, scrolloptions);
 					alert("Value for maximum choices cannot be greater than the number of possible choices");
 					return false;
 				}
 
 				// minimum choices
 				if ($("#minchoices").val().length == 0 || isNaN($("#minchoices").val())) {
-					$("#minchoices").addClass("error");
+					$.scrollTo($("#minchoices").addClass("error"), scrollduration, scrolloptions);
 					alert("Value for minimum choices is not a number");
 					return false;
 				}
 				if ($("#minchoices").val() < 0 || $("#minchoices").val().indexOf(".") != -1) {
-					$("#minchoices").addClass("error");
+					$.scrollTo($("#minchoices").addClass("error"), scrollduration, scrolloptions);
 					alert("Value for minimum choices must be zero (not require to select any choices) or a positive integer");
 					return false;
 				}
 				if ($("#minchoices").val() > $("#options tr.option").size()) {
-					$("#minchoices").addClass("error");
+					$.scrollTo($("#minchoices").addClass("error"), scrollduration, scrolloptions);
 					alert("Value for minimum choices cannot be greater than the number of possible choices");
 					return false;
 				}
 
 				// maximum choices >= minimum choices
 				if ($("#maxchoices").val() != 0 && $("#minchoices").val() > $("#maxchoices").val()) {
-					$("#maxchoices, #minchoices").addClass("error");
+					$.scrollTo($("#maxchoices, #minchoices").addClass("error"), scrollduration, scrolloptions);
 					alert("Value for minimum choices cannot be greater than the value for maximum choices");
 					return false;
 				}
@@ -215,7 +215,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			// maximum choices 1 for a multiple response is strange
 			if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
 				if ($("#maxchoices").val() == 1) {
-					$("#maxchoices").addClass("warning");
+					$.scrollTo($("#maxchoices").addClass("warning"), scrollduration, scrolloptions);
 					if (!confirm("Value for maximum choices is set as 1 which will lead to radio buttons rather than checkboxes -- click OK to continue regardless or cancel to edit it"))
 						return false;
 					else
@@ -227,14 +227,14 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			// correct responses or to have to check incorrect ones
 			if ($("input.itemtype:checked").attr("id") == "itemtype_mr") {
 				if ($("#maxchoices").val() != 0 && $("#maxchoices").val() < $("input.correct:checked").size()) {
-					$("#maxchoices").addClass("warning");
+					$.scrollTo($("#maxchoices").addClass("warning"), scrollduration, scrolloptions);
 					if (!confirm("Value for maximum choices is less than the number of correct choices -- click OK to continue regardless or cancel to edit it"))
 						return false;
 					else
 						$("#maxchoices").removeClass("error warning");
 				}
 				if ($("#minchoices").val() != 0 && $("#minchoices").val() > $("input.correct:checked").size()) {
-					$("#minchoices").addClass("warning");
+					$.scrollTo($("#minchoices").addClass("warning"), scrollduration, scrolloptions);
 					if (!confirm("Value for minimum choices is greater than the number of correct choices -- click OK to continue regardless or cancel to edit it"))
 						return false;
 					else
@@ -244,7 +244,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 			// confirm the user wanted an empty question prompt
 			if ($("#prompt").val().length == 0) {
-				$("#prompt").addClass("warning");
+				$.scrollTo($("#prompt").addClass("warning"), scrollduration, scrolloptions);
 				if (!confirm("Question prompt is empty -- click OK to continue regardless or cancel to edit it"))
 					return false;
 				else
@@ -255,7 +255,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			var ok = true;
 			$("input.optiontext").each(function(n) {
 				if ($(this).val().length == 0) {
-					$(this).addClass("warning");
+					$.scrollTo($(this).addClass("warning"), scrollduration, scrolloptions);
 					ok = confirm("Option " + (n + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
 					if (ok)
 						$(this).removeClass("error warning");
@@ -269,7 +269,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			for (var i = 0; i < $("input.optiontext").size(); i++) {
 				for (var j = i + 1; j < $("input.optiontext").size(); j++) {
 					if ($("#option_" + i + "_optiontext").val() == $("#option_" + j + "_optiontext").val()) {
-						$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").addClass("warning");
+						$.scrollTo($("#option_" + i + "_optiontext, #option_" + j + "_optiontext").addClass("warning"), scrollduration, scrolloptions);
 						ok = confirm("Options " + (i + 1) + " and " + (j + 1) + " are the same -- click OK to continue regardless or cancel to edit them");
 						if (ok)
 							$("#option_" + i + "_optiontext, #option_" + j + "_optiontext").removeClass("error warning");
