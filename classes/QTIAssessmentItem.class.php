@@ -119,7 +119,7 @@ abstract class QTIAssessmentItem {
 
 		$GLOBALS["headerjs"] = $this->headerJS();
 		$GLOBALS["headercss"] = $this->headerCSS();
-		$GLOBALS["title"] = "Edit an assessment item";
+		$GLOBALS["title"] = is_null($this->data("title")) ? "Edit untitled assessment item" : ("Edit assessment item \"" . htmlspecialchars($this->data("title")) . "\"");
 		include "htmlheader.php";
 		?>
 			<h2><?php echo $GLOBALS["title"]; ?></h2>

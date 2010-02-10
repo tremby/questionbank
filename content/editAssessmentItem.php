@@ -58,7 +58,7 @@ if (isset($_POST["edititem"])) {
 	if (!empty($tmp)) $thingstosay[] = "warnings";
 	$tmp = $ai->getMessages();
 	if (!empty($tmp)) $thingstosay[] = "messages";
-	$title = "Item complete";
+	$title = "Item \"" . htmlspecialchars($ai->data("title")) . "\" complete";
 	include "htmlheader.php";
 	?>
 	<h2><?php echo $title; ?></h2>

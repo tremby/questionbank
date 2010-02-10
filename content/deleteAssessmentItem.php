@@ -21,7 +21,7 @@ unset($_SESSION["items"][$_REQUEST["qtiid"]]);
 
 if (isset($_REQUEST["async"])) ok();
 
-$GLOBALS["title"] = "Item deleted";
+$GLOBALS["title"] = "Item \"" . htmlspecialchars($aititle) . "\" deleted";
 include "htmlheader.php";
 ?>
 
