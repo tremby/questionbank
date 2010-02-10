@@ -141,8 +141,9 @@ abstract class QTIAssessmentItem {
 
 					<?php echo $this->formHTML(); ?>
 
+					<dt>Actions</dt>
+					<dd><input id="edititemsubmit" type="submit" name="edititem" value="Submit"></dd>
 				</dl>
-				<div><input id="edititemsubmit" type="submit" name="edititem" value="Submit"></div>
 			</form>
 
 		<?php

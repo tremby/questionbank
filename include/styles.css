@@ -107,9 +107,14 @@ div.error, div.good, div.warning {
 
 dt {
 	font-weight: bold;
+}
+form dt {
 	border-top: 1px dotted #ddd;
 	margin-top: 1em;
-	padding-top: 0.2em;
+	padding-top: 0.5em;
+}
+form dt:first-child {
+	border-top-style: none;
 }
 
 input[type=text] {
@@ -127,4 +132,11 @@ table {
 input[type=submit] {
 	font-weight: bold;
 	padding: 0.3em 0.5em;
+}
+
+h2 {
+	background-color: #f8f8ff;
+	border-style: solid none;
+	border-width: 1px;
+	border-color: #ddd;
 }
