@@ -157,6 +157,10 @@ abstract class QTIAssessmentItem {
 		} else
 			$this->data = $data;
 
+		// don't even bother if title isn't set -- probably an abandoned item
+		if (is_null($this->data("title")))
+			return false;
+
 		// clear errors, warnings and messages
 		$this->errors = array();
 		$this->warnings = array();
@@ -207,22 +211,13 @@ abstract class QTIAssessmentItem {
 			$this->identifier = $identifier;
 	}
 
-	// get item title
-	public function getTitle() {
-		$qti = $this->getQTI();
-		if (!$qti)
-			return false;
-
-		return (string) $qti["title"];
-	}
-
 	// get item title with non filesystem-friendly characters replaced with 
 	// underscores
 	public function getTitleFS() {
-		if (!$this->getTitle())
+		if (!$this->data("title"))
 			return false;
 
-		return preg_replace('%[^A-Za-z0-9._-]%', "_", $this->getTitle());
+		return preg_replace('%[^A-Za-z0-9._-]%', "_", $this->data("title"));
 	}
 
 	// output nice HTML for any errors, warnings and messages
@@ -363,8 +358,8 @@ abstract class QTIAssessmentItem {
 	// compare items by title or ID
 	public static function compare_by_title(QTIAssessmentItem $a, QTIAssessmentItem $b) {
 		// get titles
-		$ta = $a->getTitle();
-		$tb = $b->getTitle();
+		$ta = $a->data("title");
+		$tb = $b->data("title");
 
 		// if both lack titles compare by ID
 		if ($ta === false && $tb === false)

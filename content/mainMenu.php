@@ -80,17 +80,21 @@ include "htmlheader.php";
 			<tr class="row<?php echo $odd; ?>" id="item_<?php echo $item->getQTIID(); ?>">
 				<td><?php if (!is_null($item->getModified())) echo friendlydate_html($item->getModified()); ?></td>
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
-				<td><?php echo $item->getTitle() === false ? "[untitled]" : htmlspecialchars($item->getTitle()); ?></td>
+				<td><?php echo is_null($item->data("title")) ? "[untitled]" : htmlspecialchars($item->data("title")); ?></td>
 				<td><?php echo htmlspecialchars($item->data("description")); ?></td>
 				<td><?php $keywords = $item->getKeywords(); if (!empty($keywords)) { ?><ul><?php foreach($keywords as $keyword) { ?><li><?php echo htmlspecialchars($keyword); ?></li><?php } ?></ul><?php } ?></td>
-				<td class="<?php echo count($item->getErrors()) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
-					<?php echo count($item->getErrors()); ?> error<?php echo plural($item->getErrors()); ?>
-					<br />
-					<?php echo count($item->getWarnings()); ?> warning<?php echo plural($item->getWarnings()); ?>
+				<td class="<?php echo (!$item->getQTI() || count($item->getErrors())) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
+					<?php if (!$item->getQTI()) { ?>
+						Unfinished
+					<?php } else { ?>
+						<?php echo count($item->getErrors()); ?> error<?php echo plural($item->getErrors()); ?>
+						<br />
+						<?php echo count($item->getWarnings()); ?> warning<?php echo plural($item->getWarnings()); ?>
+					<?php } ?>
 				</td>
 				<td><ul>
 					<li><a href="?page=editAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Edit</a></li>
-					<?php if (!count($item->getErrors())) { ?>
+					<?php if ($item->getQTI() && !count($item->getErrors())) { ?>
 						<li><a href="?page=previewAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Preview</a></li>
 						<li><a href="?page=downloadAssessmentItemXML&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download XML</a></li>
 						<li><a href="?page=downloadAssessmentItemContentPackage&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download content package</a></li>

@@ -15,7 +15,7 @@ if (!isset($_REQUEST["qtiid"])) badrequest("No QTI ID specified");
 if (!isset($_SESSION["items"][$_REQUEST["qtiid"]])) badrequest("No QTI found in session data for specified QTI ID");
 
 $ai = $_SESSION["items"][$_REQUEST["qtiid"]];
-$aititle = $ai->getTitle();
+$aititle = $ai->data("title");
 
 unset($_SESSION["items"][$_REQUEST["qtiid"]]);
 

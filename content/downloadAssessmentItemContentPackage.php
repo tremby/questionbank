@@ -49,7 +49,7 @@ $qmd->addChild("solutionAvailable", "true", NS_IMSQTI);
 // resource LOM metadata
 $lom = $md->addChild("lom", null, NS_IMSMD);
 $g = $lom->addChild("general", null, NS_IMSMD);
-$g->addChild("title", null, NS_IMSMD)->addChild("langstring", $ai->getTitle(), NS_IMSMD);
+$g->addChild("title", null, NS_IMSMD)->addChild("langstring", $ai->data("data"), NS_IMSMD);
 if (!is_null($ai->data("description")))
 	$g->addChild("description", null, NS_IMSMD)->addChild("langstring", $ai->data("description"), NS_IMSMD);
 foreach ($ai->getKeywords() as $keyword)
