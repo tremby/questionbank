@@ -24,7 +24,7 @@ header("Content-Script-Type: text/javascript");
 	<title><?php echo SITE_TITLE; ?><?php if (isset($GLOBALS["title"])) { ?> &ndash; <?php echo $GLOBALS["title"]; ?><?php } ?></title>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/jquery.js"></script>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/tiny_mce/jquery.tinymce.js"></script>
-	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/authoringtool.js.php"></script>
+	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/eqiat.js.php"></script>
 	<?php if (isset($GLOBALS["headerjs"])) { ?>
 		<script type="text/javascript">
 			<?php echo $GLOBALS["headerjs"]; ?>
