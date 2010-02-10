@@ -27,7 +27,7 @@ if (isset($_REQUEST["itemtype"])) {
 		$_SESSION["items"] = array();
 	$_SESSION["items"][$ai->getQTIID()] = $ai;
 
-	redirect("?page=editAssessmentItem&qtiid=" . $ai->getQTIID());
+	redirect(SITEROOT_WEB . "?page=editAssessmentItem&qtiid=" . $ai->getQTIID());
 }
 
 // choose from a list of item types
@@ -42,7 +42,7 @@ include "htmlheader.php";
 <dl>
 	<?php foreach ($items as $item) { ?>
 		<dt>
-			<a href="?page=newAssessmentItem&amp;itemtype=<?php echo $item->itemType(); ?>">
+			<a href="<?php echo SITEROOT_WEB; ?>?page=newAssessmentItem&amp;itemtype=<?php echo $item->itemType(); ?>">
 				<?php echo htmlspecialchars(ucfirst($item->itemTypePrint())); ?>
 			</a>
 		</dt>

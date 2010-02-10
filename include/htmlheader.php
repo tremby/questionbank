@@ -43,7 +43,7 @@ header("Content-Script-Type: text/javascript");
 	<h1><?php echo SITE_TITLE; ?></h1>
 	<ul id="headermenu">
 		<?php if ($GLOBALS["page"] != "mainMenu") { ?>
-			<li><a href="?">Back to main menu</a></li>
+			<li><a href="<?php echo SITEROOT_WEB; ?>">Back to main menu</a></li>
 		<?php } ?>
 	</ul>
 </div>

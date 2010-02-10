@@ -48,10 +48,10 @@ include "htmlheader.php";
 
 <h2>Main menu</h2>
 <dl>
-	<dt><a href="?page=newAssessmentItem">New assessment item</a></dt>
+	<dt><a href="<?php echo SITEROOT_WEB; ?>?page=newAssessmentItem">New assessment item</a></dt>
 	<dd>Write a new assessment item</dd>
 
-	<dt><a href="?page=uploadAssessmentItem">Upload an existing assessment item</a></dt>
+	<dt><a href="<?php echo SITEROOT_WEB; ?>?page=uploadAssessmentItem">Upload an existing assessment item</a></dt>
 	<dd>Upload an existing assessment item so it can be edited and packaged</dd>
 
 	<dt><a href="#itemlist">Item list</a></dt>
@@ -93,13 +93,13 @@ include "htmlheader.php";
 					<?php } ?>
 				</td>
 				<td><ul>
-					<li><a href="?page=editAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Edit</a></li>
+					<li><a href="<?php echo SITEROOT_WEB; ?>?page=editAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Edit</a></li>
 					<?php if ($item->getQTI() && !count($item->getErrors())) { ?>
-						<li><a href="?page=previewAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Preview</a></li>
-						<li><a href="?page=downloadAssessmentItemXML&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download XML</a></li>
-						<li><a href="?page=downloadAssessmentItemContentPackage&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download content package</a></li>
+						<li><a href="<?php echo SITEROOT_WEB; ?>?page=previewAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Preview</a></li>
+						<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemXML&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download XML</a></li>
+						<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemContentPackage&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download content package</a></li>
 					<?php } ?>
-					<li><a class="deleteitem" href="?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a></li>
+					<li><a class="deleteitem" href="<?php echo SITEROOT_WEB; ?>?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a></li>
 				</ul></td>
 			</tr>
 		<?php } ?>

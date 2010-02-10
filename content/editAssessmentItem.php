@@ -73,11 +73,11 @@ if (isset($_POST["edititem"])) {
 
 	<h3>Actions</h3>
 	<ul>
-		<li><a href="?">Go back to the main menu and item list</a></li>
-		<li><a href="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Preview the item full screen</a></li>
-		<li><a href="?page=downloadAssessmentItemXML&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Download the QTI item as an XML file</a></li>
-		<li><a href="?page=downloadAssessmentItemContentPackage&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Download the QTI item as a content package</a> to include its metadata</li>
-		<li><a href="?page=editAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Edit this item</a> further</li>
+		<li><a href="<?php echo SITEROOT_WEB; ?>">Go back to the main menu and item list</a></li>
+		<li><a href="<?php echo SITEROOT_WEB; ?>?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Preview the item full screen</a></li>
+		<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemXML&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Download the QTI item as an XML file</a></li>
+		<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemContentPackage&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Download the QTI item as a content package</a> to include its metadata</li>
+		<li><a href="<?php echo SITEROOT_WEB; ?>?page=editAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Edit this item</a> further</li>
 	</ul>
 
 	<?php

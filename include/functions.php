@@ -153,8 +153,7 @@ function validateQTI($xml, &$errors, &$warnings, &$messages) {
 // redirect to another URL
 function redirect($destination = null, $anal = true, $permanent = false, $textonly = false) {
 	session_write_close();
-	if ($permanent)
-		header("HTTP/1.1 301 Moved Permamently");
+	header("HTTP/1.1 " . ($permanent ? "301 Moved Permamently" : "302 Moved Temporarily"));
 
 	if (is_null($destination))
 		$destination = $_SERVER["REQUEST_URI"];
@@ -162,8 +161,12 @@ function redirect($destination = null, $anal = true, $permanent = false, $texton
 	// HTTP spec says location has to be absolute. If we started with a slash, 
 	// assume it started with the siteroot and so we can prepend the site's 
 	// domain.
+	// Otherwise if it doesn't start with http:// or https:// prepend the 
+	// hostname and the directory of the current request URI
 	if ($destination[0] == "/")
 		$destination = "http://" . $_SERVER["HTTP_HOST"] . $destination;
+	else if (!preg_match('%^https?://%', $destination))
+		$destination = "http://" . $_SERVER["HTTP_HOST"] . dirname($_SERVER["REQUEST_URI"]) . "/" . $destination;
 
 	header("Location: " . $destination);
 	if ($anal)

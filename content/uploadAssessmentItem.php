@@ -159,7 +159,7 @@ function handleupload(&$errors, &$warnings, &$messages) {
 	$_SESSION["items"][$ai->getQTIID()] = $ai;
 
 	// take the user to the main menu with the uploaded item highlighted
-	redirect("?#item_" . $ai->getQTIID());
+	redirect(SITEROOT_WEB . "#item_" . $ai->getQTIID());
 }
 
 $errors = array();
