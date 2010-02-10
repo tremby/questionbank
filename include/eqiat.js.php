@@ -45,7 +45,7 @@ qtitinymceoptions = {
 		+ "dfn,kbd,"
 		+ "q[cite],samp,small,"
 		+ "tt,var,big",
-	entities: "34,quot,38,amp,39,apos,60,lt,62,gt",
+	entity_encoding: "raw",
 	content_css: "<?php echo SITEROOT_WEB; ?>include/tinymce.css",
 };
 $(document).ready(function() {
