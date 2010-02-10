@@ -46,7 +46,7 @@ qtitinymceoptions = {
 		+ "q[cite],samp,small,"
 		+ "tt,var,big",
 	entity_encoding: "raw",
-	content_css: "<?php echo SITEROOT_WEB; ?>include/tinymce.css",
+	content_css: "<?php echo SITEROOT_WEB; ?>include/tinymce.css"
 };
 $(document).ready(function() {
 	$("textarea.qtitinymce").focus(focustinymce);
@@ -69,7 +69,7 @@ removetinymces = function() {
 // scrolling options
 scrollduration = 0;
 scrolloptions = {
-	offset: -50,
+	offset: -50
 };
 
 // check edit item form

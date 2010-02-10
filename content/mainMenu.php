@@ -32,11 +32,11 @@ $(document).ready(function() {
 		jQuery.ajax({
 			"cache": false,
 			"context": $(this).parents("tr:first").get(0),
-			"data": { "async": true, "qtiid": $(this).parents("tr:first").attr("id").split("_").splice(1).join("_"), },
+			"data": { "async": true, "qtiid": $(this).parents("tr:first").attr("id").split("_").splice(1).join("_") },
 			"error": function(xhr, text, error) { console.error(error); },
 			"success": function() { $(this.context).remove(); },
 			"type": "POST",
-			"url": "<?php echo SITEROOT_WEB; ?>?page=deleteAssessmentItem",
+			"url": "<?php echo SITEROOT_WEB; ?>?page=deleteAssessmentItem"
 		});
 	});
 });
