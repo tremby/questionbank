@@ -13,7 +13,7 @@ The source is available at <http://github.com/tremby/validate>.
 REQUIREMENTS
 
 -	Jars for SLF4J and JQTI (see README file in the lib subdirectory)
--	Java and a Java compiler (tested on Sun Java 1.6)
+-	Java and a Java compiler (tested on Sun Java 1.6.0)
 
 COMPILATION
 
@@ -61,6 +61,7 @@ EXIT CODES
 3	Error reading file
 4	XML parsing error
 5	Error reading from standard input
+253	Validate.class not found (only used by run.sh script)
 254	Unknown QTI parsing error
 255	Unexpected arguments
 
