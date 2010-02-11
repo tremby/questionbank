@@ -30,6 +30,8 @@ function handleupload(&$errors, &$warnings, &$messages) {
 			$xml = file_get_contents($_FILES["file"]["tmp_name"]);
 			break;
 		case "application/zip":
+		case "application/x-zip-compressed":
+		case "application/x-zip":
 			// open zip file
 			$zip = new ZipArchive();
 			if ($zip->open($_FILES["file"]["tmp_name"]) !== true) {
