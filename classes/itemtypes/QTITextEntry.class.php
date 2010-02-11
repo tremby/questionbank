@@ -270,6 +270,19 @@ class QTITextEntry extends QTIAssessmentItem {
 			});
 			if (!ok) return false;
 
+			// can't have empty responses
+			$("input.responsetext:visible").each(function(n) {
+				if ($(this).val().length == 0) {
+					var gapid = parseInt($(this).attr("id").split("_")[1]);
+					var responseid = parseInt($(this).attr("id").split("_")[3]);
+					$.scrollTo($(this).addClass("error"), scrollduration, scrolloptions);
+					alert("Gap " + (gapid + 1) + " response " + (responseid + 1) + " is empty -- this is not allowed");
+					ok = false;
+					return false; //this is "break" in the Jquery each() pseudoloop
+				}
+			});
+			if (!ok) return false;
+
 			// can't have identical responses for a single gap
 			for (var gap = 0; gap < $("div.gap:visible").size(); gap++) {
 				for (var i = 0; i < $("#gap_" + gap + " input.responsetext").size(); i++) {
@@ -287,23 +300,8 @@ class QTITextEntry extends QTIAssessmentItem {
 		};
 
 		edititemsubmitcheck_itemspecificwarnings = function() {
-			// confirm the user wanted any empty boxes
-			var ok = true;
-			$("input.responsetext:visible").each(function(n) {
-				if ($(this).val().length == 0) {
-					var gapid = parseInt($(this).attr("id").split("_")[1]);
-					var responseid = parseInt($(this).attr("id").split("_")[3]);
-					$.scrollTo($(this).addClass("warning"), scrollduration, scrolloptions);
-					ok = confirm("Gap " + (gapid + 1) + " response " + (responseid + 1) + " is empty -- click OK to continue regardless or cancel to edit it");
-					if (ok)
-						$(this).removeClass("error warning");
-					else
-						return false; //this is "break" in the Jquery each() pseudoloop
-				}
-			});
-			if (!ok) return false;
-
 			// confirm the user wanted zero scores
+			var ok = true;
 			$("input.responsescore:visible").each(function(n) {
 				if (parseFloat($(this).val()) == 0.0) {
 					var gapid = parseInt($(this).attr("id").split("_")[1]);
