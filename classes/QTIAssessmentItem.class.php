@@ -199,17 +199,17 @@ abstract class QTIAssessmentItem {
 	// set QTI identifier or generate a new one if none given
 	public function setQTIID($identifier = null) {
 		if (is_null($identifier))
-			$this->identifier = "item_" . md5(uniqid());
+			$this->identifier = "ITEM_" . md5(uniqid());
 		else
 			$this->identifier = $identifier;
 	}
 
 	// set manifest identifier or generate a new one if none given
-	public function setMID($identifier = null) {
-		if (is_null($identifier))
-			$this->identifier = "MANIFEST_" . md5(uniqid());
+	public function setMID($midentifier = null) {
+		if (is_null($midentifier))
+			$this->midentifier = "MANIFEST_" . md5(uniqid());
 		else
-			$this->identifier = $identifier;
+			$this->midentifier = $midentifier;
 	}
 
 	// get item title with non filesystem-friendly characters replaced with 
