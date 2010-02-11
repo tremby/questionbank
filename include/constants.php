@@ -18,9 +18,14 @@ define("VERSION", "0.1-git");
 // ending in a trailing slash
 define("SITEROOT_LOCAL", dirname(dirname(__FILE__)) . "/");
 
+// add the trailing slash to document_root if it doesn't already have it
+$document_root = $_SERVER["DOCUMENT_ROOT"];
+if ($document_root[strlen($document_root) - 1] != "/")
+	$document_root .= "/";
+
 // query path to the eqiat root directory ending in a trailing slash -- makes an 
 // absolute URL to the main page
-define("SITEROOT_WEB", "/" . substr(SITEROOT_LOCAL, strlen($_SERVER["DOCUMENT_ROOT"])));
+define("SITEROOT_WEB", "/" . substr(SITEROOT_LOCAL, strlen($document_root)));
 
 // TODO: Ensure the above two give the expected results on different server 
 // types (Windows? Lighttpd?). Expected values:
