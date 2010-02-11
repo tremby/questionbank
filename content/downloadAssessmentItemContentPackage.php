@@ -18,13 +18,15 @@ $ai = $_SESSION["items"][$_REQUEST["qtiid"]];
 
 // build the manifest
 
-$manifest = simplexml_load_string('<manifest
-	xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
-	xmlns:imsmd="' . NS_IMSMD . '"
-	xmlns:imsqti="' . NS_IMSQTI . '"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd http://www.imsglobal.org/xsd/imsmd_v1p2 imsmd_v1p2p4.xsd http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
-/>');
+$manifest = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>
+	<manifest
+		xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+		xmlns:imsmd="' . NS_IMSMD . '"
+		xmlns:imsqti="' . NS_IMSQTI . '"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd http://www.imsglobal.org/xsd/imsmd_v1p2 imsmd_v1p2p4.xsd http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
+	/>
+');
 $manifest->addAttribute("identifier", $ai->getMID());
 
 // organizations element

@@ -398,10 +398,12 @@ class QTITextEntry extends QTIAssessmentItem {
 			return false;
 
 		// container element and other metadata
-		$ai = new SimpleXMLElement('
-			<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
-			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"/>
+		$ai = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>
+			<assessmentItem
+				xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
+			/>
 		');
 		$ai->addAttribute("adaptive", "false");
 		$ai->addAttribute("timeDependent", "false");
