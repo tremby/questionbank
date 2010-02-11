@@ -12,7 +12,7 @@ licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
 // version
-define("VERSION", "0.1-git");
+define("VERSION", "0.1");
 
 // filesystem path to the eqiat root directory -- one level above this file, 
 // ending in a trailing slash
