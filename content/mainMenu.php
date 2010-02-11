@@ -84,7 +84,7 @@ include "htmlheader.php";
 				<td><?php echo htmlspecialchars($item->data("description")); ?></td>
 				<td><?php $keywords = $item->getKeywords(); if (!empty($keywords)) { ?><ul><?php foreach($keywords as $keyword) { ?><li><?php echo htmlspecialchars($keyword); ?></li><?php } ?></ul><?php } ?></td>
 				<td class="<?php echo (!$item->getQTI() || count($item->getErrors())) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
-					<?php if (!$item->getQTI()) { ?>
+					<?php if (is_null($item->data("title"))) { ?>
 						Unfinished
 					<?php } else { ?>
 						<?php echo count($item->getErrors()); ?> error<?php echo plural($item->getErrors()); ?>
