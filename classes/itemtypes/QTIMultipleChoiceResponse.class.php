@@ -452,11 +452,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			$rd->correctResponse->addChild("value", $this->data["correct"]);
 		}
 
-		// feedback outcome declarations
-		if (isset($this->data["feedback"])) for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
+		// feedback outcome declaration
+		if (isset($this->data["feedback"])) {
 			$od = $ai->addChild("outcomeDeclaration");
-			$od->addAttribute("identifier", "feedback_option_" . $i);
-			$od->addAttribute("cardinality", "single");
+			$od->addAttribute("identifier", "FEEDBACK");
+			$od->addAttribute("cardinality", "multiple");
 			$od->addAttribute("baseType", "identifier");
 		}
 
@@ -535,6 +535,11 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		$sov->addChild("baseValue", "0")->addAttribute("baseType", "integer");
 
 		if (isset($this->data["feedback"])) {
+			// initialize feedback var
+			$sov = $rp->addChild("setOutcomeValue");
+			$sov->addAttribute("identifier", "FEEDBACK");
+			$sov->addChild("null");
+
 			// feedback logic
 			for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
 				$rc = $rp->addChild("responseCondition");
@@ -549,12 +554,10 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$m->addChild("variable")->addAttribute("identifier", "RESPONSE");				//is equal to this
 				}
 				$sov = $ri->addChild("setOutcomeValue");											//then do this
-				$sov->addAttribute("identifier", "feedback_option_$i");
-				$sov->addChild("baseValue", "true")->addAttribute("baseType", "identifier");
-				$re = $rc->addChild("responseElse");												//else do this
-				$sov = $re->addChild("setOutcomeValue");
-				$sov->addAttribute("identifier", "feedback_option_$i");
-				$sov->addChild("null");
+				$sov->addAttribute("identifier", "FEEDBACK");
+				$m = $sov->addChild("multiple");
+				$m->addChild("variable")->addAttribute("identifier", "FEEDBACK");
+				$m->addChild("baseValue", "feedback_option_$i")->addAttribute("baseType", "identifier");
 			}
 
 			// the feedback itself
@@ -563,8 +566,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$this->data["option_{$i}_feedback_chosen"] = wrapindiv($this->data["option_{$i}_feedback_chosen"]);
 
 					$mf = $ai->addChild("modalFeedback");
-					$mf->addAttribute("outcomeIdentifier", "feedback_option_{$i}");
-					$mf->addAttribute("identifier", "true");
+					$mf->addAttribute("outcomeIdentifier", "FEEDBACK");
+					$mf->addAttribute("identifier", "feedback_option_$i");
 					$mf->addAttribute("showHide", "show");
 
 					// parse it as XML
@@ -580,8 +583,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$this->data["option_{$i}_feedback_unchosen"] = wrapindiv($this->data["option_{$i}_feedback_unchosen"]);
 
 					$mf = $ai->addChild("modalFeedback");
-					$mf->addAttribute("outcomeIdentifier", "feedback_option_{$i}");
-					$mf->addAttribute("identifier", "true");
+					$mf->addAttribute("outcomeIdentifier", "FEEDBACK");
+					$mf->addAttribute("identifier", "feedback_option_$i");
 					$mf->addAttribute("showHide", "hide");
 
 					// parse it as XML
@@ -688,13 +691,13 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		// not checking this properly at all but if modalFeedback elements exist 
 		// which look about right, use them for feedback
 		foreach ($xml->modalFeedback as $mf) {
-			$oi = explode("_", (string) $mf["outcomeIdentifier"]);
-			if (count($oi) == 3 && $oi[2] < count($options) && (string) $mf["identifier"] == "true") {
+			$id = explode("_", (string) $mf["identifier"]);
+			if (count($id) == 3 && $id[2] < count($options) && (string) $mf["outcomeIdentifier"] == "FEEDBACK") {
 				$data["feedback"] = true;
 				if ((string) $mf["showHide"] == "show")
-					$data["option_{$oi[2]}_feedback_chosen"] = xml_remove_wrapper_element($mf->asXML());
+					$data["option_{$id[2]}_feedback_chosen"] = xml_remove_wrapper_element($mf->asXML());
 				else
-					$data["option_{$oi[2]}_feedback_unchosen"] = xml_remove_wrapper_element($mf->asXML());
+					$data["option_{$id[2]}_feedback_unchosen"] = xml_remove_wrapper_element($mf->asXML());
 			}
 		}
 
