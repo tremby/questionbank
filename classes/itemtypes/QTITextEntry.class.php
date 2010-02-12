@@ -258,11 +258,11 @@ class QTITextEntry extends QTIAssessmentItem {
 			// scores must make sense
 			var ok = true;
 			$("input.responsescore:visible").each(function() {
-				if ($(this).val().length == 0 || isNaN($(this).val()) || parseFloat($(this).val()) < 0) {
+				if ($(this).val().length == 0 || isNaN($(this).val())) {
 					var gapid = parseInt($(this).attr("id").split("_")[1]);
 					var responseid = parseInt($(this).attr("id").split("_")[3]);
 					$.scrollTo($(this).addClass("error"), scrollduration, scrolloptions);
-					alert("Score for gap " + (gapid + 1) + " response " + (responseid + 1) + " must be a positive number");
+					alert("Score for gap " + (gapid + 1) + " response " + (responseid + 1) + " must be a number");
 					ok = false;
 					return false;
 				}
