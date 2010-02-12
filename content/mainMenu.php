@@ -22,7 +22,6 @@ $items = array_reverse($items);
 
 ob_start();
 ?>
-//<script type="text/javascript"> (get vim to highlight this properly)
 $(document).ready(function() {
 	if (location.hash.substr(0, 6) == "#item_")
 		$(location.hash).addClass("highlight");
@@ -40,7 +39,6 @@ $(document).ready(function() {
 		});
 	});
 });
-//</script>
 <?php
 $GLOBALS["headerjs"] = ob_get_clean();
 include "htmlheader.php";

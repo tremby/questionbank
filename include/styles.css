@@ -147,3 +147,7 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+
+object.embeddedhtml {
+	border: 1px solid #ccc;
+}

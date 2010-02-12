@@ -22,7 +22,6 @@ class QTITextEntry extends QTIAssessmentItem {
 	protected function headerJS() {
 		ob_start();
 		?>
-		//<script type="text/javascript"> (make vim colour the syntax properly)
 		getgapstrings = function() {
 			var value = $("#textbody").val();
 			var pos = 0;
@@ -229,7 +228,7 @@ class QTITextEntry extends QTIAssessmentItem {
 
 		renumber = function() {
 			var gapid = -1; // include template gap
-			$("#gaps div.gap").each(function() {
+			$("div.gap").each(function() {
 				$(this).attr("id", "gap_" + gapid);
 				$("span.gapnumber", this).html(gapid + 1);
 				var responseid = 0;
@@ -341,48 +340,44 @@ class QTITextEntry extends QTIAssessmentItem {
 		<dt>Responses</dt>
 		<dd>
 			<p class="hint">Responses are always case-sensitive</p>
-			<dl id="gaps">
-				<div class="gap" id="gap_-1" style="display: none;">
-					<dt>Gap <span class="gapnumber">0</span></dt>
-					<dd>
+			<div class="gap" id="gap_-1" style="display: none;">
+				<h4>Gap <span class="gapnumber">0</span></h4>
+				<table class="responses">
+					<tr>
+						<th>Response</th>
+						<th>Score</th>
+						<th>Actions</th>
+					</tr>
+					<tr class="response row0">
+						<td><input class="responsetext" type="text" name="gap_-1_response_0" id="gap_-1_response_0" size="32"></td>
+						<td><input class="responsescore small" type="text" name="gap_-1_response_0_score" id="gap_-1_response_0_score" size="3" value="1"></td>
+						<td><input style="display: none;" type="button" class="removeresponse" value="Remove"></td>
+					</tr>
+				</table>
+				<input type="button" class="addresponse" value="Add response">
+			</div>
+			<?php for ($i = 0; array_key_exists("gap_{$i}_response_0", $this->data); $i++) { ?>
+				<div class="gap" id="gap_<?php echo $i; ?>">
+					<h4>Gap <span class="gapnumber"><?php echo $i + 1; ?></span></h4>
+					<div>
 						<table class="responses">
 							<tr>
 								<th>Response</th>
 								<th>Score</th>
 								<th>Actions</th>
 							</tr>
-							<tr class="response row0">
-								<td><input class="responsetext" type="text" name="gap_-1_response_0" id="gap_-1_response_0" size="32"></td>
-								<td><input class="responsescore small" type="text" name="gap_-1_response_0_score" id="gap_-1_response_0_score" size="3" value="1"></td>
-								<td><input style="display: none;" type="button" class="removeresponse" value="Remove"></td>
-							</tr>
+							<?php for ($j = 0; array_key_exists("gap_{$i}_response_{$j}", $this->data); $j++) { $odd = $j % 2; ?>
+								<tr class="response row<?php echo $odd; ?>">
+									<td><input class="responsetext" type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" size="32" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}"]); ?>"></td>
+									<td><input class="responsescore" type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" size="3" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}_score"]); ?>"></td>
+									<td><input <?php if ($j == 0) { ?>style="display: none;" <?php } ?>type="button" class="removeresponse" value="Remove"></td>
+								</tr>
+							<?php } ?>
 						</table>
 						<input type="button" class="addresponse" value="Add response">
-					</dd>
-				</div>
-				<?php for ($i = 0; array_key_exists("gap_{$i}_response_0", $this->data); $i++) { ?>
-					<div class="gap" id="gap_<?php echo $i; ?>">
-						<dt>Gap <span class="gapnumber"><?php echo $i + 1; ?></span></dt>
-						<dd>
-							<table class="responses">
-								<tr>
-									<th>Response</th>
-									<th>Score</th>
-									<th>Actions</th>
-								</tr>
-								<?php for ($j = 0; array_key_exists("gap_{$i}_response_{$j}", $this->data); $j++) { $odd = $j % 2; ?>
-									<tr class="response row<?php echo $odd; ?>">
-										<td><input class="responsetext" type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>" size="32" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}"]); ?>"></td>
-										<td><input class="responsescore" type="text" name="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" id="gap_<?php echo $i; ?>_response_<?php echo $j; ?>_score" size="3" value="<?php echo htmlspecialchars($this->data["gap_{$i}_response_{$j}_score"]); ?>"></td>
-										<td><input <?php if ($j == 0) { ?>style="display: none;" <?php } ?>type="button" class="removeresponse" value="Remove"></td>
-									</tr>
-								<?php } ?>
-							</table>
-							<input type="button" class="addresponse" value="Add response">
-						</dd>
 					</div>
-				<?php } ?>
-			</dl>
+				</div>
+			<?php } ?>
 		</dd>
 		<?php
 		return ob_get_clean();

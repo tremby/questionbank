@@ -15,7 +15,6 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 	protected function headerJS() {
 		ob_start();
 		?>
-		//<script type="javascript"> (make vim colour the syntax properly)
 		addoption = function() {
 			// clone the last option on the list and increment its id
 			var newoption = $("#options tr.option:last").clone();
@@ -311,14 +310,16 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		?>
 		<dt>Item type</dt>
 		<dd>
-			<ul><label>
-				<input type="radio" name="itemtype" class="itemtype" id="itemtype_mc" value="multipleChoice"<?php if (!$multipleresponse) { ?> checked="checked"<?php } ?>>
-				Multiple choice (choose one answer)
-			</label></ul>
-			<ul><label>
-				<input type="radio" name="itemtype" class="itemtype" id="itemtype_mr" value="multipleResponse"<?php if ($multipleresponse) { ?> checked="checked"<?php } ?>>
-				Multiple response (choose all appropriate answers)
-			</label></ul>
+			<ul>
+				<li><label>
+					<input type="radio" name="itemtype" class="itemtype" id="itemtype_mc" value="multipleChoice"<?php if (!$multipleresponse) { ?> checked="checked"<?php } ?>>
+					Multiple choice (choose one answer)
+				</label></li>
+				<li><label>
+					<input type="radio" name="itemtype" class="itemtype" id="itemtype_mr" value="multipleResponse"<?php if ($multipleresponse) { ?> checked="checked"<?php } ?>>
+					Multiple response (choose all appropriate answers)
+				</label></li>
+			</ul>
 		</dd>
 
 		<dt><label for="prompt">Question prompt</label></dt>

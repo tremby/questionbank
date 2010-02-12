@@ -22,7 +22,6 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 	protected function headerJS() {
 		ob_start();
 		?>
-		//<script type="javascript"> (make vim colour the syntax properly)
 		alphaChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 		addoption = function() {

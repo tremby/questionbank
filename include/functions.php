@@ -327,4 +327,9 @@ if (!function_exists("lcfirst")) {
 	}
 }
 
+// return true if the user's on IE (of any version)
+function usingIE() {
+	return isset($_SERVER["HTTP_USER_AGENT"]) && (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false);
+}
+
 ?>

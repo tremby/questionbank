@@ -22,7 +22,6 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 	protected function headerJS() {
 		ob_start();
 		?>
-		//<script type="text/javascript"> (make vim colour the syntax properly)
 		addquestion = function() {
 			// clone the last question on the list and increment its id
 			var newquestion = $("#questions tr.question:last").clone();

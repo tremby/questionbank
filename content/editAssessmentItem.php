@@ -69,7 +69,11 @@ if (isset($_POST["edititem"])) {
 	// show preview and download links
 	?>
 	<h3>QTIEngine preview</h3>
-	<iframe width="100%" height="400" src="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>"></iframe>
+	<?php if (usingIE()) { //iframe isn't available in HTML 4 Strict but IE (tested on 8) doesn't like object elements used for embedded HTML ?>
+		<iframe width="100%" height="400" src="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>"></iframe>
+	<?php } else { ?>
+		<object class="embeddedhtml" width="100%" height="400" type="text/html" data="?page=previewAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>"></object>
+	<?php } ?>
 
 	<h3>Actions</h3>
 	<ul>

@@ -17,7 +17,7 @@ header("Content-Style-Type: text/css");
 header("Content-Script-Type: text/javascript");
 
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C/DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -41,10 +41,16 @@ header("Content-Script-Type: text/javascript");
 <body>
 <div id="header">
 	<h1><?php echo SITE_TITLE; ?></h1>
-	<ul id="headermenu">
-		<?php if ($GLOBALS["page"] != "mainMenu") { ?>
-			<li><a href="<?php echo SITEROOT_WEB; ?>">Back to main menu</a></li>
-		<?php } ?>
-	</ul>
+	<?php
+	$menuitems = array();
+	if ($GLOBALS["page"] != "mainMenu")
+		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "\">Back to main menu</a>";
+	if (!empty($menuitems)) { ?>
+		<ul id="headermenu">
+			<?php foreach ($menuitems as $menuitem) { ?>
+				<li><?php echo $menuitem; ?></li>
+			<?php } ?>
+		</ul>
+	<?php } ?>
 </div>
 <div id="body">
