@@ -889,6 +889,29 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			$data["maxscore"] = $val;
 		}
 
+		// check response conditions for incrementing score if a particular 
+		// response is given
+		foreach ($xml->responseProcessing->responseCondition as $rc) {
+			if (count($rc->responseIf) != 1) continue;
+			if (count($rc->responseIf->member) != 1) continue;
+			$mchildren = $rc->responseIf->member->children();
+			if ($mchildren[0]->getName() != "baseValue" || (string) $mchildren[0]["baseType"] != "identifier") continue;
+			$oid = (string) $mchildren[0];
+			if ($mchildren[1]->getName() != "variable" || (string) $mchildren[1]["identifier"] != "RESPONSE") continue;
+			if (count($rc->responseIf->setOutcomeValue) != 1) continue;
+			if ((string) $rc->responseIf->setOutcomeValue["identifier"] != "SCORE") continue;
+			if (count($rc->responseIf->setOutcomeValue->sum) != 1) continue;
+			if (count($rc->responseIf->setOutcomeValue->sum->children()) != 2) continue;
+			if (count($rc->responseIf->setOutcomeValue->sum->variable) != 1 || (string) $rc->responseIf->setOutcomeValue->sum->variable["identifier"] != "SCORE") continue;
+			if (count($rc->responseIf->setOutcomeValue->sum->baseValue) != 1) continue;
+			$val = (string) $rc->responseIf->setOutcomeValue->sum->baseValue;
+
+			$pos = array_search((string) $oid, $options);
+			if ($pos === false)
+				continue;
+			$data["option_{$pos}_score"] = $val;
+		}
+
 		// happy with that -- set data property and identifier
 		$this->data = $data;
 		$this->setQTIID((string) $xml["identifier"]);
