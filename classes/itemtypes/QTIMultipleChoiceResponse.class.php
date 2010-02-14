@@ -859,6 +859,26 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			}
 		}
 
+		// get min score
+		foreach ($xml->responseProcessing->responseCondition as $rc) {
+			if (count($rc->responseIf) != 1) continue;
+			if (count($rc->responseIf->lt) != 1) continue;
+			$ltchildren = $rc->responseIf->lt->children();
+			if ($ltchildren[0]->getName() != "variable" || (string) $ltchildren[0]["identifier"] != "SCORE") continue;
+			if ($ltchildren[1]->getName() != "baseValue") continue;
+			$data["minscore"] = (string) $ltchildren[1];
+		}
+
+		// get max score
+		foreach ($xml->responseProcessing->responseCondition as $rc) {
+			if (count($rc->responseIf) != 1) continue;
+			if (count($rc->responseIf->gt) != 1) continue;
+			$gtchildren = $rc->responseIf->gt->children();
+			if ($gtchildren[0]->getName() != "variable" || (string) $gtchildren[0]["identifier"] != "SCORE") continue;
+			if ($gtchildren[1]->getName() != "baseValue") continue;
+			$data["maxscore"] = (string) $gtchildren[1];
+		}
+
 		// happy with that -- set data property and identifier
 		$this->data = $data;
 		$this->setQTIID((string) $xml["identifier"]);
