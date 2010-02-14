@@ -646,6 +646,9 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 			// add the option's score if it was chosen
 			for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
+				if ($this->data["scoring"] == "custom" && $scores[$i] == 0)
+					continue;
+
 				$rc = $rp->addChild("responseCondition");
 				$ri = $rc->addChild("responseIf");
 				$c = $ri->addChild("member");
