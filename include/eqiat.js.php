@@ -50,6 +50,8 @@ qtitinymceoptions = {
 };
 $(document).ready(function() {
 	$("textarea.qtitinymce").focus(focustinymce);
+	qtitinymceoptions.theme_advanced_resizing = $("#stimulus").is(".resizable");
+	$("#stimulus").tinymce(qtitinymceoptions);
 });
 focustinymce = function() {
 	if (typeof tinyMCE != "undefined" && tinyMCE.get($(this).attr("id")))
