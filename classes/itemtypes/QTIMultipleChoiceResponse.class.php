@@ -866,7 +866,12 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			$ltchildren = $rc->responseIf->lt->children();
 			if ($ltchildren[0]->getName() != "variable" || (string) $ltchildren[0]["identifier"] != "SCORE") continue;
 			if ($ltchildren[1]->getName() != "baseValue") continue;
-			$data["minscore"] = (string) $ltchildren[1];
+			$val = (string) $ltchildren[1];
+			if (count($rc->responseIf->setOutcomeValue) != 1) continue;
+			if ((string) $rc->responseIf->setOutcomeValue["identifier"] != "SCORE") continue;
+			if (count($rc->responseIf->setOutcomeValue->baseValue) != 1) continue;
+			if ((string) $rc->responseIf->setOutcomeValue->baseValue != $val) continue;
+			$data["minscore"] = $val;
 		}
 
 		// get max score
@@ -876,7 +881,12 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			$gtchildren = $rc->responseIf->gt->children();
 			if ($gtchildren[0]->getName() != "variable" || (string) $gtchildren[0]["identifier"] != "SCORE") continue;
 			if ($gtchildren[1]->getName() != "baseValue") continue;
-			$data["maxscore"] = (string) $gtchildren[1];
+			$val = (string) $gtchildren[1];
+			if (count($rc->responseIf->setOutcomeValue) != 1) continue;
+			if ((string) $rc->responseIf->setOutcomeValue["identifier"] != "SCORE") continue;
+			if (count($rc->responseIf->setOutcomeValue->baseValue) != 1) continue;
+			if ((string) $rc->responseIf->setOutcomeValue->baseValue != $val) continue;
+			$data["maxscore"] = $val;
 		}
 
 		// happy with that -- set data property and identifier
