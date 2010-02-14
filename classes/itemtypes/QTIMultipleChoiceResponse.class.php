@@ -137,8 +137,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$(this).remove();
 				});
 
-				// hide choice restriction options
-				$(".choicerestrictions").hide();
+				// hide choice restriction and scoring options
+				$(".choicerestrictions, #scoring").hide();
 			} else {
 				// change to checkboxes
 				if ($("#option_0_correct").attr("type") == "checkbox") return;
@@ -150,8 +150,18 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 					$(this).remove();
 				});
 
-				// show choice restriction options
-				$(".choicerestrictions").show();
+				// show choice restriction and scoring options
+				$(".choicerestrictions, #scoring").show();
+			}
+		};
+
+		switchscoringtype = function() {
+			if ($("#scoring input:checked").attr("id") == "scoring_custom") {
+				$(".scorecol, #scorerestrictions").show();
+				$(".correctcol").hide();
+			} else {
+				$(".scorecol, #scorerestrictions").hide();
+				$(".correctcol").show();
 			}
 		};
 
@@ -161,6 +171,36 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				if ($("input.correct:checked").size() == 0) {
 					alert("One response must be marked as correct");
 					return false;
+				}
+			}
+
+			// score restriction options must make sense
+			if ($("#scoring input:checked").attr("id") == "scoring_custom") {
+				// maximum score
+				if ($("#maxscore").val().length != 0 && isNaN($("#maxscore").val())) {
+					$.scrollTo($("#maxscore").addClass("error"), scrollduration, scrolloptions);
+					alert("Maximum score must be blank or a number");
+					return false;
+				}
+
+				// minimum score
+				if ($("#minscore").val().length != 0 && isNaN($("#minscore").val())) {
+					$.scrollTo($("#minscore").addClass("error"), scrollduration, scrolloptions);
+					alert("Minimum score must be blank or a number");
+					return false;
+				}
+
+				// maximum score >= minimum score
+				if ($("#maxscore").val() != "" && $("#minscore").val() != "") {
+					if (parseFloat($("#minscore").val()) > parseFloat($("#maxscore").val())) {
+						$.scrollTo($("#maxscore, #minscore").addClass("error"), scrollduration, scrolloptions);
+						alert("Value for minimum score cannot be greater than the value for maximum score");
+						return false;
+					} else if (parseFloat($("#minscore").val()) == parseFloat($("#maxscore").val())) {
+						$.scrollTo($("#maxscore, #minscore").addClass("error"), scrollduration, scrolloptions);
+						alert("Minimum and maximum scores can't be equal");
+						return false;
+					}
 				}
 			}
 
@@ -299,6 +339,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			$("#feedback").click(togglefeedback);
 			$("input.itemtype").click(switchitemtype);
 			$("input.optiontext").change(updatefeedback);
+			$("#scoring input").click(switchscoringtype);
 		});
 		<?php
 		return ob_get_clean();
@@ -327,14 +368,52 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 		<dt>Options</dt>
 		<dd>
-			<div>
-				<input type="checkbox" id="shuffle" name="shuffle"<?php if (isset($this->data["shuffle"])) { ?> checked="checked"<?php } ?>>
-				<label for="shuffle">Shuffle the options</label>
-			</div>
+			<dl>
+				<dt>Display</dt>
+				<dd><label>
+					<input type="checkbox" id="shuffle" name="shuffle"<?php if (isset($this->data["shuffle"])) { ?> checked="checked"<?php } ?>>
+					Shuffle the options
+				</label></dd>
+			</dl>
+			<dl id="scoring"<?php if (!$multipleresponse) { ?> style="display: none;"<?php } ?>>
+				<dt>Scoring</dt>
+				<dd>
+					<ul>
+						<li><label>
+							<input type="radio" id="scoring_exact" name="scoring" value="exact"<?php if (!isset($this->data["scoring"]) || $this->data["scoring"] == "exact") { ?> checked="checked"<?php } ?>>
+							Exact
+							<span class="hint">One point if exactly the right boxes are checked, otherwise zero</span>
+						</label></li>
+						<li><label>
+							<input type="radio" id="scoring_cumulative" name="scoring" value="cumulative"<?php if (isset($this->data["scoring"]) && $this->data["scoring"] == "cumulative") { ?> checked="checked"<?php } ?>>
+							Cumulative
+							<span class="hint">One point for each checked correct response, minus one for each checked incorrect response with a minimum score of zero</span>
+						</label></li>
+						<li><label>
+							<input type="radio" id="scoring_custom" name="scoring" value="custom"<?php if (isset($this->data["scoring"]) && $this->data["scoring"] == "custom") { ?> checked="checked"<?php } ?>>
+							Custom
+							<span class="hint">Choose the score given if each option is checked individually and optionally the overall maximum and minimum</span>
+						</label></li>
+					</ul>
+					<dl id="scorerestrictions"<?php if (!$multipleresponse || !isset($this->data["scoring"]) || $this->data["scoring"] != "custom") { ?> style="display: none;"<?php } ?>>
+						<dt><label for="minscore">Minimum score</label></dt>
+						<dd>
+							<input class="small" size="4" type="text" id="minscore" name="minscore" value="<?php if (isset($this->data["minscore"])) echo htmlspecialchars($this->data["minscore"]); ?>">
+							<span class="hint">You can enforce a minimum score (for example 0 to disallow negative scores) or leave blank</span>
+						</dd>
+						<dt><label for="maxscore">Maximum score</label></dt>
+						<dd>
+							<input class="small" size="4" type="text" id="maxscore" name="maxscore" value="<?php if (isset($this->data["maxscore"])) echo htmlspecialchars($this->data["maxscore"]); ?>">
+							<span class="hint">You can enforce a maximum score or leave blank</span>
+						</dd>
+					</dl>
+				</dd>
+			</dl>
 			<table id="options">
 				<tr>
 					<th>Option text</th>
-					<th>Correct</th>
+					<th class="scorecol"<?php if (!$multipleresponse || !isset($this->data["scoring"]) || $this->data["scoring"] != "custom") { ?> style="display: none;"<?php } ?>>Score</th>
+					<th class="correctcol"<?php if ($multipleresponse && isset($this->data["scoring"]) && $this->data["scoring"] == "custom") { ?> style="display: none;"<?php } ?>>Correct</th>
 					<th class="fixed"<?php if (!isset($this->data["shuffle"])) { ?> style="display: none;"<?php } ?>>Fixed</th>
 					<th>Actions</th>
 				</tr>
@@ -348,7 +427,10 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) { $odd = $i % 2; ?>
 					<tr class="option row<?php echo $odd; ?>" id="option_<?php echo $i; ?>">
 						<td><input size="48" type="text" id="option_<?php echo $i; ?>_optiontext" name="option_<?php echo $i; ?>_optiontext" class="optiontext" value="<?php echo htmlspecialchars($this->data["option_{$i}_optiontext"]); ?>"></td>
-						<td>
+						<td class="scorecol"<?php if (!$multipleresponse || !isset($this->data["scoring"]) || $this->data["scoring"] != "custom") { ?> style="display: none;"<?php } ?>>
+							<input class="small" size="4" type="text" id="option_<?php echo $i; ?>_score" name="option_<?php echo $i; ?>_score" value="<?php echo isset($this->data["option_{$i}_score"]) ? htmlspecialchars($this->data["option_{$i}_score"]) : "0"; ?>">
+						</td>
+						<td class="correctcol"<?php if ($multipleresponse && isset($this->data["scoring"]) && $this->data["scoring"] == "custom") { ?> style="display: none;"<?php } ?>>
 							<?php if ($multipleresponse) { ?>
 								<input type="checkbox" id="option_<?php echo $i; ?>_correct" name="option_<?php echo $i; ?>_correct" class="correct"<?php if (isset($this->data["option_{$i}_correct"])) { ?> checked="checked"<?php } ?>>
 							<?php } else { ?>
@@ -440,9 +522,28 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		if ($this->itemType() == "multipleResponse") {
 			// build array of correct responses
 			$correct = array();
-			for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++)
-				if (isset($this->data["option_{$i}_correct"]))
-					$correct[] = $i;
+			if ($this->data["scoring"] == "custom") {
+				// collect scores, sort
+				$scores = array();
+				for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++)
+					$scores[$i] = floatval($this->data["option_{$i}_score"]);
+				arsort($scores, SORT_NUMERIC);
+				$keys = array_keys($scores);
+
+				// using max and min choices find the optimal response
+				for ($i = 0; $i < (isset($this->data["minchoices"]) ? $this->data["minchoices"] : 0); $i++)
+					$correct[] = $keys[$i];
+				for ( ; $i < count($scores); $i++) {
+					if (isset($this->data["maxchoices"]) && $this->data["maxchoices"] > 0 && $i >= $this->data["maxchoices"])
+						break; //stop if we've used all the choices we're allowed
+					if ($scores[$keys[$i]] <= 0)
+						break; //stop if the next best choice doesn't improve the score
+					$correct[] = $keys[$i];
+				}
+			} else
+				for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++)
+					if (isset($this->data["option_{$i}_correct"]))
+						$correct[] = $i;
 
 			// add correctResponse node only if any options are correct
 			if (!empty($correct)) {
@@ -467,7 +568,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		$od = $ai->addChild("outcomeDeclaration");
 		$od->addAttribute("identifier", "SCORE");
 		$od->addAttribute("cardinality", "single");
-		$od->addAttribute("baseType", "integer");
+		$od->addAttribute("baseType", $this->data["scoring"] == "custom" ? "float" : "integer");
 		$od->addChild("defaultValue");
 		$od->defaultValue->addChild("value", "0");
 
@@ -514,28 +615,79 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		$rp = $ai->addChild("responseProcessing");
 
 		// scoring logic
-		$rc = $rp->addChild("responseCondition");
-		$ri = $rc->addChild("responseIf");
-		if ($this->itemType() == "multipleResponse" && empty($correct)) {
-			// multiple response in which the correct response is to tick no 
-			// boxes -- check number of responses is equal to zero
-			$e = $ri->addChild("equal");
-			$e->addAttribute("toleranceMode", "exact");
-			$e->addChild("containerSize")->addChild("variable")->addAttribute("identifier", "RESPONSE");
-			$e->addChild("baseValue", "0")->addAttribute("baseType", "integer");
+		if ($this->itemType() == "multipleChoice" || $this->data["scoring"] == "exact") {
+			$rc = $rp->addChild("responseCondition");
+			$ri = $rc->addChild("responseIf");
+			if ($this->itemType() == "multipleResponse" && empty($correct)) {
+				// multiple response in which the correct response is to tick no 
+				// boxes -- check number of responses is equal to zero
+				$e = $ri->addChild("equal");
+				$e->addAttribute("toleranceMode", "exact");
+				$e->addChild("containerSize")->addChild("variable")->addAttribute("identifier", "RESPONSE");
+				$e->addChild("baseValue", "0")->addAttribute("baseType", "integer");
+			} else {
+				// otherwise, we match responses to the correctResponse above
+				$m = $ri->addChild("match");
+				$m->addChild("variable")->addAttribute("identifier", "RESPONSE");
+				$m->addChild("correct")->addAttribute("identifier", "RESPONSE");
+			}
+			$sov = $ri->addChild("setOutcomeValue");
+			$sov->addAttribute("identifier", "SCORE");
+			$sov->addChild("baseValue", "1")->addAttribute("baseType", "integer");
+			$re = $rc->addChild("responseElse");
+			$sov = $re->addChild("setOutcomeValue");
+			$sov->addAttribute("identifier", "SCORE");
+			$sov->addChild("baseValue", "0")->addAttribute("baseType", "integer");
 		} else {
-			// otherwise, we match responses to the correctResponse above
-			$m = $ri->addChild("match");
-			$m->addChild("variable")->addAttribute("identifier", "RESPONSE");
-			$m->addChild("correct")->addAttribute("identifier", "RESPONSE");
+			// start with zero score
+			$sov = $rp->addChild("setOutcomeValue");
+			$sov->addAttribute("identifier", "SCORE");
+			$sov->addChild("baseValue", "0")->addAttribute("baseType", $this->data["scoring"] == "custom" ? "float" : "integer");
+
+			// add the option's score if it was chosen
+			for ($i = 0; array_key_exists("option_{$i}_optiontext", $this->data); $i++) {
+				$rc = $rp->addChild("responseCondition");
+				$ri = $rc->addChild("responseIf");
+				$c = $ri->addChild("member");
+				$c->addChild("baseValue", "option_$i")->addAttribute("baseType", "identifier");	//if this
+				$c->addChild("variable")->addAttribute("identifier", "RESPONSE");				//is a member of this
+				$sov = $ri->addChild("setOutcomeValue");										//then do this
+				$sov->addAttribute("identifier", "SCORE");
+				$s = $sov->addChild("sum");
+				$s->addChild("variable")->addAttribute("identifier", "SCORE");
+				if ($this->data["scoring"] == "custom")
+					$val = $scores[$i];
+				else if (isset($this->data["option_{$i}_correct"]))
+					$val = 1;
+				else
+					$val = -1;
+				$s->addChild("baseValue", $val)->addAttribute("baseType", $this->data["scoring"] == "custom" ? "float" : "integer");
+			}
+
+			// minimum score
+			if ($this->data["scoring"] == "cumulative" || ($this->data["scoring"] == "custom" && is_numeric($this->data["minscore"]))) {
+				$rc = $rp->addChild("responseCondition");
+				$ri = $rc->addChild("responseIf");
+				$lt = $ri->addChild("lt");
+				$lt->addChild("variable")->addAttribute("identifier", "SCORE");
+				$lt->addChild("baseValue", $this->data["scoring"] == "custom" ? $this->data["minscore"] : 0)->addAttribute("baseType", $this->data["scoring"] == "custom" ? "float" : "integer");
+				$sov = $ri->addChild("setOutcomeValue");
+				$sov->addAttribute("identifier", "SCORE");
+				$sov->addChild("baseValue", $this->data["scoring"] == "custom" ? $this->data["minscore"] : 0)->addAttribute("baseType", $this->data["scoring"] == "custom" ? "float" : "integer");
+			}
+
+			// maximum score
+			if ($this->data["scoring"] == "custom" && is_numeric($this->data["maxscore"])) {
+				$rc = $rp->addChild("responseCondition");
+				$ri = $rc->addChild("responseIf");
+				$gt = $ri->addChild("gt");
+				$gt->addChild("variable")->addAttribute("identifier", "SCORE");
+				$gt->addChild("baseValue", $this->data["maxscore"])->addAttribute("baseType", "float");
+				$sov = $ri->addChild("setOutcomeValue");
+				$sov->addAttribute("identifier", "SCORE");
+				$sov->addChild("baseValue", $this->data["maxscore"])->addAttribute("baseType", "float");
+			}
 		}
-		$sov = $ri->addChild("setOutcomeValue");
-		$sov->addAttribute("identifier", "SCORE");
-		$sov->addChild("baseValue", "1")->addAttribute("baseType", "integer");
-		$re = $rc->addChild("responseElse");
-		$sov = $re->addChild("setOutcomeValue");
-		$sov->addAttribute("identifier", "SCORE");
-		$sov->addChild("baseValue", "0")->addAttribute("baseType", "integer");
 
 		if (isset($this->data["feedback"])) {
 			// initialize feedback var
