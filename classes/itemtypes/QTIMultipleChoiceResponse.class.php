@@ -891,6 +891,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 		// check response conditions for incrementing score if a particular 
 		// response is given
+		$data["scoring"] = "exact";
 		foreach ($xml->responseProcessing->responseCondition as $rc) {
 			if (count($rc->responseIf) != 1) continue;
 			if (count($rc->responseIf->member) != 1) continue;
@@ -910,6 +911,17 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			if ($pos === false)
 				continue;
 			$data["option_{$pos}_score"] = $val;
+			$data["scoring"] = "cumulative";
+		}
+
+		// see if it is in fact cumulative
+		if ($data["scoring"] == "cumulative" && (!isset($data["minscore"]) || $data["minscore"] != 0 || isset($data["maxscore"])))
+			$data["scoring"] = "custom";
+		if ($data["scoring"] == "cumulative") foreach ($options as $o => $option) {
+			if (!isset($data["option_{$o}_score"]) || $data["option_{$o}_score"] != 1 && $data["option_{$o}_score"] != -1) {
+				$data["scoring"] = "custom";
+				break;
+			}
 		}
 
 		// happy with that -- set data property and identifier
