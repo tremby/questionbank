@@ -15,6 +15,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 	protected function headerJS() {
 		ob_start();
 		?>
+		//<script>//fixme
 		addoption = function() {
 			// clone the last option on the list and increment its id
 			var newoption = $("#options tr.option:last").clone();
@@ -329,6 +330,25 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			// options are marked as fixed
 			if ($("#shuffle").is(":checked") && $("input.fixed").size() == $("input.fixed:checked").size() && !confirm("Shuffle is selected but all options are marked as fixed -- click OK to continue regardless or cancel to change this"))
 				return false;
+
+			// confirm it's what the user wanted if custom scoring is on but all 
+			// options have a zero score
+			if ($("#scoring input:checked").attr("id") == "scoring_custom") {
+				var allzero = true;
+				$(".scorecol input").each(function(n) {
+					if (parseFloat($(this).val()) != 0) {
+						allzero = false;
+						return false; //this is "break" in the Jquery each() pseudoloop
+					}
+				});
+				if (allzero) {
+					$.scrollTo($(".scorecol input").addClass("warning"), scrollduration, scrolloptions);
+					if (confirm("No options are set to give a score -- click OK to continue regardless or cancel to change this"))
+						$(".scorecol input").removeClass("error warning");
+					else
+						return false;
+				}
+			}
 
 			return true;
 		}
