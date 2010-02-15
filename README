@@ -59,7 +59,7 @@ application structure:
 -	When output is to be displayed to the browser the files htmlheader.php and 
 	htmlfooter.php are included to frame the output (found in the include 
 	subdirectory)
--	The list of item types are generated from suitable classes found in the 
+-	The list of item types is generated from suitable classes found in the 
 	classes/itemtypes subdirectory
 -	Each non-abstract class descending from QTIAssessmentItem describes an item 
 	type and contains its own logic for the authoring form, generating QTI XML 
