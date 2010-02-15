@@ -102,11 +102,17 @@ edititemsubmitcheck = function() {
 
 	// confirm the user wanted an empty stimulus
 	if ($("#stimulus").val().length == 0) {
-		$.scrollTo($("#stimulus").addClass("warning"), scrollduration, scrolloptions);
+		if ($("#stimulus_parent").is(":visible")) {
+			$("#stimulus_ifr").contents().find("body").addClass("warning");
+			$.scrollTo($("#stimulus_parent").addClass("warning"), scrollduration, scrolloptions);
+		} else
+			$.scrollTo($("#stimulus").addClass("warning"), scrollduration, scrolloptions);
 		if (!confirm("Stimulus is empty -- click OK to continue regardless or cancel to edit it"))
 			return false;
-		else
+		else {
 			$("#stimulus").removeClass("error warning");
+			$("#stimulus_ifr").contents().find("body").removeClass("error warning");
+		}
 	}
 
 	// item-specific warnings

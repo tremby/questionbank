@@ -9,6 +9,8 @@ Licensed under the Creative Commons 'Attribution non-commercial share alike'
 licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
+@import "errorcolours.css";
+
 .flashvideo {
 	width: 510px;
 	height: 330px;

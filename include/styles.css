@@ -9,6 +9,8 @@ Licensed under the Creative Commons 'Attribution non-commercial share alike'
 licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
+@import "errorcolours.css";
+
 html, body {
 	background-color: #eee;
 	color: black;
@@ -20,27 +22,6 @@ html, body {
 
 .disabled {
 	color: gray;
-}
-.error {
-	color: red;
-}
-td.error, div.error, input.error, textarea.error {
-	color: inherit;
-	background-color: #fcc;
-}
-.good {
-	color: green;
-}
-td.good, div.good, input.good, textarea.good {
-	color: inherit;
-	background-color: #cfc;
-}
-.warning {
-	color: #f90;
-}
-td.warning, div.warning, input.warning, textarea.warning {
-	color: inherit;
-	background-color: #fda;
 }
 
 .hint {
