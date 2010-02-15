@@ -28,6 +28,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			$(".scorecol input", newoption).attr("id", "option_" + newid + "_score").attr("name", "option_" + newid + "_score").val("0").removeClass("error warning");
 			if ($("input.correct", newoption).attr("type") == "checkbox")
 				$("input.correct", newoption).attr("name", "option_" + newid + "_correct");
+			else
+				$("input.correct", newoption).attr("value", "option_" + newid);
 			$("input.fixed", newoption).attr("id", "option_" + newid + "_fixed").attr("name", "option_" + newid + "_fixed").removeAttr("checked");
 
 			// add the remove and update feedback actions
@@ -78,11 +80,10 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				$(this).attr("id", "option_" + i);
 				$("input.optiontext", this).attr("id", "option_" + i + "_optiontext").attr("name", "option_" + i + "_optiontext");
 				$("input.correct", this).attr("id", "option_" + i + "_correct");
-				if ($("input.correct", this).attr("type") == "checkbox") {
+				if ($("input.correct", this).attr("type") == "checkbox")
 					$("input.correct", this).attr("name", "option_" + i + "_correct");
-				} else {
+				else
 					$("input.correct", this).attr("name", "correct").attr("value", "option_" + i);
-				}
 				$("input.fixed", this).attr("id", "option_" + i + "_fixed").attr("name", "option_" + i + "_fixed");
 				$(this).removeClass("row" + ((i + 1) % 2)).addClass("row" + (i % 2));
 				i++;
