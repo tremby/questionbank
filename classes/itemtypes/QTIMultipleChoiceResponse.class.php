@@ -25,6 +25,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			newoption.attr("id", "option_" + newid);
 			$("input.optiontext", newoption).attr("id", "option_" + newid + "_optiontext").attr("name", "option_" + newid + "_optiontext").val("").removeClass("error warning");
 			$("input.correct", newoption).attr("id", "option_" + newid + "_correct").removeAttr("checked");
+			$(".scorecol input", newoption).attr("id", "option_" + newid + "_score").attr("name", "option_" + newid + "_score").val("0").removeClass("error warning");
 			if ($("input.correct", newoption).attr("type") == "checkbox")
 				$("input.correct", newoption).attr("name", "option_" + newid + "_correct");
 			$("input.fixed", newoption).attr("id", "option_" + newid + "_fixed").attr("name", "option_" + newid + "_fixed").removeAttr("checked");
