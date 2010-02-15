@@ -61,8 +61,10 @@ focustinymce = function() {
 	qtitinymceoptions.theme_advanced_resizing = $(this).is(".resizable");
 	$(this).tinymce(qtitinymceoptions);
 };
-removetinymces = function() {
-	$("textarea.qtitinymce").each(function() {
+removetinymces = function(obj) {
+	if (typeof obj == "undefined")
+		var obj = $("textarea.qtitinymce");
+	obj.each(function() {
 		if (typeof tinyMCE != "undefined" && tinyMCE.get($(this).attr("id")))
 			tinyMCE.execCommand("mceRemoveControl", false, $(this).attr("id"));
 	});

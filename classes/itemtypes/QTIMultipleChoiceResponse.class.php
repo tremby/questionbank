@@ -15,7 +15,6 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 	protected function headerJS() {
 		ob_start();
 		?>
-		//<script>//fixme
 		addoption = function() {
 			// clone the last option on the list and increment its id
 			var newoption = $("#options tr.option:last").clone();
@@ -38,8 +37,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			// add it to the list
 			$("#options").append(newoption);
 
-			// switch off all tinyMCEs
-			removetinymces();
+			// switch off all non-stimulus tinyMCEs
+			removetinymces($("textarea.qtitinymce").not("#stimulus"));
 
 			// clone the last feedback row
 			var newfeedback = $("#option_" + oldid + "_feedback").clone();
@@ -68,8 +67,8 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 			var optionid = $(this).parents("tr:first").attr("id").split("_")[1];
 
-			// switch off all tinyMCEs
-			removetinymces();
+			// switch off all non-stimulus tinyMCEs
+			removetinymces($("textarea.qtitinymce").not("#stimulus"));
 
 			$("#option_" + optionid + ", #option_" + optionid + "_feedback").remove();
 
