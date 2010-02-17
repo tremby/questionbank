@@ -50,8 +50,11 @@ abstract class QTIAssessmentItem {
 	abstract public function itemTypeDescription();
 
 	/** buildQTI
-	 * This must build and return the QTI from the $data property. It should 
-	 * call validateQTI() before returning the SimpleXML element.
+	 * This must build and return the QTI from the $data property.
+	 * It should use the initialXML method to get the root assessmentItem with 
+	 * attributes (including title and identifier) already set. It should then 
+	 * add all necessary child nodes including the stimulus.
+	 * It should call validateQTI() before returning the SimpleXML element.
 	 * Populate $this->errors, $this->warnings and $this->messages with anything 
 	 * appropriate.
 	 * Return false if there were any errors.
@@ -352,6 +355,26 @@ abstract class QTIAssessmentItem {
 		sort($keywords);
 
 		return array_unique($keywords);
+	}
+
+	// return an initial SimpleXML assessmentItem element
+	protected function initialXML() {
+		$ai = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>
+			<assessmentItem
+				xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
+			/>
+		');
+
+		$ai->addAttribute("adaptive", "false");
+		$ai->addAttribute("timeDependent", "false");
+
+		$ai->addAttribute("identifier", $this->getQTIID());
+		if (isset($this->data["title"]))
+			$ai->addAttribute("title", $this->data["title"]);
+
+		return $ai;
 	}
 
 	/* --------------------------------------------------------------------- */

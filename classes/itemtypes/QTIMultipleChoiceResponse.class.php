@@ -520,18 +520,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			return false;
 
 		// container element and other metadata
-		$ai = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>
-			<assessmentItem
-				xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
-				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
-			/>
-		');
-		$ai->addAttribute("adaptive", "false");
-		$ai->addAttribute("timeDependent", "false");
-		$ai->addAttribute("identifier", $this->getQTIID());
-		if (isset($this->data["title"]))
-			$ai->addAttribute("title", $this->data["title"]);
+		$ai = $this->initialXML();
 
 		// response declaration
 		$rd = $ai->addChild("responseDeclaration");
