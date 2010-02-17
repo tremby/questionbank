@@ -366,6 +366,8 @@ abstract class QTIAssessmentItem {
 				xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
 			/>
 		');
+		$ai->addAttribute("toolName", PROGRAMNAME);
+		$ai->addAttribute("toolVersion", VERSION);
 
 		$ai->addAttribute("adaptive", "false");
 		$ai->addAttribute("timeDependent", "false");

@@ -11,7 +11,8 @@ Licensed under the Creative Commons 'Attribution non-commercial share alike'
 licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
-// version
+// program
+define("PROGRAMNAME", "Eqiat");
 define("VERSION", "0.2~git");
 
 // filesystem path to the eqiat root directory -- one level above this file, 
@@ -28,7 +29,7 @@ if ($document_root[strlen($document_root) - 1] != "/")
 define("SITEROOT_WEB", "/" . substr(SITEROOT_LOCAL, strlen($document_root)));
 
 // TODO: Ensure the above two give the expected results on different server 
-// types (Windows? Lighttpd?). Expected values:
+// types. Expected values:
 // SITEROOT_LOCAL (should this have backslashes if Windows?)
 // 	/var/www/eqiat/ (or /var/www/ if not running in a subdirectory)
 // SITEROOT_WEB
@@ -38,10 +39,12 @@ define("SITEROOT_WEB", "/" . substr(SITEROOT_LOCAL, strlen($document_root)));
 define("NS_IMSQTI", "http://www.imsglobal.org/xsd/imsqti_v2p1");
 define("NS_IMSMD", "http://www.imsglobal.org/xsd/imsmd_v1p2");
 
+// configuration----------------------------------------------------------------
+
 // host of QTIEngine
 define("QTIENGINE_HOST", "qtiengine.qtitools.org");
 
 // site title
-define("SITE_TITLE", "Eqiat");
+define("SITE_TITLE", PROGRAMNAME);
 
 ?>

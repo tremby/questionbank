@@ -14,7 +14,7 @@ licence -- see the LICENCE file for more details
 ?>
 </div>
 <div id="footer">
-	Eqiat <?php echo VERSION; ?>, &copy; 2010 JISC-funded EASiHE project, University of Southampton
+	<?php echo PROGRAMNAME; ?> <?php echo VERSION; ?>, &copy; 2010 JISC-funded EASiHE project, University of Southampton
 	<?php if (strpos(VERSION, "git") !== false) { ?>
 		<!-- output of `git show | head -3`: <?php echo "\n" . `git show | head -3`; ?>
 		-->
