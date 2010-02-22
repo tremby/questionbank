@@ -82,6 +82,7 @@ if (isset($_POST["edititem"])) {
 		<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemXML&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Download the QTI item as an XML file</a></li>
 		<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemContentPackage&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Download the QTI item as a content package</a> to include its metadata</li>
 		<li><a href="<?php echo SITEROOT_WEB; ?>?page=editAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Edit this item</a> further</li>
+		<li><a href="<?php echo SITEROOT_WEB; ?>?page=cloneAssessmentItem&amp;qtiid=<?php echo $ai->getQTIID(); ?>">Clone this item</a> to use it as a template for a new item</li>
 	</ul>
 
 	<?php
