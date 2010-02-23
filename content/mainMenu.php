@@ -28,6 +28,10 @@ $(document).ready(function() {
 
 	$(".deleteitem").click(function(e) {
 		e.preventDefault();
+
+		if (!confirm("Are you sure you want to delete this item?"))
+			return;
+
 		jQuery.ajax({
 			"cache": false,
 			"context": $(this).parents("tr:first").get(0),
@@ -97,8 +101,8 @@ include "htmlheader.php";
 						<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemXML&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download XML</a></li>
 						<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemContentPackage&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download content package</a></li>
 					<?php } ?>
-					<li><a class="cloneitem" href="<?php echo SITEROOT_WEB; ?>?page=cloneAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Clone</a></li>
-					<li><a class="deleteitem" href="<?php echo SITEROOT_WEB; ?>?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a></li>
+					<li><a href="<?php echo SITEROOT_WEB; ?>?page=cloneAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Clone</a></li>
+					<li><a class="deleteitem" href="<?php echo SITEROOT_WEB; ?>?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Delete</a></li>
 				</ul></td>
 			</tr>
 		<?php } ?>
