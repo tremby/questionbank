@@ -20,12 +20,19 @@ require_once "include/constants.php";
 // class autoloader
 function __autoload($classname) {
 	$path = "classes/$classname.class.php";
-	if (dirname($path) == "classes" && file_exists($path))
+	if (dirname($path) == "classes" && file_exists($path)) {
 		require_once $path;
-	else {
-		$path = "classes/itemtypes/$classname.class.php";
-		if (dirname($path) == "classes/itemtypes" && file_exists($path))
-			require_once $path;
+		return;
+	}
+	$path = "classes/itemtypes/$classname.class.php";
+	if (dirname($path) == "classes/itemtypes" && file_exists($path)) {
+		require_once $path;
+		return;
+	}
+	$path = "classes/itemactions/$classname.class.php";
+	if (dirname($path) == "classes/itemactions" && file_exists($path)) {
+		require_once $path;
+		return;
 	}
 }
 

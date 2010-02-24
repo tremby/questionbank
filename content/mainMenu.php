@@ -23,28 +23,11 @@ $items = array_reverse($items);
 ob_start();
 ?>
 $(document).ready(function() {
-	if (location.hash.substr(0, 6) == "#item_")
-		$(location.hash).addClass("highlight");
-
-	$(".deleteitem").click(function(e) {
-		e.preventDefault();
-
-		if (!confirm("Are you sure you want to delete this item?"))
-			return;
-
-		jQuery.ajax({
-			"cache": false,
-			"context": $(this).parents("tr:first").get(0),
-			"data": { "async": true, "qtiid": $(this).parents("tr:first").attr("id").split("_").splice(1).join("_") },
-			"error": function(xhr, text, error) { console.error(error); },
-			"success": function() { $(this.context).remove(); },
-			"type": "POST",
-			"url": "<?php echo SITEROOT_WEB; ?>?page=deleteAssessmentItem"
-		});
-	});
+	if (window.location.hash.substr(0, 6) == "#item_")
+		$(window.location.hash).addClass("highlight");
 });
 <?php
-$GLOBALS["headerjs"] = ob_get_clean();
+$GLOBALS["headerjs"] = ob_get_clean() . item_action_js();
 include "htmlheader.php";
 ?>
 
@@ -78,7 +61,10 @@ include "htmlheader.php";
 			<th>Status</th>
 			<th>Actions</th>
 		</tr>
-		<?php $i = 0; foreach ($items as $item) { $odd = $i++ % 2; ?>
+		<?php
+		$types = item_actions();
+		$i = 0;
+		foreach ($items as $item) { $odd = $i++ % 2; ?>
 			<tr class="row<?php echo $odd; ?>" id="item_<?php echo $item->getQTIID(); ?>">
 				<td><?php if (!is_null($item->getModified())) echo friendlydate_html($item->getModified()); ?></td>
 				<td><?php echo htmlspecialchars($item->itemTypePrint()); ?></td>
@@ -90,20 +76,24 @@ include "htmlheader.php";
 						Unfinished
 					<?php } else { ?>
 						<?php echo count($item->getErrors()); ?> error<?php echo plural($item->getErrors()); ?>
-						<br />
+						<br>
 						<?php echo count($item->getWarnings()); ?> warning<?php echo plural($item->getWarnings()); ?>
 					<?php } ?>
 				</td>
-				<td><ul>
-					<li><a href="<?php echo SITEROOT_WEB; ?>?page=editAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Edit</a></li>
-					<?php if ($item->getQTI() && !count($item->getErrors())) { ?>
-						<li><a href="<?php echo SITEROOT_WEB; ?>?page=previewAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Preview</a></li>
-						<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemXML&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download XML</a></li>
-						<li><a href="<?php echo SITEROOT_WEB; ?>?page=downloadAssessmentItemContentPackage&amp;qtiid=<?php echo $item->getQTIID(); ?>">Download content package</a></li>
+				<td>
+					<?php
+					$actions = array();
+					foreach ($types as $type)
+						if ($type->available($item))
+							$actions[] = $type;
+					if (!empty($actions)) { ?>
+						<ul>
+							<?php foreach ($actions as $action) { ?>
+								<li><a class="itemaction_<?php echo $action->actionString(); ?>" href="<?php echo $action->actionURL($item->getQTIID()); ?>" title="<?php echo htmlspecialchars($action->description()); ?>"><?php echo htmlspecialchars(ucfirst($action->name())); ?></a></li>
+							<?php } ?>
+						</ul>
 					<?php } ?>
-					<li><a href="<?php echo SITEROOT_WEB; ?>?page=cloneAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Clone</a></li>
-					<li><a class="deleteitem" href="<?php echo SITEROOT_WEB; ?>?page=deleteAssessmentItem&amp;qtiid=<?php echo $item->getQTIID(); ?>">Delete</a></li>
-				</ul></td>
+				</td>
 			</tr>
 		<?php } ?>
 	</table>

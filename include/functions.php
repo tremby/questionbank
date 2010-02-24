@@ -241,11 +241,74 @@ function compare_item_alpha(QTIAssessmentItem $a, QTIAssessmentItem $b) {
 	return strcasecmp($a->itemTypePrint(), $b->itemTypePrint());
 }
 
+// get array of item action class objects
+function item_actions() {
+	// look for item type classes
+	$dh = opendir(SITEROOT_LOCAL . "classes/itemactions") or servererror("Couldn't open item actions dir");
+	$types = array();
+	while (($file = readdir($dh)) !== false) {
+		if (!preg_match('%^.+Action\.class\.php$%', $file))
+			continue;
+
+		$classname = substr($file, 0, -10);
+
+		// skip classes which aren't ItemActions
+		if (!is_subclass_of($classname, "ItemAction"))
+			continue;
+
+		// skip abstract classes
+		$rc = new ReflectionClass($classname);
+		if ($rc->isAbstract())
+			continue;
+
+		$types[] = new $classname;
+	}
+	closedir($dh);
+
+	usort($types, "compare_action_alpha");
+
+	return $types;
+}
+
+// compare item actions alphabetically by name
+function compare_action_alpha(ItemAction $a, ItemAction $b) {
+	return strcasecmp($a->name(), $b->name());
+}
+
 // return plural ending if appropriate
 function plural($input, $pluralsuffix = "s", $singularsuffix = "") {
 	if (is_array($input) && count($input) != 1 || is_numeric($input) && $input != 1)
 		return $pluralsuffix;
 	return $singularsuffix;
+}
+
+// return Javascript for item action links
+function item_action_js() {
+	$actions = item_actions();
+	$jsparts = array();
+	foreach ($actions as $action) {
+		$js = $action->clickJS();
+		if (is_null($js))
+			continue;
+
+		ob_start();
+		?>
+		$(".itemaction_<?php echo $action->actionString(); ?>").click(function(e) {
+			<?php echo $js; ?>
+		});
+		<?php
+		$jsparts[] = ob_get_clean();
+	}
+	if (empty($jsparts))
+		return "";
+
+	ob_start();
+	?>
+	$(document).ready(function() {
+		<?php echo implode("\n", $jsparts); ?>
+	});
+	<?php
+	return ob_get_clean();
 }
 
 // return a readable date in HTML form

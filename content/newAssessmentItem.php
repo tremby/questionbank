@@ -27,7 +27,8 @@ if (isset($_REQUEST["itemtype"])) {
 		$_SESSION["items"] = array();
 	$_SESSION["items"][$ai->getQTIID()] = $ai;
 
-	redirect(SITEROOT_WEB . "?page=editAssessmentItem&qtiid=" . $ai->getQTIID());
+	$action = new EditAssessmentItemAction();
+	redirect($action->actionURL($ai, false));
 }
 
 // choose from a list of item types

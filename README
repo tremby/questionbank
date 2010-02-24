@@ -47,9 +47,13 @@ basic) supplied stylesheets styles.css and tinymce.css and perhaps to amend the
 htmlheader.php and htmlfooter.php files. All of these are found in the include 
 subdirectory.
 
-To add custom item types add a new class to the classes/itemtypes subdirectory 
+To add a custom item type add a new class to the classes/itemtypes subdirectory 
 -- see the existing item types and the documentation in the parent class 
 QTIAssessmentItem (classes/QTIAssessmentItem.class.php) for guidelines.
+
+To add a custom item action add a new class to the classes/itemactions 
+subdirectory -- see the existing item types and the documentation in the parent 
+class ItemAction (classes/ItemAction.class.php) for guidelines.
 
 In case further customization is necessary, here is a brief overview of the 
 application structure:
@@ -58,16 +62,19 @@ application structure:
 	query variable "page" (default value is "mainMenu")
 -	The scripts which can be included in this way are all in the content 
 	subdirectory, identified by filename
--	Some of these content scripts take parameters such as "qtiid", the 
-	identifier of the QTI item to be acted upon
--	When output is to be displayed to the browser the files htmlheader.php and 
-	htmlfooter.php are included to frame the output (found in the include 
-	subdirectory)
+-	The list of item actions is generated from suitable classes found in the 
+	classes/itemactions subdirectory
+-	Each non-abstract class descending from ItemAction describes functionality 
+	which can be performed on a particular item. These classes describe whether 
+	the action is available for the given assessment item and the logic to take.
 -	The list of item types is generated from suitable classes found in the 
 	classes/itemtypes subdirectory
 -	Each non-abstract class descending from QTIAssessmentItem describes an item 
 	type and contains its own logic for the authoring form, generating QTI XML 
 	to realize the item and importing the item from XML
+-	When output is to be displayed to the browser the files htmlheader.php and 
+	htmlfooter.php are included to frame the output (found in the include 
+	subdirectory)
 -	The Javascript Jquery library is used
 -	The Wysiwyg HTML editing areas are instances of TinyMCE (the Jquery version, 
 	to be specific)

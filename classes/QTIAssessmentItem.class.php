@@ -127,7 +127,7 @@ abstract class QTIAssessmentItem {
 		?>
 			<h2><?php echo $GLOBALS["title"]; ?></h2>
 			<?php $this->showmessages(); ?>
-			<form id="edititem" action="?page=editAssessmentItem" method="post">
+			<form id="edititem" action="<?php $action = new EditAssessmentItemAction(); echo $action->actionURL(); ?>" method="post">
 				<dl>
 					<dt><label for="title">Title</label></dt>
 					<dd><input size="64" type="text" name="title" id="title"<?php if (isset($this->data["title"])) { ?> value="<?php echo htmlspecialchars($this->data["title"]); ?>"<?php } ?>></dd>
