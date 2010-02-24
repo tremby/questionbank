@@ -81,6 +81,9 @@ ul li, ol li {
 	color: #999;
 	text-align: center;
 }
+#footer a {
+	color: #779;
+}
 
 div.error, div.good, div.warning {
 	padding: 0.5em;
