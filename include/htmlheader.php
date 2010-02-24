@@ -45,6 +45,8 @@ header("Content-Script-Type: text/javascript");
 	$menuitems = array();
 	if ($GLOBALS["page"] != "mainMenu")
 		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "\">Back to main menu</a>";
+	if ($GLOBALS["page"] != "help")
+		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "?page=help\">Help</a>";
 	if (!empty($menuitems)) { ?>
 		<ul id="headermenu">
 			<?php foreach ($menuitems as $menuitem) { ?>
