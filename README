@@ -15,6 +15,8 @@ REQUIREMENTS
 	qtiengine.qtitools.org is used by default)
 -	validate, the Java commandline QTI validator (imported as a subdirectory)
 -	A Java VM on which to run validate (tested on Sun Java 1.6.0)
+-	An instance of Edshare (optional -- only required if the deposit in Edshare 
+	action is to be available)
 
 SOURCE
 
@@ -31,12 +33,16 @@ server.
 
 CONFIGURATION
 
-Currently the only options are constants found at the bottom of 
-include/constants.php:
+The options are constants found at the bottom of include/constants.php:
 	QTIENGINE_HOST
 		edit this to use a custom instance of QTIEngine
 	SITE_TITLE
 		edit this to use a custom site title (it defaults to Eqiat)
+	DIEA_AVAILABLE
+		change this to true if you wish to use the "deposit in Edshare" action
+	DIEA_EDSHARE_HOST
+		if the "deposit in Edshare" action is to be used this must point to the 
+		host of the Edshare instance
 
 CUSTOMIZATION
 

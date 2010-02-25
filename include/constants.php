@@ -47,4 +47,10 @@ define("QTIENGINE_HOST", "qtiengine.qtitools.org");
 // site title
 define("SITE_TITLE", PROGRAMNAME);
 
+// use the "deposit in Edshare" action
+define("DIEA_AVAILABLE", false);
+
+// host of Edshare (set and uncomment)
+//define("DIEA_EDSHARE_HOST", "edshare.soton.ac.uk");
+
 ?>
