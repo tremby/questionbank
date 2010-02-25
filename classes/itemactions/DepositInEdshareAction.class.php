@@ -12,7 +12,7 @@ licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
 if (DIEA_AVAILABLE && !defined("DIEA_EDSHARE_HOST"))
-	die("DIEA_AVALIABLE is true but DIEA_EDSHARE_HOST has not been configured. This should be done in the DepositInEdshareAction.conf.php file.");
+	die("DIEA_AVALIABLE is true but DIEA_EDSHARE_HOST has not been configured");
 
 class DepositInEdshareAction extends ItemAction {
 	private $ai;
@@ -150,7 +150,7 @@ class DepositInEdshareAction extends ItemAction {
 	}
 
 	public function available(QTIAssessmentItem $ai) {
-		return $ai->getQTI() && !count($ai->getErrors());
+		return DIEA_AVALIABLE && $ai->getQTI() && !count($ai->getErrors());
 	}
 }
 
