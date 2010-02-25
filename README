@@ -107,7 +107,8 @@ further problems not picked up client side are shown.
 
 An item preview is made visible and links to various actions are shown such as 
 previewing in full screen, editing the item further and downloading the item 
-either as XML or a content package.
+either as XML or a content package. If enabled there is also an action to 
+deposit the item in an Edshare repository.
 
 Until the session times out or the item is deleted it will then remain on the 
 item list on the main menu page.
