@@ -395,4 +395,25 @@ function usingIE() {
 	return isset($_SERVER["HTTP_USER_AGENT"]) && (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false);
 }
 
+// return an associative array of HTTP response headers given an HTTP response 
+// string
+function response_headers($response) {
+	$responseparts = explode("\r\n\r\n", $response);
+	$headerstrings = explode("\r\n", $responseparts[0]);
+	$headers = array();
+	foreach ($headerstrings as $headerstring) {
+		$headerparts = preg_split('%:\s*%', $headerstring);
+		if (isset($headerparts[1]))
+			$headers[$headerparts[0]] = $headerparts[1];
+	}
+	return $headers;
+}
+
+// return the body of an HTTP response which includes headers
+function response_body($response) {
+	if (strpos($response, "\r\n\r\n") === false)
+		return "";
+	return substr($response, strpos($response, "\r\n\r\n") + 4);
+}
+
 ?>
