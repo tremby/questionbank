@@ -150,7 +150,7 @@ class DepositInEdshareAction extends ItemAction {
 	}
 
 	public function available(QTIAssessmentItem $ai) {
-		return DIEA_AVALIABLE && $ai->getQTI() && !count($ai->getErrors());
+		return DIEA_AVAILABLE && $ai->getQTI() && !count($ai->getErrors());
 	}
 }
 
