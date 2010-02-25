@@ -24,7 +24,7 @@ class DeleteAssessmentItemAction extends ItemAction {
 	}
 
 	public function beforeLogic() {
-		$this->ai = $_SESSION["items"][$_REQUEST["qtiid"]];
+		$this->ai = QTIAssessmentItem::fromQTIID($_REQUEST["qtiid"]);
 		$this->aititle = $this->ai->data("title");
 	}
 
@@ -45,7 +45,7 @@ class DeleteAssessmentItemAction extends ItemAction {
 	}
 
 	public function postLogic() {
-		unset($_SESSION["items"][$this->ai->getQTIID()]);
+		$this->ai->sessionRemove();
 
 		if (isset($_REQUEST["async"])) ok();
 

@@ -155,11 +155,6 @@ function handleupload(&$errors, &$warnings, &$messages) {
 	if (array_key_exists("keywords", $metadata))
 		$ai->data("keywords", implode(", ", $metadata["keywords"]));
 
-	// put it in session data
-	if (!isset($_SESSION["items"]))
-		$_SESSION["items"] = array();
-	$_SESSION["items"][$ai->getQTIID()] = $ai;
-
 	// take the user to the main menu with the uploaded item highlighted
 	redirect(SITEROOT_WEB . "#item_" . $ai->getQTIID());
 }

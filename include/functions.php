@@ -227,7 +227,7 @@ function item_types() {
 		if ($rc->isAbstract())
 			continue;
 
-		$items[] = new $classname;
+		$items[] = new $classname(false);
 	}
 	closedir($dh);
 

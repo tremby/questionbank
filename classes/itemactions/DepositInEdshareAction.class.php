@@ -27,7 +27,7 @@ class DepositInEdshareAction extends ItemAction {
 	}
 
 	public function beforeLogic() {
-		$this->ai = $_SESSION["items"][$_REQUEST["qtiid"]];
+		$this->ai = QTIAssessmentItem::fromQTIID($_REQUEST["qtiid"]);
 	}
 
 	public function getLogic() {

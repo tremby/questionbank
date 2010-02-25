@@ -22,11 +22,6 @@ if (isset($_REQUEST["itemtype"])) {
 
 	$ai = new $classname;
 
-	// store new item in session data
-	if (!isset($_SESSION["items"]) || !is_array($_SESSION["items"]))
-		$_SESSION["items"] = array();
-	$_SESSION["items"][$ai->getQTIID()] = $ai;
-
 	$action = new EditAssessmentItemAction();
 	redirect($action->actionURL($ai, false));
 }

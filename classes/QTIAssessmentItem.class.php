@@ -21,15 +21,21 @@ abstract class QTIAssessmentItem {
 
 	private $modified;
 
-	protected $identifier;
-	protected $midentifier;
+	protected $identifier = null;
+	protected $midentifier = null;
 
 	/** constructor
 	 * Child classes' constructors, if implemented, must call this
+	 * A QTI identifier can be specified or pass null (default) to generate a 
+	 * random one or false to not generate one (and so not store the item in 
+	 * session memory)
 	 */
-	public function __construct() {
+	public function __construct($id = null) {
+		if ($id === false)
+			return;
+
 		$this->modified = time();
-		$this->setQTIID();
+		$this->setQTIID($id);
 		$this->setMID();
 	}
 
@@ -201,12 +207,15 @@ abstract class QTIAssessmentItem {
 		return $this->midentifier;
 	}
 
-	// set QTI identifier or generate a new one if none given
+	// set QTI identifier or generate a new one if none given and update session 
+	// memory
 	public function setQTIID($identifier = null) {
+		$this->sessionRemove();
 		if (is_null($identifier))
 			$this->identifier = "ITEM_" . md5(uniqid());
 		else
 			$this->identifier = $identifier;
+		$this->sessionStore();
 	}
 
 	// get the item as a content package as a binary zip string
@@ -444,6 +453,21 @@ abstract class QTIAssessmentItem {
 		return $ai;
 	}
 
+	// store the item in session memory
+	public function sessionStore() {
+		if (!isset($_SESSION["items"]) || !is_array($_SESSION["items"]))
+			$_SESSION["items"] = array();
+		$_SESSION["items"][$this->getQTIID()] = $this;
+	}
+
+	// remove the item from session memory
+	public function sessionRemove() {
+		if (!isset($_SESSION["items"]) || !isset($_SESSION["items"][$this->getQTIID()]))
+			return;
+		unset($_SESSION["items"][$this->getQTIID()]);
+	}
+
+
 	/* --------------------------------------------------------------------- */
 	/* static utility methods                                                */
 	/* --------------------------------------------------------------------- */
@@ -472,6 +496,23 @@ abstract class QTIAssessmentItem {
 	// compare items by modification date
 	public static function compare_by_modification_date(QTIAssessmentItem $a, QTIAssessmentItem $b) {
 		return $a->getModified() - $b->getModified();
+	}
+
+	// get a QTIAssessmentItem object from session memory given a QTIID string
+	// return false if it is not found
+	public static function fromQTIID($qtiid) {
+		if (!isset($_SESSION["items"]))
+			return false;
+		if (!isset($_SESSION["items"][$qtiid]))
+			return false;
+		return $_SESSION["items"][$qtiid];
+	}
+
+	// return an array of all items in session memory
+	public static function allItems() {
+		if (!isset($_SESSION["items"]))
+			return array();
+		return $_SESSION["items"];
 	}
 }
 

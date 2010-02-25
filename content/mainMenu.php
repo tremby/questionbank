@@ -15,7 +15,7 @@ licence -- see the LICENCE file for more details
 // those which have titles in alphabetical order
 // then others in identifier order
 $items = array();
-if (isset($_SESSION["items"])) foreach ($_SESSION["items"] as $id => $item)
+foreach (QTIAssessmentItem::allItems() as $id => $item)
 	$items[] = $item;
 usort($items, array("QTIAssessmentItem", "compare_by_modification_date"));
 $items = array_reverse($items);

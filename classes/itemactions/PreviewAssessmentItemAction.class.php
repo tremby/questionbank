@@ -21,7 +21,7 @@ class PreviewAssessmentItemAction extends ItemAction {
 	}
 
 	public function getLogic() {
-		$ai = $_SESSION["items"][$_REQUEST["qtiid"]];
+		$ai = QTIAssessmentItem::fromQTIID($_REQUEST["qtiid"]);
 
 		// upload the QTI to QTIEngine
 		// Doing this manually rather than using curl because until some PHP 

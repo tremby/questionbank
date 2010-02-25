@@ -21,7 +21,7 @@ class DownloadAssessmentItemContentPackageAction extends ItemAction {
 	}
 
 	public function getLogic() {
-		$ai = $_SESSION["items"][$_REQUEST["qtiid"]];
+		$ai = QTIAssessmentItem::fromQTIID($_REQUEST["qtiid"]);
 
 		// download the content package
 		header("Content-Type: application/zip");

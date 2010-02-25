@@ -23,7 +23,7 @@ class EditAssessmentItemAction extends ItemAction {
 	}
 
 	public function beforeLogic() {
-		$this->ai = $_SESSION["items"][$_REQUEST["qtiid"]];
+		$this->ai = QTIAssessmentItem::fromQTIID($_REQUEST["qtiid"]);
 	}
 
 	public function getLogic() {
@@ -47,14 +47,6 @@ class EditAssessmentItemAction extends ItemAction {
 
 			// keep the old identifier
 			$this->ai->setQTIID($olditem->getQTIID());
-
-			// replace old object in session data
-			if (!isset($_SESSION["items"]))
-				$_SESSION["items"] = array();
-			else
-				foreach($_SESSION["items"] as $id => $item)
-					if ($olditem == $_SESSION["items"][$id])
-						$_SESSION["items"][$id] = $this->ai;
 
 			unset($olditem);
 		}

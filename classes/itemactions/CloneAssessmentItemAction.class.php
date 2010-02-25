@@ -26,16 +26,13 @@ class CloneAssessmentItemAction extends ItemAction {
 	}
 
 	public function postLogic() {
-		$ai = $_SESSION["items"][$_REQUEST["qtiid"]];
+		$ai = QTIAssessmentItem::fromQTIID($_REQUEST["qtiid"]);
 
 		// clone the item
-		$ai = clone $_SESSION["items"][$_REQUEST["qtiid"]];
+		$ai = clone $ai;
 
 		// call its constructor to updated the modified time and set new identifiers
 		$ai->__construct();
-
-		// put it in session data
-		$_SESSION["items"][$ai->getQTIID()] = $ai;
 
 		// take the user to the main menu with the cloned item highlighted
 		redirect(SITEROOT_WEB . "#item_" . $ai->getQTIID());

@@ -21,7 +21,7 @@ class DownloadAssessmentItemAction extends ItemAction {
 	}
 
 	public function getLogic() {
-		$ai = $_SESSION["items"][$_REQUEST["qtiid"]];
+		$ai = QTIAssessmentItem::fromQTIID($_REQUEST["qtiid"]);
 
 		// download the QTI
 		//header("Content-Type: application/qti+xml"); //proposed Mime type -- http://www.imsglobal.org/question/ims-qti-archives/2003-January/000502.html

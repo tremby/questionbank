@@ -23,10 +23,10 @@ $action = new $classname;
 if (!isset($_REQUEST["qtiid"]))
 	badrequest("No QTI ID specified");
 
-if (!isset($_SESSION["items"][$_REQUEST["qtiid"]]))
+if (!QTIAssessmentItem::fromQTIID($_REQUEST["qtiid"]))
 	badrequest("No QTI found in session data for specified QTI ID");
 
-if (!$action->available($_SESSION["items"][$_REQUEST["qtiid"]]))
+if (!$action->available(QTIAssessmentItem::fromQTIID($_REQUEST["qtiid"])))
 	badrequest(ucfirst($action->name()) . " action is not currently available for the specified QTI item");
 
 $GLOBALS["title"] = $action->description();
