@@ -90,9 +90,8 @@ application structure:
 
 USAGE
 
-Point a browser to the document root where the Eqiat is hosted. The main menu 
-gives options to write a new item or upload an existing item and shows a list of 
-all items currently in session memory.
+The main menu gives options to write a new item or upload an existing item and 
+shows a list of all items currently in session memory.
 
 Items in the list each have various links to actions which can be performed on 
 them -- edit, delete, preview and so on.
@@ -156,3 +155,5 @@ licence -- see the LICENCE file for more details
 AUTHOR
 
 Bart Nagel <bjn@ecs.soton.ac.uk>
+
+vim: tw=80 fo=wqnta sw=4 ts=4 sts=4 flp=^\s*(\d+\|-)\s+ spl=en_gb noet nosi nojs
