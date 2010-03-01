@@ -37,7 +37,7 @@ include "htmlheader.php";
 	<dd>Write a new assessment item</dd>
 
 	<dt><a href="<?php echo SITEROOT_WEB; ?>?page=uploadAssessmentItem">Upload an existing assessment item</a></dt>
-	<dd>Upload an existing assessment item so it can be edited and packaged</dd>
+	<dd>Upload an existing assessment item so it can be edited</dd>
 
 	<dt><a href="#itemlist">Item list</a></dt>
 	<dd>A list of items currently in memory for your session</dd>

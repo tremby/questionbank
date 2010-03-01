@@ -91,7 +91,7 @@ application structure:
 USAGE
 
 The main menu gives options to write a new item or upload an existing item and 
-shows a list of all items currently in session memory.
+also shows a list of all items currently in session memory for the current user.
 
 Items in the list each have various links to actions which can be performed on 
 them -- edit, delete, preview and so on.
