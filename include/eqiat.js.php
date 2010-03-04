@@ -84,6 +84,7 @@ edititemsubmitcheck = function() {
 
 	// clear any previously set background colours
 	$("input, textarea").removeClass("error warning");
+	$("#stimulus_ifr").contents().find("body").removeClass("error warning");
 
 	// common errors
 
