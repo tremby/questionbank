@@ -78,12 +78,13 @@ application structure:
 -	Each non-abstract class descending from QTIAssessmentItem describes an item 
 	type and contains its own logic for the authoring form, generating QTI XML 
 	to realize the item and importing the item from XML
--	When output is to be displayed to the browser the files htmlheader.php and 
+-	When output is to be sent to the browser the files htmlheader.php and 
 	htmlfooter.php are included to frame the output (found in the include 
 	subdirectory)
 -	The Javascript Jquery library is used
 -	The Wysiwyg HTML editing areas are instances of TinyMCE (the Jquery version, 
-	to be specific)
+	to be specific) which have been configured to only allow the subset of XHTML 
+	included in the QTI specification
 -	Various utility functions are to be found in include/functions.php
 -	The Java commandline program validate is called by PHP to ensure any 
 	generated QTI is valid. Any messages returned are in turn shown to the user.
@@ -156,4 +157,5 @@ AUTHOR
 
 Bart Nagel <bjn@ecs.soton.ac.uk>
 
-vim: tw=80 fo=wqnta sw=4 ts=4 sts=4 flp=^\s*(\d+\|-)\s+ spl=en_gb noet nosi nojs
+vim: tw=80 fo=wqnta sw=4 ts=4 sts=4 flp=^\s*(\d+\|-)\s+ spl=en_gb
+vim: noet nosi nojs ai
