@@ -36,7 +36,8 @@ class DepositInEdshareAction extends ItemAction {
 		?>
 		<h2>Deposit item "<?php echo htmlspecialchars($this->ai->data("title")); ?>" in Edshare</h2>
 		<?php if (!empty($this->errors)) showmessages($this->errors, "Error" . plural($this->errors), "error"); ?>
-		<p>Before the item can be deposited you need to provide your Edshare 
+		<p>Before the item can be deposited you need to provide your <a 
+		href="http://<?php echo DIEA_EDSHARE_HOST; ?>">Edshare</a> 
 		username and password. This information is not stored.</p>
 		<form action="<?php echo $this->actionURL($this->ai); ?>" method="post">
 			<dl>
