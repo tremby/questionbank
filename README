@@ -17,6 +17,8 @@ REQUIREMENTS
 -	A Java VM on which to run validate (tested on Sun Java 1.6.0)
 -	An instance of Edshare (optional -- only required if the deposit in Edshare 
 	action is to be available)
+-	If using the deposit in Edshare action, curl module for PHP (package 
+	php5-curl in Debian)
 
 SOURCE
 
