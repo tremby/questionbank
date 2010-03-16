@@ -21,7 +21,7 @@ licence -- see the LICENCE file for more details
 	<a href="http://easihe.ecs.soton.ac.uk">EASiHE project</a>,
 	<a href="http://www.soton.ac.uk">University of Southampton</a>
 	<?php if (strpos(VERSION, "git") !== false) { ?>
-		<!-- output of `git show | head -5`: <?php echo "\n" . `git show | head -5`; ?>
+		<!-- output of `git show | head -5`: <?php echo "\n" . str_replace("--", "–", `git show | head -5`); ?>
 		-->
 	<?php } ?>
 </div>
