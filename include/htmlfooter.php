@@ -20,8 +20,8 @@ licence -- see the LICENCE file for more details
 	<a href="http://www.jisc.ac.uk">JISC</a>-funded
 	<a href="http://easihe.ecs.soton.ac.uk">EASiHE project</a>,
 	<a href="http://www.soton.ac.uk">University of Southampton</a>
-	<?php if (strpos(VERSION, "git") !== false) { ?>
-		<!-- output of `git show | head -5`: <?php echo "\n" . str_replace("--", "–", `git show | head -5`); ?>
+	<?php if (strpos(VERSION, "git") !== false) { $commit = `git show`; ?>
+		<!-- last commit: <?php echo "\n" . str_replace("--", "–", substr($commit, 0, strpos($commit, "\n\n", strpos($commit, "\n\n") + 1))) . "\n"; ?>
 		-->
 	<?php } ?>
 </div>
