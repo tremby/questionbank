@@ -85,7 +85,7 @@ class DepositInEdshareAction extends ItemAction {
 		$doc = $ep3->eprint->addChild("documents")->addChild("document");
 		$doc->addChild("format", "application/zip");
 		$doc->addChild("security", "public");
-		$doc->addChild("main", $this->ai->data("title"));
+		$doc->addChild("main", $this->ai->getTitleFS() . ".zip");
 		$file = $doc->addChild("files")->addChild("file");
 		$file->addChild("filename", $this->ai->getTitleFS() . ".zip");
 		$file->addChild("filesize", strlen($zipcontents));
