@@ -201,6 +201,7 @@ class DepositInEdshareAction extends ItemAction {
 					}
 				}
 
+				// show "deposited" message and give link to the share
 				$GLOBALS["title"] = "Item deposited in Edshare";
 				include "htmlheader.php";
 				?>
@@ -209,7 +210,26 @@ class DepositInEdshareAction extends ItemAction {
 					<p>Edshare returned the following information:</p>
 					<p><blockquote><?php echo htmlspecialchars($treatment); ?></blockquote></p>
 				<?php } ?>
-				<p>You can now <a href="http://<?php echo DIEA_EDSHARE_HOST; ?>/cgi/users/home?screen=EPrint::Summary&amp;eprintid=<?php echo $eprintid; ?>">view the item in Edshare</a></p>
+				<?php if (strpos($_POST["collection"], "/sword-app/deposit/archive") === false) { ?>
+					<p>
+						The item is not yet live in the repository. As the owner 
+						you can still
+						<a href="http://<?php echo DIEA_EDSHARE_HOST; ?>/cgi/users/home?screen=EPrint::Summary&amp;eprintid=<?php echo $eprintid; ?>">view it</a>
+						or edit it (including setting it live) in Edshare.
+					</p>
+					<p>
+						Once the item is live it'll be visible to the world at the following address.
+						<br>
+						<tt>http://<?php echo DIEA_EDSHARE_HOST; ?>/<?php echo $eprintid; ?></tt>
+					</p>
+				<?php } else { ?>
+					<p>
+						The item is now live in Edshare and you and others can 
+						view it at the following address.
+						<br>
+						<tt><a href="http://<?php echo DIEA_EDSHARE_HOST; ?>/<?php echo $eprintid; ?>">http://<?php echo DIEA_EDSHARE_HOST; ?>/<?php echo $eprintid; ?></a></tt>
+					</p>
+				<?php } ?>
 				<?php
 				include "htmlfooter.php";
 
