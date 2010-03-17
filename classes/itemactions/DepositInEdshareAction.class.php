@@ -215,7 +215,9 @@ class DepositInEdshareAction extends ItemAction {
 						The item is not yet live in the repository. As the owner 
 						you can still
 						<a href="http://<?php echo DIEA_EDSHARE_HOST; ?>/cgi/users/home?screen=EPrint::Summary&amp;eprintid=<?php echo $eprintid; ?>">view it</a>
-						or edit it (including setting it live) in Edshare.
+						or
+						<a href="http://<?php echo DIEA_EDSHARE_HOST; ?>/cgi/users/home?screen=EPrint::EdShare::Edit&amp;eprintid=<?php echo $eprintid; ?>">edit it</a>
+						(including setting it live) in Edshare.
 					</p>
 					<p>
 						Once the item is live it'll be visible to the world at the following address.
