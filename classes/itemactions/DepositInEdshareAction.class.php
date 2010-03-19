@@ -148,6 +148,10 @@ class DepositInEdshareAction extends ItemAction {
 		$ep3->eprint->addChild("metadata_visibility", "show");
 		$ep3->eprint->addChild("title", $this->ai->data("title"));
 		$ep3->eprint->addChild("abstract", $this->ai->data("description"));
+		if (strpos($_POST["collection"], "/sword-app/deposit/archive") !== false) {
+			$ep3->eprint->addChild("visible", "world_public"); //for Edshare <2
+			$ep3->eprint->addChild("viewing_perms", "world_public"); //for Edshare 2
+		}
 		$keywords = $this->ai->getKeywords();
 		if (!empty($keywords)) {
 			$kw = $ep3->eprint->addChild("keywords");
