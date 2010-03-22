@@ -13,7 +13,7 @@ licence -- see the LICENCE file for more details
 
 // program
 define("PROGRAMNAME", "Eqiat");
-define("VERSION", "0.4");
+define("VERSION", "0.5~git");
 
 // filesystem path to the eqiat root directory -- one level above this file, 
 // ending in a trailing slash
