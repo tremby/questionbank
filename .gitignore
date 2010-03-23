@@ -2,3 +2,4 @@
 *.swp
 *.swo
 sync.sh
+db/db.sqlite

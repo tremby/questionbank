@@ -1,0 +1,2 @@
+This directory must be writable by the user running PHP so that the database 
+file can be created and temporary journals can be stored here.

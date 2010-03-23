@@ -11,7 +11,7 @@ REQUIREMENTS
 
 -	Web server such as Apache or Lighttpd
 -	PHP 5 (tested on PHP 5.2.4)
--	The Sqlite module for PHP (php5-sqlite in Debian)
+-	The Sqlite3 module for PHP
 -	An instance of QTIEngine to call (the demonstration version at 
 	qtiengine.qtitools.org is used by default)
 -	Eqiat (imported as a subdirectory) and all of its dependencies (see its 
@@ -27,8 +27,14 @@ Eqiat's dependency, validate, must be compiled -- see its own README file.
 
 INSTALLATION
 
-It should be enough to extract the full tree to a directory visible to the web 
-server.
+Extract the full tree to a directory visible to the web server.
+
+The user running PHP must have read and write permissions to db, the database 
+directory. If necessary you can do this manually by running commands similar to 
+the following:
+	chmod 770 db
+	chown :www-data db
+where www-data is the user running PHP.
 
 CONFIGURATION
 

@@ -31,6 +31,37 @@ date_default_timezone_set("Europe/London");
 // undo any magic quotes
 unmagic();
 
+// database
+$db = new SQLite3("db/db.sqlite");
+$result = $db->exec("
+	BEGIN TRANSACTION;
+	CREATE TABLE IF NOT EXISTS items (
+		identifier text not null,
+		uploaded integer not null,
+		modified integer null,
+		user text not null,
+		title text not null,
+		description text null,
+		xml blob not null
+	);
+	CREATE TABLE IF NOT EXISTS keywords (
+		item text not null,
+		keyword text not null
+	);
+	CREATE TABLE IF NOT EXISTS users (
+		username text not null,
+		passwordhash text not null
+	);
+	CREATE TABLE IF NOT EXISTS ratings (
+		user text not null,
+		item text not null,
+		rating integer null,
+		comment integer null
+	);
+	COMMIT;
+");
+exit;
+
 // start sessions
 session_start();
 
