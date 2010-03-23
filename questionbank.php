@@ -16,6 +16,20 @@ error_reporting(E_ALL | E_STRICT);
 // constants
 require_once "include/constants.php";
 
+// class autoloader
+function __autoload($classname) {
+	$path = "eqiat/classes/$classname.class.php";
+	if (dirname($path) == "eqiat/classes" && file_exists($path)) {
+		require_once $path;
+		return;
+	}
+	$path = "eqiat/classes/itemtypes/$classname.class.php";
+	if (dirname($path) == "eqiat/classes/itemtypes" && file_exists($path)) {
+		require_once $path;
+		return;
+	}
+}
+
 // set up include path
 ini_set("include_path", ".:" . SITEROOT_LOCAL . "include");
 
@@ -60,7 +74,6 @@ $result = $db->exec("
 	);
 	COMMIT;
 ");
-exit;
 
 // start sessions
 session_start();
