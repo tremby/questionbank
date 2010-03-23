@@ -143,4 +143,12 @@ function usingIE() {
 	return isset($_SERVER["HTTP_USER_AGENT"]) && (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false);
 }
 
+// return true if a user exists in the database
+function userexists($username, $password = null) {
+	$query = "SELECT COUNT(*) FROM users WHERE username LIKE '" . $GLOBALS["db"]->escapeString($username) . "'";
+	if (!is_null($password))
+		$query .= " AND password = '" . $GLOBALS["db"]->escapeString(md5($password)) . "'";
+
+	return $GLOBALS["db"]->querySingle($query) === 1;
+}
 ?>

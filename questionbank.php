@@ -64,7 +64,8 @@ $result = $db->exec("
 	);
 	CREATE TABLE IF NOT EXISTS users (
 		username text not null,
-		passwordhash text not null
+		passwordhash text not null,
+		registered integer not null
 	);
 	CREATE TABLE IF NOT EXISTS ratings (
 		user text not null,
