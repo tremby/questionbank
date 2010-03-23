@@ -30,11 +30,12 @@ INSTALLATION
 Extract the full tree to a directory visible to the web server.
 
 The user running PHP must have read and write permissions to db, the database 
-directory. If necessary you can do this manually by running commands similar to 
-the following:
+subdirectory. If necessary you can do this manually by running commands similar 
+to the following:
 	chmod 770 db
 	chown :www-data db
-where www-data is the user running PHP.
+where www-data is the user running PHP. You may also want to configure your web 
+server not to serve anything within the db subdirectory.
 
 CONFIGURATION
 
