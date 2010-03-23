@@ -1,0 +1,1 @@
+eqiat.php

@@ -1,0 +1,21 @@
+.error {
+	color: red;
+}
+body.error, td.error, div.error, input.error, textarea.error {
+	color: inherit;
+	background-color: #fcc;
+}
+.good {
+	color: green;
+}
+body.good, td.good, div.good, input.good, textarea.good {
+	color: inherit;
+	background-color: #cfc;
+}
+.warning {
+	color: #f90;
+}
+body.warning, td.warning, div.warning, input.warning, textarea.warning {
+	color: inherit;
+	background-color: #fda;
+}

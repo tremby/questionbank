@@ -1,0 +1,83 @@
+NAME
+
+Validate
+
+SUMMARY
+
+A commandline QTI validator.
+
+SOURCE
+
+The source is available at <http://github.com/tremby/validate>.
+
+REQUIREMENTS
+
+-	Jars for SLF4J and JQTI (see README file in the lib subdirectory)
+-	Java and a Java compiler (tested on Sun Java 1.6.0)
+
+COMPILATION
+
+On a unix-like environment it should be possible to just run the provided 
+make.sh script, which just sources the classpath.sh script (which sets up the 
+class path to include all jar files in the lib subdirectory) and then invokes 
+the Java compiler.
+
+It's a trivial compilation -- I'm sure it's also very easy to compile in a 
+Windows environment.
+
+USAGE
+
+It takes QTI XML either as standard input or via a filename given as an 
+argument, for example:
+
+./run.sh testqti.xml
+or
+perl getrandomquestion.pl | ./run.sh
+
+These examples use the provided wrapper script run.sh, which sources 
+classpath.sh just as the make script does and invokes Java. On other 
+environments a similarly simple invocation should be possible.
+
+OUTPUT
+
+The validator outputs any errors, warnings or messages regarding the XML or QTI 
+one per line on standard output.
+
+The format used is message type, then the message itself, then the position or 
+node in the XML, separated by tab characters, such as:
+
+Error	The element type "reesponseDeclaration" must be terminated by the matching end-tag "</reesponseDeclaration>".	7:5
+or
+Error	Not enough children: value. Expected at least: 1, but found: 0	assessmentItem:mcr_ce58cd5cc10e12447135d33aa890cbd3->responseDeclaration:RESPONSE->correctResponse
+
+Any operational errors such as being unable to read the file or bogus arguments 
+cause messages to be written to standard error.
+
+EXIT CODES
+
+0	Valid QTI, but may still have warnings or messages
+1	Valid XML but not valid QTI
+2	File not found
+3	Error reading file
+4	XML parsing error
+5	Error reading from standard input
+253	Validate.class not found (only used by run.sh script)
+254	Unknown QTI parsing error
+255	Unexpected arguments
+
+BUGS
+
+Bugs should be reported at <http://github.com/tremby/validate/issues>.
+
+COPYRIGHT
+
+(c) 2010 JISC-funded EASiHE project, University of Southampton
+
+LICENCE
+
+Licensed under the Creative Commons 'Attribution non-commercial share alike' 
+licence -- see the LICENCE file for more details
+
+AUTHOR
+
+Bart Nagel <bjn@ecs.soton.ac.uk>

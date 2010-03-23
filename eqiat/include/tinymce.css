@@ -1,0 +1,22 @@
+/*
+ * Eqiat
+ * Easy QTI Item Authoring Tool
+ */
+
+/*------------------------------------------------------------------------------
+(c) 2010 JISC-funded EASiHE project, University of Southampton
+Licensed under the Creative Commons 'Attribution non-commercial share alike' 
+licence -- see the LICENCE file for more details
+------------------------------------------------------------------------------*/
+
+@import "errorcolours.css";
+
+.flashvideo {
+	width: 510px;
+	height: 330px;
+	border: 1px solid #ddd;
+	background-color: #eee;
+	background-image: url(../images/Gnome-Video-X-Generic-64.png);
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}
