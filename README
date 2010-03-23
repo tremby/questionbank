@@ -1,0 +1,63 @@
+NAME
+
+Question Bank
+
+SUMMARY
+
+A system to collect and deliver QTI items, easily allowing derivative items to 
+be authored and deposited.
+
+REQUIREMENTS
+
+-	Web server such as Apache or Lighttpd
+-	PHP 5 (tested on PHP 5.2.4)
+-	The Sqlite module for PHP (php5-sqlite in Debian)
+-	An instance of QTIEngine to call (the demonstration version at 
+	qtiengine.qtitools.org is used by default)
+-	Eqiat (imported as a subdirectory) and all of its dependencies (see its 
+	README)
+
+SOURCE
+
+The source is available at <http://github.com/tremby/questionbank>.
+
+COMPILATION
+
+Eqiat's dependency, validate, must be compiled -- see its own README file.
+
+INSTALLATION
+
+It should be enough to extract the full tree to a directory visible to the web 
+server.
+
+CONFIGURATION
+
+The options are constants found at the bottom of include/constants.php:
+	QTIENGINE_HOST
+		edit this to use a custom instance of QTIEngine
+	SITE_TITLE
+		edit this to use a custom site title (it defaults to Eqiat)
+
+USAGE
+
+todo: write this
+
+BUGS
+
+Bugs should be reported at <http://github.com/tremby/questionbank/issues>.
+
+COPYRIGHT
+
+(c) 2010 JISC-funded EASiHE project, University of Southampton
+
+LICENCE
+
+Licensed under the Creative Commons 'Attribution non-commercial share alike' 
+licence -- see the LICENCE file for more details
+
+AUTHOR
+
+Bart Nagel <bjn@ecs.soton.ac.uk>
+
+vim: tw=80 fo=wqnta sw=4 ts=4 sts=4 flp=^\s*(\d+\|-)\s+ spl=en_gb
+vim: noet nosi nojs ai
