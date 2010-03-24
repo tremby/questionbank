@@ -21,6 +21,8 @@ header("Content-Script-Type: text/javascript");
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title><?php echo SITE_TITLE; ?><?php if (isset($GLOBALS["title"])) { ?> &ndash; <?php echo $GLOBALS["title"]; ?><?php } ?></title>
+	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/jquery.js"></script>
+	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/questionbank.js.php"></script>
 	<link rel="stylesheet" href="<?php echo SITEROOT_WEB; ?>include/styles.css">
 </head>
 <body>
@@ -30,6 +32,10 @@ header("Content-Script-Type: text/javascript");
 	$menuitems = array();
 	if ($GLOBALS["page"] != "mainMenu")
 		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "\">Back to main menu</a>";
+	if (loggedin() && $GLOBALS["page"] != "logout")
+		$menuitems[] = "<a id=\"logoutlink\" href=\"" . SITEROOT_WEB . "?page=logout\">Log out (<strong>" . htmlspecialchars(username()) . "</strong>)</a>";
+	else if (!loggedin() && $GLOBALS["page"] != "login")
+		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "?page=login\">Log in</a>";
 	if ($GLOBALS["page"] != "help")
 		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "?page=help\">Help</a>";
 	if (!empty($menuitems)) { ?>

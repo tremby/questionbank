@@ -144,11 +144,40 @@ function usingIE() {
 }
 
 // return true if a user exists in the database
-function userexists($username, $password = null) {
+function userexists($username, $password = null, $ishash = false) {
+	if (!$ishash)
+		$password = md5($password);
 	$query = "SELECT COUNT(*) FROM users WHERE username LIKE '" . $GLOBALS["db"]->escapeString($username) . "'";
 	if (!is_null($password))
-		$query .= " AND password = '" . $GLOBALS["db"]->escapeString(md5($password)) . "'";
+		$query .= " AND passwordhash='" . $GLOBALS["db"]->escapeString($password) . "'";
 
 	return $GLOBALS["db"]->querySingle($query) === 1;
+}
+
+// attempt to log in
+function login($username, $password, $ishash = false) {
+	if (userexists($username, $password, $ishash)) {
+		$_SESSION[SITE_TITLE . "_username"] = $username;
+		$_SESSION[SITE_TITLE . "_passwordhash"] = $ishash ? $password : md5($password);
+		return true;
+	}
+	return false;
+}
+
+// log out
+function logout() {
+	unset($_SESSION[SITE_TITLE . "_username"], $_SESSION[SITE_TITLE . "_passwordhash"]);
+}
+
+// user is logged in
+function loggedin() {
+	return isset($_SESSION[SITE_TITLE . "_username"]) && isset($_SESSION[SITE_TITLE . "_passwordhash"]) && userexists($_SESSION[SITE_TITLE . "_username"], $_SESSION[SITE_TITLE . "_passwordhash"], true);
+}
+
+// return username or false if not logged in
+function username() {
+	if (loggedin())
+		return $_SESSION[SITE_TITLE . "_username"];
+	return false;
 }
 ?>

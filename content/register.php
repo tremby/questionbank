@@ -10,28 +10,43 @@ Licensed under the Creative Commons 'Attribution non-commercial share alike'
 licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
+if (loggedin()) {
+	$title = "Already logged in";
+	include "htmlheader.php";
+	?>
+	<h2><?php echo htmlspecialchars($title); ?></h2>
+	<p>
+		You can't register since you're already logged in as
+		<strong><?php echo htmlspecialchars(username()); ?></strong>
+		– if this isn't you you can
+		<a href="<?php echo SITEROOT_WEB; ?>?page=logout">log out</a>
+	</p>
+	<?php
+	include "htmlfooter.php";
+	exit;
+}
+
 $errors = array();
 
 if (isset($_POST["register"])) {
+	// keep it atomic
+	$db->exec("BEGIN TRANSACTION;");
 
+	// check input
 	if (!isset($_POST["username"]) || empty($_POST["username"]))
 		$errors[] = "You need to specify a username";
 	else if (preg_match('%^[^_0-9]%', $_POST["username"]) && !preg_match('%^\w%', $_POST["username"]))
 		$errors[] = "Your username must start with an alphanumeric character";
 	else if (!preg_match('%^[\w.-]+$%', $_POST["username"]))
 		$errors[] = "Your username can only contain alphanumeric characters, dots, underscores and hyphens";
+	else if (userexists($_POST["username"])) {
+		$errors[] = "This username has already been taken";
+	}
 
 	if ($_POST["password"] != $_POST["password2"])
 		$errors[] = "The passwords you entered didn't match";
 	else if (!isset($_POST["password"]) || empty($_POST["password"]))
 		$errors[] = "You need to specify a password";
-
-	$db->exec("BEGIN TRANSACTION;");
-
-	if (userexists($_POST["username"])) {
-		$errors[] = "This username has already been taken";
-		$db->exec("COMMIT;");
-	}
 
 	if (empty($errors)) {
 		$db->exec("INSERT INTO users VALUES (
@@ -41,20 +56,23 @@ if (isset($_POST["register"])) {
 		);");
 		$db->exec("COMMIT;");
 
-		//TODO: log them in
+		login($_POST["username"], $_POST["password"]);
 
 		$title = "Registration successful";
 		include "htmlheader.php";
 		?>
 		<h2><?php echo htmlspecialchars($title); ?></h2>
-		<p>You have successfully registered as <strong><?php echo htmlspecialchars($_POST["username"]); ?></strong> and can now go ahead and deposit, rate and comment on items</p>
+		<p>You have successfully registered as <strong><?php echo htmlspecialchars($_POST["username"]); ?></strong>. 
+		You've been logged in and can now go ahead and deposit, rate and comment 
+		on items</p>
 		<?php
 		include "htmlfooter.php";
 		exit;
 	}
-}
 
-//TODO: check if already logged in
+	// finish transaction (which didn't happen anyway)
+	$db->exec("COMMIT;");
+}
 
 $title = "Register";
 include "htmlheader.php";
@@ -79,3 +97,5 @@ include "htmlheader.php";
 		<dd><input type="submit" name="register" value="Register"></dd>
 	</dl>
 </form>
+
+<?php include "htmlfooter.php"; ?>
