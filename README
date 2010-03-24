@@ -34,8 +34,10 @@ subdirectory. If necessary you can do this manually by running commands similar
 to the following:
 	chmod 770 db
 	chown :www-data db
-where www-data is the user running PHP. You may also want to configure your web 
-server not to serve anything within the db subdirectory.
+where www-data is a group of which the user running PHP is a member.
+
+You may also want to configure your web server not to serve anything within the 
+db subdirectory.
 
 CONFIGURATION
 
