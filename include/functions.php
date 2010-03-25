@@ -197,4 +197,14 @@ function requirelogin() {
 	include "content/login.php";
 	exit;
 }
+
+// return true if an item with the given identifier exists in the database
+function itemexists($qtiid) {
+	return $GLOBALS["db"]->querySingle("SELECT COUNT(*) FROM items WHERE identifier='" . $GLOBALS["db"]->escapeString($qtiid) . "';") === 1;
+}
+
+// return the owner of an item with the given identifier
+function itemowner($qtiid) {
+	return $GLOBALS["db"]->querySingle("SELECT user FROM items WHERE identifier='" . $GLOBALS["db"]->escapeString($qtiid) . "';");
+}
 ?>
