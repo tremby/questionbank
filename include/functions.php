@@ -52,6 +52,11 @@ function notfound($message = "404: not found", $mimetype = "text/plain") {
 	echo $message;
 	exit;
 }
+function forbidden($message = "403: forbidden", $mimetype = "text/plain") {
+	header("Content-Type: $mimetype", true, 403);
+	echo $message;
+	exit;
+}
 
 // show an array of messages as HTML
 function showmessages($messages, $title = "Message", $class = null) {
