@@ -53,7 +53,7 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
 } else if (isset($_REQUEST["async"]))
 	badrequest("username and password not given");
 
-$title = "Register";
+$title = "Log in";
 include "htmlheader.php";
 ?>
 <h2><?php echo htmlspecialchars($title); ?></h2>
