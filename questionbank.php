@@ -77,14 +77,16 @@ $result = $db->exec("
 	CREATE TABLE IF NOT EXISTS ratings (
 		user TEXT NOT NULL,
 		item TEXT NOT NULL,
-		rating INTEGER NOT NULL
+		rating INTEGER NOT NULL,
+		posted INTEGER NOT NULL
 	);
 	CREATE UNIQUE INDEX IF NOT EXISTS ratings_user_item ON ratings (user ASC, item ASC);
 
 	CREATE TABLE IF NOT EXISTS comments (
 		user TEXT NOT NULL,
 		item TEXT NOT NULL,
-		comment TEXT NOT NULL
+		comment TEXT NOT NULL,
+		posted INTEGER NOT NULL
 	);
 	CREATE UNIQUE INDEX IF NOT EXISTS comments_user_item ON comments (user ASC, item ASC);
 
