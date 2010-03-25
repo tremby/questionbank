@@ -185,4 +185,16 @@ function username() {
 		return $_SESSION[SITE_TITLE . "_username"];
 	return false;
 }
+
+// if a user is not logged in, show a login form and exit or, if async, send 403 forbidden
+function requirelogin() {
+	if (loggedin())
+		return;
+	if (isset($_REQUEST["async"]))
+		forbidden();
+
+	$_SESSION["nextpage"] = $_SERVER["REQUEST_URI"];
+	include "content/login.php";
+	exit;
+}
 ?>

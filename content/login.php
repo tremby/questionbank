@@ -10,6 +10,10 @@ Licensed under the Creative Commons 'Attribution non-commercial share alike'
 licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
+// clear the nextpage session var if we've come to the login page directly
+if ($GLOBALS["page"] == "login" && isset($_SESSION["nextpage"]))
+	unset($_SESSION["nextpage"]);
+
 if (!isset($_REQUEST["async"]) && loggedin()) {
 	$title = "Already logged in";
 	include "htmlheader.php";
@@ -32,6 +36,13 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
 	if (login($_POST["username"], $_POST["password"])) {
 		if (isset($_REQUEST["async"]))
 			ok();
+
+		// redirect if nextpage session var is set (and unset it)
+		if (isset($_SESSION["nextpage"])) {
+			$nextpage = $_SESSION["nextpage"];
+			unset($_SESSION["nextpage"]);
+			redirect($nextpage);
+		}
 
 		$title = "Successfully logged in";
 		include "htmlheader.php";
@@ -57,11 +68,14 @@ $title = "Log in";
 include "htmlheader.php";
 ?>
 <h2><?php echo htmlspecialchars($title); ?></h2>
+<?php if (isset($_SESSION["nextpage"])) { ?>
+	<p><strong>You need to be logged in to view the page you requested</strong></p>
+<?php } ?>
 <p>Use the form below to log in</p>
 
 <?php if (!empty($errors)) showmessages($errors, "Error", "error"); ?>
 
-<form action="<?php echo SITEROOT_WEB; ?>?page=login" method="post">
+<form action="<?php echo isset($_SESSION["nextpage"]) ? $_SESSION["nextpage"] : SITEROOT_WEB . "?page=login"; ?>" method="post">
 	<dl>
 		<dt><label for="username">Username</label></dt>
 		<dd><input type="text" width="32" name="username" id="username"<?php if (isset($_POST["username"])) { ?> value="<?php echo htmlspecialchars($_POST["username"]); ?>"<?php } ?>></dd>

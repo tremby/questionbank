@@ -34,7 +34,7 @@ header("Content-Script-Type: text/javascript");
 		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "\">Back to main menu</a>";
 	if (loggedin() && $GLOBALS["page"] != "logout")
 		$menuitems[] = "<a id=\"logoutlink\" href=\"" . SITEROOT_WEB . "?page=logout\">Log out (<strong>" . htmlspecialchars(username()) . "</strong>)</a>";
-	else if (!loggedin() && $GLOBALS["page"] != "login")
+	else if (!loggedin() && ($GLOBALS["page"] != "login" && !isset($_SESSION["nextpage"])))
 		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "?page=login\">Log in</a>";
 	if ($GLOBALS["page"] != "help")
 		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "?page=help\">Help</a>";
