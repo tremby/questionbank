@@ -81,6 +81,7 @@ $result = $db->exec("
 		posted INTEGER NOT NULL
 	);
 	CREATE UNIQUE INDEX IF NOT EXISTS ratings_user_item ON ratings (user ASC, item ASC);
+	CREATE INDEX IF NOT EXISTS ratings_item ON ratings (item ASC);
 
 	CREATE TABLE IF NOT EXISTS comments (
 		user TEXT NOT NULL,
@@ -88,7 +89,7 @@ $result = $db->exec("
 		comment TEXT NOT NULL,
 		posted INTEGER NOT NULL
 	);
-	CREATE UNIQUE INDEX IF NOT EXISTS comments_user_item ON comments (user ASC, item ASC);
+	CREATE INDEX IF NOT EXISTS comments_item ON comments (item ASC);
 
 	COMMIT;
 ");
