@@ -19,7 +19,7 @@ if (loggedin()) {
 		You can't register since you're already logged in as
 		<strong><?php echo htmlspecialchars(username()); ?></strong>
 		– if this isn't you you can
-		<a href="<?php echo SITEROOT_WEB; ?>?page=logout">log out</a>
+		<a href="<?php echo SITEROOT_WEB; ?>?page=logout">log out</a>.
 	</p>
 	<?php
 	include "htmlfooter.php";
@@ -64,7 +64,7 @@ if (isset($_POST["register"])) {
 		<h2><?php echo htmlspecialchars($title); ?></h2>
 		<p>You have successfully registered as <strong><?php echo htmlspecialchars($_POST["username"]); ?></strong>. 
 		You've been logged in and can now go ahead and deposit, rate and comment 
-		on items</p>
+		on items.</p>
 		<?php
 		include "htmlfooter.php";
 		exit;

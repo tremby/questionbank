@@ -71,7 +71,7 @@ include "htmlheader.php";
 <?php if (isset($_SESSION["nextpage"])) { ?>
 	<p><strong>You need to be logged in to view the page you requested</strong></p>
 <?php } ?>
-<p>Use the form below to log in</p>
+<p>Use the form below to log in. If you don't yet have an account you can <a href="<?php echo SITEROOT_WEB; ?>?page=register">register</a>.</p>
 
 <?php if (!empty($errors)) showmessages($errors, "Error", "error"); ?>
 
