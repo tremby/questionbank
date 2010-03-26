@@ -431,6 +431,25 @@ abstract class QTIAssessmentItem {
 		return array_unique($keywords);
 	}
 
+	// store the item in session memory
+	public function sessionStore() {
+		if (!isset($_SESSION["items"]) || !is_array($_SESSION["items"]))
+			$_SESSION["items"] = array();
+		$_SESSION["items"][$this->getQTIID()] = $this;
+	}
+
+	// remove the item from session memory
+	public function sessionRemove() {
+		if (!isset($_SESSION["items"]) || !isset($_SESSION["items"][$this->getQTIID()]))
+			return;
+		unset($_SESSION["items"][$this->getQTIID()]);
+	}
+
+
+	/* --------------------------------------------------------------------- */
+	/* protected utility methods                                             */
+	/* --------------------------------------------------------------------- */
+
 	// return an initial SimpleXML assessmentItem element
 	protected function initialXML() {
 		$ai = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>
@@ -451,20 +470,6 @@ abstract class QTIAssessmentItem {
 			$ai->addAttribute("title", $this->data["title"]);
 
 		return $ai;
-	}
-
-	// store the item in session memory
-	public function sessionStore() {
-		if (!isset($_SESSION["items"]) || !is_array($_SESSION["items"]))
-			$_SESSION["items"] = array();
-		$_SESSION["items"][$this->getQTIID()] = $this;
-	}
-
-	// remove the item from session memory
-	public function sessionRemove() {
-		if (!isset($_SESSION["items"]) || !isset($_SESSION["items"][$this->getQTIID()]))
-			return;
-		unset($_SESSION["items"][$this->getQTIID()]);
 	}
 
 
