@@ -10,6 +10,74 @@ Licensed under the Creative Commons 'Attribution non-commercial share alike'
 licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
+function forbidden($message = "403: forbidden", $mimetype = "text/plain") {
+	header("Content-Type: $mimetype", true, 403);
+	echo $message;
+	exit;
+}
+
+// return true if a user exists in the database
+function userexists($username, $password = null, $ishash = false) {
+	if (!$ishash)
+		$password = md5($password);
+	$query = "SELECT COUNT(*) FROM users WHERE username LIKE '" . $GLOBALS["db"]->escapeString($username) . "'";
+	if (!is_null($password))
+		$query .= " AND passwordhash='" . $GLOBALS["db"]->escapeString($password) . "'";
+
+	return $GLOBALS["db"]->querySingle($query) === 1;
+}
+
+// attempt to log in
+function login($username, $password, $ishash = false) {
+	if (userexists($username, $password, $ishash)) {
+		$_SESSION[SITE_TITLE . "_username"] = $username;
+		$_SESSION[SITE_TITLE . "_passwordhash"] = $ishash ? $password : md5($password);
+		return true;
+	}
+	return false;
+}
+
+// log out
+function logout() {
+	unset($_SESSION[SITE_TITLE . "_username"], $_SESSION[SITE_TITLE . "_passwordhash"]);
+}
+
+// user is logged in
+function loggedin() {
+	return isset($_SESSION[SITE_TITLE . "_username"]) && isset($_SESSION[SITE_TITLE . "_passwordhash"]) && userexists($_SESSION[SITE_TITLE . "_username"], $_SESSION[SITE_TITLE . "_passwordhash"], true);
+}
+
+// return username or false if not logged in
+function username() {
+	if (loggedin())
+		return $_SESSION[SITE_TITLE . "_username"];
+	return false;
+}
+
+// if a user is not logged in, show a login form and exit or, if async, send 403 forbidden
+function requirelogin() {
+	if (loggedin())
+		return;
+	if (isset($_REQUEST["async"]))
+		forbidden();
+
+	$_SESSION["nextpage"] = $_SERVER["REQUEST_URI"];
+	include "content/login.php";
+	exit;
+}
+
+// return true if an item with the given identifier exists in the database
+function itemexists($qtiid) {
+	return $GLOBALS["db"]->querySingle("SELECT COUNT(*) FROM items WHERE identifier='" . $GLOBALS["db"]->escapeString($qtiid) . "';") === 1;
+}
+
+// return the owner of an item with the given identifier
+function itemowner($qtiid) {
+	return $GLOBALS["db"]->querySingle("SELECT user FROM items WHERE identifier='" . $GLOBALS["db"]->escapeString($qtiid) . "';");
+}
+
+// from Eqiat-------------------------------------------------------------------
+
 // if magic quotes get/post/cookie is on, undo it by stripping slashes from each
 function unmagic() {
 	if (get_magic_quotes_gpc()) {
@@ -49,11 +117,6 @@ function ok($message = null, $mimetype = "text/plain") {
 }
 function notfound($message = "404: not found", $mimetype = "text/plain") {
 	header("Content-Type: $mimetype", true, 404);
-	echo $message;
-	exit;
-}
-function forbidden($message = "403: forbidden", $mimetype = "text/plain") {
-	header("Content-Type: $mimetype", true, 403);
 	echo $message;
 	exit;
 }
@@ -148,63 +211,11 @@ function usingIE() {
 	return isset($_SERVER["HTTP_USER_AGENT"]) && (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false);
 }
 
-// return true if a user exists in the database
-function userexists($username, $password = null, $ishash = false) {
-	if (!$ishash)
-		$password = md5($password);
-	$query = "SELECT COUNT(*) FROM users WHERE username LIKE '" . $GLOBALS["db"]->escapeString($username) . "'";
-	if (!is_null($password))
-		$query .= " AND passwordhash='" . $GLOBALS["db"]->escapeString($password) . "'";
-
-	return $GLOBALS["db"]->querySingle($query) === 1;
+// return indented XML string from SimpleXML object
+function simplexml_indented_string(SimpleXMLElement $xml) {
+	$dom = dom_import_simplexml($xml)->ownerDocument;
+	$dom->formatOutput = true;
+	return $dom->saveXML();
 }
 
-// attempt to log in
-function login($username, $password, $ishash = false) {
-	if (userexists($username, $password, $ishash)) {
-		$_SESSION[SITE_TITLE . "_username"] = $username;
-		$_SESSION[SITE_TITLE . "_passwordhash"] = $ishash ? $password : md5($password);
-		return true;
-	}
-	return false;
-}
-
-// log out
-function logout() {
-	unset($_SESSION[SITE_TITLE . "_username"], $_SESSION[SITE_TITLE . "_passwordhash"]);
-}
-
-// user is logged in
-function loggedin() {
-	return isset($_SESSION[SITE_TITLE . "_username"]) && isset($_SESSION[SITE_TITLE . "_passwordhash"]) && userexists($_SESSION[SITE_TITLE . "_username"], $_SESSION[SITE_TITLE . "_passwordhash"], true);
-}
-
-// return username or false if not logged in
-function username() {
-	if (loggedin())
-		return $_SESSION[SITE_TITLE . "_username"];
-	return false;
-}
-
-// if a user is not logged in, show a login form and exit or, if async, send 403 forbidden
-function requirelogin() {
-	if (loggedin())
-		return;
-	if (isset($_REQUEST["async"]))
-		forbidden();
-
-	$_SESSION["nextpage"] = $_SERVER["REQUEST_URI"];
-	include "content/login.php";
-	exit;
-}
-
-// return true if an item with the given identifier exists in the database
-function itemexists($qtiid) {
-	return $GLOBALS["db"]->querySingle("SELECT COUNT(*) FROM items WHERE identifier='" . $GLOBALS["db"]->escapeString($qtiid) . "';") === 1;
-}
-
-// return the owner of an item with the given identifier
-function itemowner($qtiid) {
-	return $GLOBALS["db"]->querySingle("SELECT user FROM items WHERE identifier='" . $GLOBALS["db"]->escapeString($qtiid) . "';");
-}
 ?>
