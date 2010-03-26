@@ -92,8 +92,6 @@ $result = $db->exec("
 
 	COMMIT;
 ");
-var_dump($result);
-exit;
 
 // start sessions
 session_start();
