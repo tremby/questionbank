@@ -43,8 +43,9 @@ header("Content-Script-Type: text/javascript");
 	<h1><?php echo SITE_TITLE; ?></h1>
 	<?php
 	$menuitems = array();
+	$menuitems[] = "<a href=\"" . dirname(SITEROOT_WEB) . "\">Back to Question Bank</a>";
 	if ($GLOBALS["page"] != "mainMenu")
-		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "\">Back to main menu</a>";
+		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "\">Back to Eqiat main menu</a>";
 	if ($GLOBALS["page"] != "help")
 		$menuitems[] = "<a href=\"" . SITEROOT_WEB . "?page=help\">Help</a>";
 	if (!empty($menuitems)) { ?>
