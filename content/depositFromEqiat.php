@@ -73,6 +73,9 @@ foreach ($ai->getKeywords() as $keyword) {
 // commit changes
 $db->exec("COMMIT;");
 
+// remove from session memory to remove from Eqiat view
+$ai->sessionRemove();
+
 $title = "Item " . ($exists ? "updated" : "deposited");
 include "htmlheader.php";
 ?>
