@@ -13,6 +13,10 @@ licence -- see the LICENCE file for more details
 include "htmlheader.php";
 ?>
 
-Main menu...
+<dl id="mainmenu">
+	<dt><a href="<?php echo SITEROOT_WEB; ?>?page=itemList">Item list</a></dt>
+	<dd>A filterable list of all items currently in <?php echo 
+	htmlspecialchars(SITE_TITLE); ?></dd>
+</dl>
 
 <?php include "htmlfooter.php"; ?>

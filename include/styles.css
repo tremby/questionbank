@@ -132,3 +132,7 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+
+.ordered {
+	background-color: #fdd;
+}
