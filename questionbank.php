@@ -18,6 +18,11 @@ require_once "include/constants.php";
 
 // class autoloader
 function __autoload($classname) {
+	$path = "classes/$classname.class.php";
+	if (dirname($path) == "classes" && file_exists($path)) {
+		require_once $path;
+		return;
+	}
 	$path = "eqiat/classes/$classname.class.php";
 	if (dirname($path) == "eqiat/classes" && file_exists($path)) {
 		require_once $path;
