@@ -1,7 +1,7 @@
 <?php
 /*
 	bart's URI class
-	0.2
+	0.3
 	bart@tremby.net
 */
 class Uri {
@@ -216,14 +216,15 @@ class Uri {
 			else
 				$value = "";
 
-			list($name, $index) = split("[][]", $name);
-			$name = urldecode($name);
+			$matches = array();
+			if (preg_match('%^(.*?)\[(.*)\]$%', $name, $matches)) { //array
+				$name = urldecode($matches[1]);
+				$index = $matches[2];
 
-			if (isset($index)) { //array
-				if (!isset($args[$name]))
+				if (!isset($args[$name]) || !is_array($args[$name]))
 					$args[$name] = array();
 
-				if ($index == "")
+				if ($index === "")
 					$args[$name][] = $value; //indexed
 				else
 					$args[$name][urldecode($index)] = $value; //associative
