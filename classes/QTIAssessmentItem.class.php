@@ -97,8 +97,8 @@ abstract class QTIAssessmentItem {
 	 * implementing the functions
 	 * 	edititemsubmitcheck_itemspecificwarnings
 	 * 	edititemsubmitcheck_itemspecificerrors
-	 * which should return show any warning or error messages and then return 
-	 * true if submission should continue or false if it should be aborted.
+	 * which should show any warning or error messages and then return true if 
+	 * submission should continue or false if it should be aborted.
 	 * If possible, indicate the elements on which warnings or errors occured by 
 	 * adding the appropriate CSS class ("warning" or "error").
 	 * Additionally, if defined the function
