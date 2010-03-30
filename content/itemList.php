@@ -85,7 +85,14 @@ include "htmlheader.php";
 	<table>
 		<tr>
 			<?php foreach (array("uploaded", "modified", "user", "title", "description") as $type) { ?>
-				<th<?php if ($orderby == $type) { ?> class="ordered"<?php } ?>><a href="<?php echo $_SERVER["REQUEST_URI"]; ?>&amp;orderby=<?php echo $type; ?>&amp;direction=<?php echo $orderby == $type && $direction == "ASC" ? "DESC" : "ASC"; ?>"><?php echo ucfirst($type); ?></a></th>
+				<th<?php if ($orderby == $type) { ?> class="ordered"<?php } ?>>
+					<a href="<?php echo Uri::construct(true)->addvars(array(
+						"orderby" => $type,
+						"direction" => $orderby == $type && $direction == "ASC" ? "DESC" : "ASC",
+					))->geturi(true); ?>">
+						<?php echo ucfirst($type); ?>
+					</a>
+				</th>
 			<?php } ?>
 			<th>Keywords</th>
 			<th>Actions</th>
@@ -100,9 +107,11 @@ include "htmlheader.php";
 				<td><?php if (!empty($item["keywords"])) { ?>
 					<ul class="keywords">
 						<?php foreach ($item["keywords"] as $keyword) { ?>
-							<li><a href="<?php echo $_SERVER["REQUEST_URI"]; ?>&amp;keyword=<?php echo urlencode($keyword); ?>">
-								<?php echo htmlspecialchars($keyword); ?>
-							</a></li>
+							<li>
+								<a href="<?php echo Uri::construct(true)->addvars("keyword", $keyword)->geturi(true); ?>">
+									<?php echo htmlspecialchars($keyword); ?>
+								</a>
+							</li>
 						<?php } ?>
 					</ul>
 				<?php } ?></td>
