@@ -132,4 +132,21 @@ function itemowner($qtiid) {
 	return db()->querySingle("SELECT user FROM items WHERE identifier='" . db()->escapeString($qtiid) . "';");
 }
 
+// return the item with the given identifier from the database
+function getitem($qtiid) {
+	if (!itemexists($qtiid))
+		return false;
+
+	// get item
+	$item = db()->querySingle("SELECT * FROM items WHERE identifier='" . db()->escapeString($qtiid) . "';", true);
+
+	// get keywords
+	$item["keywords"] = array();
+	$result = db()->query("SELECT keyword FROM keywords WHERE item='" . db()->escapeString($qtiid) . "' ORDER BY keyword ASC;");
+	while ($row = $result->fetchArray(SQLITE3_NUM))
+		$item["keywords"][] = $row[0];
+
+	return $item;
+}
+
 ?>
