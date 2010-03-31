@@ -557,9 +557,10 @@ function xmltoqtiobject($xml, &$errors, &$warnings, &$messages, $metadata = arra
 
 	// give it a new identifier if appropriate, restore manifest identifier if 
 	// no new identifier is wanted
-	if ($newidentifier)
+	if ($newidentifier) {
+		$ai->touch();
 		$ai->setQTIID();
-	else if (array_key_exists("midentifier", $metadata))
+	} else if (array_key_exists("midentifier", $metadata))
 		$ai->setMID($metadata["midentifier"]);
 
 	// restore the metadata taken from the manifest
