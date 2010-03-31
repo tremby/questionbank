@@ -21,15 +21,71 @@ function forbidden($message = "403: forbidden", $mimetype = "text/plain") {
 	exit;
 }
 
+// return the database object, connecting and setting up the schema first if 
+// necessary
+function db() {
+	if (array_key_exists("db", $GLOBALS))
+		return $GLOBALS["db"];
+
+	$GLOBALS["db"] = new SQLite3((basename(SITEROOT_LOCAL) == "eqiat" ? dirname(SITEROOT_LOCAL) . "/" : SITEROOT_LOCAL) . "db/db.sqlite");
+	$GLOBALS["db"]->exec("
+		BEGIN TRANSACTION;
+
+		CREATE TABLE IF NOT EXISTS items (
+			identifier TEXT PRIMARY KEY ASC NOT NULL,
+			uploaded INTEGER NOT NULL,
+			modified INTEGER NULL,
+			user TEXT NOT NULL,
+			title TEXT NOT NULL,
+			description TEXT NULL,
+			xml BLOB NOT NULL
+		);
+		CREATE INDEX IF NOT EXISTS items_user ON items (user ASC);
+
+		CREATE TABLE IF NOT EXISTS keywords (
+			item TEXT NOT NULL,
+			keyword TEXT NOT NULL
+		);
+		CREATE INDEX IF NOT EXISTS keywords_item ON keywords (item ASC);
+		CREATE INDEX IF NOT EXISTS keywords_keyword ON keywords (keyword ASC);
+
+		CREATE TABLE IF NOT EXISTS users (
+			username TEXT PRIMARY KEY ASC NOT NULL,
+			passwordhash TEXT NOT NULL,
+			registered INTEGER NOT NULL
+		);
+
+		CREATE TABLE IF NOT EXISTS ratings (
+			user TEXT NOT NULL,
+			item TEXT NOT NULL,
+			rating INTEGER NOT NULL,
+			posted INTEGER NOT NULL
+		);
+		CREATE UNIQUE INDEX IF NOT EXISTS ratings_user_item ON ratings (user ASC, item ASC);
+		CREATE INDEX IF NOT EXISTS ratings_item ON ratings (item ASC);
+
+		CREATE TABLE IF NOT EXISTS comments (
+			user TEXT NOT NULL,
+			item TEXT NOT NULL,
+			comment TEXT NOT NULL,
+			posted INTEGER NOT NULL
+		);
+		CREATE INDEX IF NOT EXISTS comments_item ON comments (item ASC);
+
+		COMMIT;
+	");
+	return $GLOBALS["db"];
+}
+
 // return true if a user exists in the database
 function userexists($username, $password = null, $ishash = false) {
 	if (!$ishash)
 		$password = md5($password);
-	$query = "SELECT COUNT(*) FROM users WHERE username LIKE '" . $GLOBALS["db"]->escapeString($username) . "'";
+	$query = "SELECT COUNT(*) FROM users WHERE username LIKE '" . db()->escapeString($username) . "'";
 	if (!is_null($password))
-		$query .= " AND passwordhash='" . $GLOBALS["db"]->escapeString($password) . "'";
+		$query .= " AND passwordhash='" . db()->escapeString($password) . "'";
 
-	return $GLOBALS["db"]->querySingle($query) === 1;
+	return db()->querySingle($query) === 1;
 }
 
 // attempt to log in
@@ -73,12 +129,12 @@ function requirelogin() {
 
 // return true if an item with the given identifier exists in the database
 function itemexists($qtiid) {
-	return $GLOBALS["db"]->querySingle("SELECT COUNT(*) FROM items WHERE identifier='" . $GLOBALS["db"]->escapeString($qtiid) . "';") === 1;
+	return db()->querySingle("SELECT COUNT(*) FROM items WHERE identifier='" . db()->escapeString($qtiid) . "';") === 1;
 }
 
 // return the owner of an item with the given identifier
 function itemowner($qtiid) {
-	return $GLOBALS["db"]->querySingle("SELECT user FROM items WHERE identifier='" . $GLOBALS["db"]->escapeString($qtiid) . "';");
+	return db()->querySingle("SELECT user FROM items WHERE identifier='" . db()->escapeString($qtiid) . "';");
 }
 
 // Eqiat's functions------------------------------------------------------------

@@ -50,55 +50,6 @@ date_default_timezone_set("Europe/London");
 // undo any magic quotes
 unmagic();
 
-// database
-$db = new SQLite3("db/db.sqlite");
-$result = $db->exec("
-	BEGIN TRANSACTION;
-
-	CREATE TABLE IF NOT EXISTS items (
-		identifier TEXT PRIMARY KEY ASC NOT NULL,
-		uploaded INTEGER NOT NULL,
-		modified INTEGER NULL,
-		user TEXT NOT NULL,
-		title TEXT NOT NULL,
-		description TEXT NULL,
-		xml BLOB NOT NULL
-	);
-	CREATE INDEX IF NOT EXISTS items_user ON items (user ASC);
-
-	CREATE TABLE IF NOT EXISTS keywords (
-		item TEXT NOT NULL,
-		keyword TEXT NOT NULL
-	);
-	CREATE INDEX IF NOT EXISTS keywords_item ON keywords (item ASC);
-	CREATE INDEX IF NOT EXISTS keywords_keyword ON keywords (keyword ASC);
-
-	CREATE TABLE IF NOT EXISTS users (
-		username TEXT PRIMARY KEY ASC NOT NULL,
-		passwordhash TEXT NOT NULL,
-		registered INTEGER NOT NULL
-	);
-
-	CREATE TABLE IF NOT EXISTS ratings (
-		user TEXT NOT NULL,
-		item TEXT NOT NULL,
-		rating INTEGER NOT NULL,
-		posted INTEGER NOT NULL
-	);
-	CREATE UNIQUE INDEX IF NOT EXISTS ratings_user_item ON ratings (user ASC, item ASC);
-	CREATE INDEX IF NOT EXISTS ratings_item ON ratings (item ASC);
-
-	CREATE TABLE IF NOT EXISTS comments (
-		user TEXT NOT NULL,
-		item TEXT NOT NULL,
-		comment TEXT NOT NULL,
-		posted INTEGER NOT NULL
-	);
-	CREATE INDEX IF NOT EXISTS comments_item ON comments (item ASC);
-
-	COMMIT;
-");
-
 // start sessions
 session_start();
 

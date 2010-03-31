@@ -30,7 +30,7 @@ $errors = array();
 
 if (isset($_POST["register"])) {
 	// keep it atomic
-	$db->exec("BEGIN TRANSACTION;");
+	db()->exec("BEGIN TRANSACTION;");
 
 	// check input
 	if (!isset($_POST["username"]) || empty($_POST["username"]))
@@ -49,12 +49,12 @@ if (isset($_POST["register"])) {
 		$errors[] = "You need to specify a password";
 
 	if (empty($errors)) {
-		$db->exec("INSERT INTO users VALUES (
-			'" . $db->escapeString($_POST["username"]) . "',
-			'" . $db->escapeString(md5($_POST["password"])) . "',
+		db()->exec("INSERT INTO users VALUES (
+			'" . db()->escapeString($_POST["username"]) . "',
+			'" . db()->escapeString(md5($_POST["password"])) . "',
 			" . time() . "
 		);");
-		$db->exec("COMMIT;");
+		db()->exec("COMMIT;");
 
 		login($_POST["username"], $_POST["password"]);
 
@@ -71,7 +71,7 @@ if (isset($_POST["register"])) {
 	}
 
 	// finish transaction (which didn't happen anyway)
-	$db->exec("COMMIT;");
+	db()->exec("COMMIT;");
 }
 
 $title = "Register";

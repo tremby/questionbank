@@ -38,9 +38,9 @@ if (!isset($_REQUEST["direction"]) || empty($_REQUEST["direction"]) && (!isset($
 // filter by user and keyword
 $where = array();
 if (isset($_REQUEST["user"]) && !empty($_REQUEST["user"]))
-	$where[] = "user='" . $db->escapeString($_REQUEST["user"]) . "'";
+	$where[] = "user='" . db()->escapeString($_REQUEST["user"]) . "'";
 if (isset($_REQUEST["keyword"]) && !empty($_REQUEST["keyword"]))
-	$where[] = "keywords.keyword='" . $db->escapeString($_REQUEST["keyword"]) . "'";
+	$where[] = "keywords.keyword='" . db()->escapeString($_REQUEST["keyword"]) . "'";
 
 // TODO: limits (pagination)
 
@@ -53,7 +53,7 @@ $sql = "
 	GROUP BY keywords.item
 	ORDER BY $orderbysql $direction
 ;";
-$result = $db->query($sql);
+$result = db()->query($sql);
 $items = array();
 while ($row = $result->fetchArray(SQLITE3_ASSOC))
 	$items[$row["identifier"]] = $row;
@@ -66,7 +66,7 @@ if (!empty($items)) {
 		WHERE item IN ('" . implode("', '", array_keys($items)) . "')
 		ORDER BY keyword ASC
 	;";
-	$result = $db->query($sql);
+	$result = db()->query($sql);
 	while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
 		if (!isset($items[$row["item"]]["keywords"]))
 			$items[$row["item"]]["keywords"] = array();
