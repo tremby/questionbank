@@ -40,6 +40,7 @@ ini_set("include_path", ".:" . SITEROOT_LOCAL . "include");
 
 // common functions
 require_once "include/functions.php";
+require_once "eqiat/include/functions.php";
 
 // character encoding
 mb_internal_encoding("UTF-8");
