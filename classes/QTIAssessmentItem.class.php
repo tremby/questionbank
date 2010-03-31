@@ -34,7 +34,6 @@ abstract class QTIAssessmentItem {
 		if ($id === false)
 			return;
 
-		$this->touch();
 		$this->setQTIID($id);
 		$this->setMID();
 	}
@@ -215,6 +214,7 @@ abstract class QTIAssessmentItem {
 	// set QTI identifier or generate a new one if none given and update session 
 	// memory
 	public function setQTIID($identifier = null, $keepold = false) {
+		$this->touch();
 		if (!$keepold)
 			$this->sessionRemove();
 		if (is_null($identifier))
