@@ -97,8 +97,8 @@ abstract class QTIAssessmentItem {
 	 * implementing the functions
 	 * 	edititemsubmitcheck_itemspecificwarnings
 	 * 	edititemsubmitcheck_itemspecificerrors
-	 * which should return show any warning or error messages and then return 
-	 * true if submission should continue or false if it should be aborted.
+	 * which should show any warning or error messages and then return true if 
+	 * submission should continue or false if it should be aborted.
 	 * If possible, indicate the elements on which warnings or errors occured by 
 	 * adding the appropriate CSS class ("warning" or "error").
 	 * Additionally, if defined the function
@@ -431,6 +431,25 @@ abstract class QTIAssessmentItem {
 		return array_unique($keywords);
 	}
 
+	// store the item in session memory
+	public function sessionStore() {
+		if (!isset($_SESSION["items"]) || !is_array($_SESSION["items"]))
+			$_SESSION["items"] = array();
+		$_SESSION["items"][$this->getQTIID()] = $this;
+	}
+
+	// remove the item from session memory
+	public function sessionRemove() {
+		if (!isset($_SESSION["items"]) || !isset($_SESSION["items"][$this->getQTIID()]))
+			return;
+		unset($_SESSION["items"][$this->getQTIID()]);
+	}
+
+
+	/* --------------------------------------------------------------------- */
+	/* protected utility methods                                             */
+	/* --------------------------------------------------------------------- */
+
 	// return an initial SimpleXML assessmentItem element
 	protected function initialXML() {
 		$ai = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>
@@ -451,20 +470,6 @@ abstract class QTIAssessmentItem {
 			$ai->addAttribute("title", $this->data["title"]);
 
 		return $ai;
-	}
-
-	// store the item in session memory
-	public function sessionStore() {
-		if (!isset($_SESSION["items"]) || !is_array($_SESSION["items"]))
-			$_SESSION["items"] = array();
-		$_SESSION["items"][$this->getQTIID()] = $this;
-	}
-
-	// remove the item from session memory
-	public function sessionRemove() {
-		if (!isset($_SESSION["items"]) || !isset($_SESSION["items"][$this->getQTIID()]))
-			return;
-		unset($_SESSION["items"][$this->getQTIID()]);
 	}
 
 
