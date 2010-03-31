@@ -31,8 +31,10 @@ class CloneAssessmentItemAction extends ItemAction {
 		// clone the item
 		$ai = clone $ai;
 
-		// call its constructor to updated the modified time and set new identifiers
-		$ai->__construct();
+		// update the modified time and set new identifiers
+		$ai->touch();
+		$ai->setQTIID(null, true); //true is sent to stop the original being removed from session memory
+		$ai->setMID();
 
 		// take the user to the main menu with the cloned item highlighted
 		redirect(SITEROOT_WEB . "#item_" . $ai->getQTIID());

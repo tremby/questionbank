@@ -235,7 +235,7 @@ function validateQTI($xml, &$errors, &$warnings, &$messages) {
 		$xml = $xml->asXML();
 
 	$pipes = null;
-	$validate = proc_open("./run.sh", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, SITEROOT_LOCAL . "validate");
+	$validate = proc_open("./run.sh", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, dirname(dirname(__FILE__)) . "/validate");
 	if (!is_resource($validate)) {
 		$errors[] = "Failed to start validator";
 		return false;
@@ -338,7 +338,7 @@ function qti_get_stimulus(SimpleXMLElement $ib) {
 // get array of items, one of each type
 function item_types() {
 	// look for item type classes
-	$dh = opendir(SITEROOT_LOCAL . "classes/itemtypes") or servererror("Couldn't open item types dir");
+	$dh = opendir(dirname(dirname(__FILE__)) . "/classes/itemtypes") or servererror("Couldn't open item types dir");
 	$items = array();
 	while (($file = readdir($dh)) !== false) {
 		if (!preg_match('%^QTI.*\.class\.php$%', $file))
