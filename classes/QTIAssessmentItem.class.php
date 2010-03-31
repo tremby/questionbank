@@ -34,7 +34,7 @@ abstract class QTIAssessmentItem {
 		if ($id === false)
 			return;
 
-		$this->modified = time();
+		$this->touch();
 		$this->setQTIID($id);
 		$this->setMID();
 	}
@@ -121,6 +121,11 @@ abstract class QTIAssessmentItem {
 	/* public utility methods                                                */
 	/* --------------------------------------------------------------------- */
 
+	// touch the item -- update its modification date to now
+	public function touch() {
+		$this->modified = time();
+	}
+
 	// render the authoring form
 	public function showForm($data = null) {
 		if (!is_null($data))
@@ -178,7 +183,7 @@ abstract class QTIAssessmentItem {
 		$this->warnings = array();
 		$this->messages = array();
 
-		$this->modified = time();
+		$this->touch();
 		$qti = $this->buildQTI();
 		if (!$qti)
 			return false;
@@ -209,8 +214,9 @@ abstract class QTIAssessmentItem {
 
 	// set QTI identifier or generate a new one if none given and update session 
 	// memory
-	public function setQTIID($identifier = null) {
-		$this->sessionRemove();
+	public function setQTIID($identifier = null, $keepold = false) {
+		if (!$keepold)
+			$this->sessionRemove();
 		if (is_null($identifier))
 			$this->identifier = "ITEM_" . md5(uniqid());
 		else
