@@ -636,7 +636,7 @@ function handleupload(&$errors, &$warnings, &$messages) {
 
 // take xml and optionally a metadata array and try and put it all in a QTI 
 // object or return false, populating $errors etc
-function xmltoqtiobject($xml, &$errors, &$warnings, &$messages, $metadata = array()) {
+function xmltoqtiobject($xml, &$errors, &$warnings, &$messages, $metadata = array(), $newidentifier = false) {
 	// make sure it's valid XML
 	$xml = simplexml_load_string($xml);
 	if ($xml === false) {
@@ -685,7 +685,7 @@ function xmltoqtiobject($xml, &$errors, &$warnings, &$messages, $metadata = arra
 
 	// give it a new identifier if appropriate, restore manifest identifier if 
 	// no new identifier is wanted
-	if (isset($_POST["newidentifier"]))
+	if ($newidentifier)
 		$ai->setQTIID();
 	else if (array_key_exists("midentifier", $metadata))
 		$ai->setMID($metadata["midentifier"]);
