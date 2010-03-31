@@ -19,7 +19,7 @@ if (isset($_POST["uploaditem"])) {
 	$output = handleupload($errors, $warnings, $messages);
 	if ($output !== false) {
 		list($xml, $metadata) = $output;
-		$ai = xmltoqtiobject($xml, $errors, $warnings, $messages, $metadata);
+		$ai = xmltoqtiobject($xml, $errors, $warnings, $messages, $metadata, isset($_POST["newidentifier"]));
 		if ($ai !== false)
 			redirect(SITEROOT_WEB . "#item_" . $ai->getQTIID());
 	}
