@@ -559,7 +559,7 @@ function xmltoqtiobject($xml, &$errors, &$warnings, &$messages, $metadata = arra
 	// no new identifier is wanted
 	if ($newidentifier) {
 		$ai->touch();
-		$ai->setQTIID();
+		$ai->setQTIID(null, true); //don't want to delete a possible existing item with the same identifier
 	} else if (array_key_exists("midentifier", $metadata))
 		$ai->setMID($metadata["midentifier"]);
 
