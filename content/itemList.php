@@ -115,7 +115,20 @@ include "htmlheader.php";
 						<?php } ?>
 					</ul>
 				<?php } ?></td>
-				<td></td>
+				<td><ul>
+					<li>
+						<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>&amp;clone=true">
+							Clone and edit
+						</a>
+					</li>
+					<?php if ($item["user"] == username()) { ?>
+						<li>
+							<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>">
+								Edit
+							</a>
+						</li>
+					<?php } ?>
+				</ul></td>
 			</tr>
 		<?php } ?>
 	</table>
