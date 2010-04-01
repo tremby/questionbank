@@ -46,7 +46,9 @@ class EditAssessmentItemAction extends ItemAction {
 			$this->ai = new $classname;
 
 			// keep the old identifier
+			$olditem->sessionRemove();
 			$this->ai->setQTIID($olditem->getQTIID());
+			$this->ai->sessionStore();
 
 			unset($olditem);
 		}

@@ -243,7 +243,7 @@ function compare_item_alpha(QTIAssessmentItem $a, QTIAssessmentItem $b) {
 
 // get array of item action class objects
 function item_actions() {
-	// look for item type classes
+	// look for item action classes
 	$dh = opendir(SITEROOT_LOCAL . "classes/itemactions") or servererror("Couldn't open item actions dir");
 	$types = array();
 	while (($file = readdir($dh)) !== false) {
@@ -559,7 +559,7 @@ function xmltoqtiobject($xml, &$errors, &$warnings, &$messages, $metadata = arra
 	// no new identifier is wanted
 	if ($newidentifier) {
 		$ai->touch();
-		$ai->setQTIID(null, true); //don't want to delete a possible existing item with the same identifier
+		$ai->setQTIID(null);
 	} else if (array_key_exists("midentifier", $metadata))
 		$ai->setMID($metadata["midentifier"]);
 

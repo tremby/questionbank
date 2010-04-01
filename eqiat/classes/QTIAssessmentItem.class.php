@@ -212,16 +212,12 @@ abstract class QTIAssessmentItem {
 		return $this->midentifier;
 	}
 
-	// set QTI identifier or generate a new one if none given and update session 
-	// memory
-	public function setQTIID($identifier = null, $keepold = false) {
-		if (!$keepold)
-			$this->sessionRemove();
+	// set QTI identifier or generate a new one if none given
+	public function setQTIID($identifier = null) {
 		if (is_null($identifier))
 			$this->identifier = "ITEM_" . md5(uniqid());
 		else
 			$this->identifier = $identifier;
-		$this->sessionStore();
 	}
 
 	// get the item as a content package as a binary zip string
