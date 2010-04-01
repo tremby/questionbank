@@ -123,7 +123,7 @@ class PreviewAssessmentItemAction extends ItemAction {
 	}
 
 	public function available(QTIAssessmentItem $ai) {
-		return $ai->getQTI() && !count($ai->getErrors());
+		return $ai->itemOK();
 	}
 }
 

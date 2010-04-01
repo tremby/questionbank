@@ -71,7 +71,7 @@ include "htmlheader.php";
 				<td><?php echo is_null($item->data("title")) ? "[untitled]" : htmlspecialchars($item->data("title")); ?></td>
 				<td><?php echo htmlspecialchars($item->data("description")); ?></td>
 				<td><?php $keywords = $item->getKeywords(); if (!empty($keywords)) { ?><ul><?php foreach($keywords as $keyword) { ?><li><?php echo htmlspecialchars($keyword); ?></li><?php } ?></ul><?php } ?></td>
-				<td class="<?php echo (!$item->getQTI() || count($item->getErrors())) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
+				<td class="<?php echo (!$item->itemOK()) ? "error" : (count($item->getWarnings()) ? "warning" : "good"); ?>">
 					<?php if (is_null($item->data("title"))) { ?>
 						Unfinished
 					<?php } else { ?>

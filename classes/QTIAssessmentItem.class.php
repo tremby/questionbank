@@ -449,6 +449,12 @@ abstract class QTIAssessmentItem {
 		unset($_SESSION["items"][$this->getQTIID()]);
 	}
 
+	// return true if the item is OK (valid QTI can be generated and there are 
+	// no errors)
+	public function itemOK() {
+		return $this->getQTI() && !count($this->getErrors());
+	}
+
 	/* --------------------------------------------------------------------- */
 	/* protected utility methods                                             */
 	/* --------------------------------------------------------------------- */
