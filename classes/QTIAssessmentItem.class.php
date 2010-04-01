@@ -199,7 +199,7 @@ abstract class QTIAssessmentItem {
 		if (!$this->getQTI())
 			return false;
 
-		return simplexml_indented_string($this->getQTI());
+		return $this->qti;
 	}
 
 	// get QTI identifier
