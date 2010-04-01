@@ -32,7 +32,6 @@ class CloneAssessmentItemAction extends ItemAction {
 		$ai = clone $ai;
 
 		// update the modified time and set new identifiers
-		$ai->touch();
 		$ai->setQTIID(null);
 		$ai->setMID();
 		$ai->sessionStore();

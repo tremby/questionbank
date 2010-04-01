@@ -34,7 +34,6 @@ abstract class QTIAssessmentItem {
 		if ($id === false)
 			return;
 
-		$this->touch();
 		$this->setQTIID($id);
 		$this->setMID();
 	}
@@ -168,11 +167,10 @@ abstract class QTIAssessmentItem {
 
 	// get QTI as SimpleXML object
 	public function getQTI($data = null) {
-		if (is_null($data)) {
-			if (!is_null($this->qti))
-				return simplexml_load_string($this->qti);
-		} else
+		if (!is_null($data))
 			$this->data = $data;
+		else if (!is_null($this->qti))
+			return simplexml_load_string($this->qti);
 
 		// don't even bother if title isn't set -- probably an abandoned item
 		if (is_null($this->data("title")))
@@ -214,6 +212,8 @@ abstract class QTIAssessmentItem {
 
 	// set QTI identifier or generate a new one if none given
 	public function setQTIID($identifier = null) {
+		$this->touch();
+		$this->clearQTI();
 		if (is_null($identifier))
 			$this->identifier = "ITEM_" . md5(uniqid());
 		else
@@ -403,8 +403,10 @@ abstract class QTIAssessmentItem {
 
 		// two arguments -- set the data item indicated by the first argument to 
 		// the value in the second argument
-		if (count($args) == 2)
+		if (count($args) == 2) {
+			$this->clearQTI();
 			return $this->data[$args[0]] = $args[1];
+		}
 
 		// more than two arguments -- error
 		trigger_error("Too many arguments to QTIAssessmentItem::data -- expected 0, 1 or 2", E_USER_ERROR);
@@ -447,7 +449,6 @@ abstract class QTIAssessmentItem {
 		unset($_SESSION["items"][$this->getQTIID()]);
 	}
 
-
 	/* --------------------------------------------------------------------- */
 	/* protected utility methods                                             */
 	/* --------------------------------------------------------------------- */
@@ -474,6 +475,11 @@ abstract class QTIAssessmentItem {
 		return $ai;
 	}
 
+	// clear the qti property so that the QTI will be rebuilt next time it's 
+	// asked for
+	protected function clearQTI() {
+		$this->qti = null;
+	}
 
 	/* --------------------------------------------------------------------- */
 	/* static utility methods                                                */
