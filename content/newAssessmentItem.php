@@ -21,6 +21,7 @@ if (isset($_REQUEST["itemtype"])) {
 		servererror("Item type doesn't exist or not implemented");
 
 	$ai = new $classname;
+	$ai->sessionStore();
 
 	$action = new EditAssessmentItemAction();
 	redirect($action->actionURL($ai, false));
