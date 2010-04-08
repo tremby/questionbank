@@ -44,6 +44,10 @@ if ($newsearch) {
 				$orderbysql = $_REQUEST["orderby"];
 				$orderby = $_REQUEST["orderby"];
 				break;
+			case "random":
+				$orderbysql = "RANDOM()";
+				$orderby = $_REQUEST["orderby"];
+				break;
 		}
 
 		// if order not set in request vars and we're ordering by date, show 
@@ -184,6 +188,7 @@ include "htmlheader.php";
 					"user" => "User",
 					"title" => "Title",
 					"description" => "Description",
+					"random" => "Random",
 				) as $k => $v) { ?>
 					<option value="<?php echo htmlspecialchars($k); ?>"<?php if ($orderby == $k) { ?> selected="selected"<?php } ?>><?php echo htmlspecialchars($v); ?></option>
 				<?php } ?>
