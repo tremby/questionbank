@@ -1,7 +1,7 @@
 <?php
 /*
 	bart's URI class
-	0.3
+	0.4
 	bart@tremby.net
 */
 class Uri {
@@ -83,10 +83,16 @@ class Uri {
 	}
 
 	/**	removevars
-	*	remove all vars
+	*	given no arguments remove all vars
+	*	else removes the vars given as arguments
 	*/
 	public function removevars() {
-		$this->vars = array();
+		$args = func_get_args();
+		if (count($args) == 0)
+			$this->vars = array();
+		else foreach ($args as $arg)
+			if (isset($this->vars[$arg]))
+				unset($this->vars[$arg]);
 		return $this;
 	}
 
