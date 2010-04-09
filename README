@@ -45,7 +45,7 @@ The options are constants found at the bottom of include/constants.php:
 	QTIENGINE_HOST
 		edit this to use a custom instance of QTIEngine
 	SITE_TITLE
-		edit this to use a custom site title (it defaults to Eqiat)
+		edit this to use a custom site title (it defaults to Question Bank)
 
 USAGE
 
