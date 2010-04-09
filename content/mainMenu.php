@@ -14,13 +14,19 @@ include "htmlheader.php";
 ?>
 
 <dl id="mainmenu">
-	<dt><a href="<?php echo SITEROOT_WEB; ?>?page=itemList&amp;clear=true">Item list</a></dt>
-	<dd>A filterable list of all items currently in <?php echo htmlspecialchars(SITE_TITLE); ?> &ndash; start a new search</dd>
-
-	<?php if (isset($_SESSION["search"])) { ?>
-		<dt><a href="<?php echo SITEROOT_WEB; ?>?page=itemList">Filtered item list</a></dt>
-		<dd>Return to your previous item list search results</dd>
-	<?php } ?>
+	<dt>Item list</a></dt>
+	<dd>
+		A filterable list of all items currently in <?php echo htmlspecialchars(SITE_TITLE); ?>
+		<ul>
+			<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->addvars("clear", "true")->geturi(); ?>">All items</a> (or start a new search)</li>
+			<?php if (isset($_SESSION["search"])) { ?>
+				<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->geturi(); ?>">Previous search results</a>
+			<?php } ?>
+			<?php if (loggedin()) { ?>
+				<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->addvars("user", username())->geturi(); ?>">Your items</a>
+			<?php } ?>
+		</ul>
+	</dd>
 </dl>
 
 <?php include "htmlfooter.php"; ?>
