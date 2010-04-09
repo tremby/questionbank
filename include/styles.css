@@ -136,3 +136,16 @@ a:hover {
 .ordered {
 	background-color: #fdd;
 }
+
+ul.pagination {
+	margin: 0;
+	padding: 0;
+	float: right;
+	list-style-type: none;
+	font-size: 80%;
+}
+ul.pagination li {
+	display: inline;
+	padding: 0 0 0 0.5em;
+	margin: 0;
+}

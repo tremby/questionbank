@@ -108,7 +108,23 @@ if ($newsearch) {
 // get items
 $items = array();
 foreach ($_SESSION["items"] as $itemid)
-	$items[$itemid] = getitem($itemid);
+	$items[] = getitem($itemid);
+
+// get page number from request
+$page = 1;
+if (isset($_REQUEST["p"]))
+	$page = intval($_REQUEST["p"]);
+if ($page < 1)
+	$page = 1;
+$perpage = 20;
+if (isset($_REQUEST["perpage"]))
+	$perpage = intval($_REQUEST["perpage"]);
+if ($perpage < 1)
+	$perpage = 1;
+$numpages = ceil(count($items) / $perpage);
+
+if (!empty($items) && count($items) <= ($page - 1) * $perpage)
+	badrequest("Not enough search results for this page to exist");
 
 $title = "Item list";
 include "htmlheader.php";
@@ -118,6 +134,25 @@ include "htmlheader.php";
 <?php if (empty($items)) { ?>
 	<p>No items were found</p>
 <?php } else { ?>
+	<?php if (count($items) <= $perpage) { ?>
+		<p>Showing all results</p>
+	<?php } else { ?>
+		<p>
+			Showing results
+			<?php echo $perpage * ($page - 1) + 1; ?>
+			to <?php echo min($perpage * $page, count($items)); ?>
+			of <?php echo count($items); ?>
+		</p>
+	<?php } ?>
+	<?php ob_start(); ?>
+	<ul class="pagination">
+		<?php if ($page > 2) { ?><li><a href="<?php echo Uri::construct(true)->addvars("p", 1)->geturi(true); ?>">First</a></li><?php } ?>
+		<?php if ($page > 1) { ?><li><a href="<?php echo Uri::construct(true)->addvars("p", $page - 1)->geturi(true); ?>">Previous</a></li><?php } ?>
+		<li>Page <?php echo $page; ?> of <?php echo $numpages; ?></li>
+		<?php if ($page < $numpages) { ?><li><a href="<?php echo Uri::construct(true)->addvars("p", $page + 1)->geturi(true); ?>">Next</a></li><?php } ?>
+		<?php if ($page < $numpages - 1) { ?><li><a href="<?php echo Uri::construct(true)->addvars("p", $numpages)->geturi(true); ?>">Last</a></li><?php } ?>
+	</ul>
+	<?php $pagination = ob_get_flush(); ?>
 	<table>
 		<tr>
 			<?php foreach (array("uploaded", "modified", "user", "title", "description") as $type) { ?>
@@ -133,8 +168,8 @@ include "htmlheader.php";
 			<th>Keywords</th>
 			<th>Actions</th>
 		</tr>
-		<?php $odd = 0; foreach ($items as $item) { $odd = ++$odd % 2; ?>
-			<tr class="row<?php echo $odd; ?>" id="item_<?php echo htmlspecialchars($item["identifier"]); ?>">
+		<?php for ($i = $perpage * ($page - 1); $i < min($perpage * $page, count($items)); $i++) { $item = $items[$i]; ?>
+			<tr class="row<?php echo $i % 2; ?>" id="item_<?php echo htmlspecialchars($item["identifier"]); ?>">
 				<td><?php echo friendlydate($item["uploaded"]); ?></td>
 				<td><?php if (!is_null($item["modified"])) echo friendlydate($item["modified"]); ?></td>
 				<td><a href="<?php echo SITEROOT_WEB; ?>?page=itemList&amp;user=<?php echo urlencode($item["user"]); ?>"><?php echo htmlspecialchars($item["user"]); ?></a></td>
@@ -168,6 +203,7 @@ include "htmlheader.php";
 			</tr>
 		<?php } ?>
 	</table>
+	<?php echo $pagination; ?>
 <?php } ?>
 
 <h2>Filter items</h2>
@@ -198,6 +234,9 @@ include "htmlheader.php";
 				<option value="DESC"<?php if ($direction == "DESC") { ?> selected="selected"<?php } ?>>Descending</option>
 			</select>
 		</dd>
+
+		<dt><label for="perpage">Results per page</label></dt>
+		<dd><input type="text small" name="perpage" id="perpage" size="4" value="<?php echo $perpage; ?>"></dd>
 
 		<dt></dt>
 		<dd>
