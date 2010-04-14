@@ -81,10 +81,10 @@ function simplexml_append(SimpleXMLElement $parent, SimpleXMLElement $new_child)
 
 // return indented XML string from SimpleXML object
 function simplexml_indented_string(SimpleXMLElement $xml) {
-	$node = dom_import_simplexml($xml);
 	$doc = new DomDocument();
-	$doc->importNode($node);
 	$doc->formatOutput = true;
+	$node = $doc->importNode(dom_import_simplexml($xml), true);
+	$doc->appendChild($node);
 	return $doc->saveXML();
 }
 
