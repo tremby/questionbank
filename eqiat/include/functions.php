@@ -81,9 +81,11 @@ function simplexml_append(SimpleXMLElement $parent, SimpleXMLElement $new_child)
 
 // return indented XML string from SimpleXML object
 function simplexml_indented_string(SimpleXMLElement $xml) {
-	$dom = dom_import_simplexml($xml)->ownerDocument;
-	$dom->formatOutput = true;
-	return $dom->saveXML();
+	$node = dom_import_simplexml($xml);
+	$doc = new DomDocument();
+	$doc->importNode($node);
+	$doc->formatOutput = true;
+	return $doc->saveXML();
 }
 
 // show an array of messages as HTML
