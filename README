@@ -12,8 +12,9 @@ REQUIREMENTS
 -	Web server such as Apache or Lighttpd
 -	PHP 5 (tested on PHP 5.2.4)
 -	The Sqlite3 module for PHP
--	An instance of QTIEngine to call (the demonstration version at 
-	qtiengine.qtitools.org is used by default)
+-	An instance of QTIEngine with Rest support (that is, at least revision 2447) 
+	to call (the demonstration version at qtiengine.qtitools.org is used by 
+	default)
 -	Eqiat (imported as a subdirectory) and all of its dependencies (see its 
 	README)
 
@@ -42,8 +43,8 @@ db subdirectory.
 CONFIGURATION
 
 The options are constants found at the bottom of include/constants.php:
-	QTIENGINE_HOST
-		edit this to use a custom instance of QTIEngine
+	QTIENGINE_HOST, QTIENGINE_PORT, QTIENGINE_PATH
+		edit these to use a custom instance of QTIEngine
 	SITE_TITLE
 		edit this to use a custom site title (it defaults to Question Bank)
 

@@ -36,8 +36,11 @@ define("SITEROOT_WEB", "/" . substr(SITEROOT_LOCAL, strlen($document_root)));
 
 // configuration----------------------------------------------------------------
 
-// host of QTIEngine
+// QTIEngine host -- these should fit together like this to form a working URL:
+// "http://" . QTIENGINE_HOST . ":" . QTIENGINE_PORT . QTIENGINE_PATH
 define("QTIENGINE_HOST", "qtiengine.qtitools.org");
+define("QTIENGINE_PORT", 80);
+define("QTIENGINE_PATH", "/");
 
 // site title
 define("SITE_TITLE", PROGRAMNAME);
