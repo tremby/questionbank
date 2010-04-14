@@ -13,15 +13,19 @@ licence -- see the LICENCE file for more details
 if (!isset($_REQUEST["qtiid"]))
 	badrequest("no QTI ID was specified");
 
-$item = getitem($_REQUEST["qtiid"]);
+// single-item queue
+$_SESSION["itemqueue"] = array($_REQUEST["qtiid"]);
+
+// get current item
+$item = getitem(array_shift($_SESSION["itemqueue"]));
 
 if (!$item)
 	badrequest("no item with the given QTI ID exists in the database");
 
-$actionurl = "http://www.example.com";
+$actionurl = "/?page=playItem&";
 
 // get a new QTIEngine session ID
-$_SESSION["qtiengine_session"] = file_get_contents("http://" . QTIENGINE_HOST . ":" . QTIENGINE_PORT . QTIENGINE_PATH . "/rest/newSession");
+$_SESSION["qtiengine_session"] = file_get_contents("http://" . QTIENGINE_HOST . ":" . QTIENGINE_PORT . QTIENGINE_PATH . "rest/newSession") or servererror("couldn't get QTIEngine session");
 
 // upload the QTI to QTIEngine
 // Doing this manually rather than using curl because until PHP 5.2.7 (SVN 
@@ -61,10 +65,8 @@ $reqheader = array(
 	"Content-Type"		=>	"multipart/form-data; boundary=$boundary",
 	"User-Agent"		=>	PROGRAMNAME . "/" . VERSION,
 );
-$url = "/rest/upload";
+$url = QTIENGINE_PATH . "rest/upload";
 $reqaction = "POST $url HTTP/1.1";
-
-header("Content-Type: text/plain");
 
 // make requests and follow location headers
 $error = null;
@@ -147,6 +149,11 @@ while (true) {
 if (!is_null($error))
 	servererror($error);
 
-echo $response;
+$xml = new SimpleXMLElement($response) or servererror("couldn't parse XML response");
+
+// TODO: get scripts and stylesheets from HTML header -- find some way to make 
+// Jquery and Prototype play together
+
+echo simplexml_indented_string($xml->page->html);
 
 ?>
