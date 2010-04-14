@@ -11,7 +11,7 @@ licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
 // use old search unless filters or clear action are set in request vars
-$newsearch = isset($_REQUEST["clear"]) || isset($_REQUEST["direction"]) || isset($_REQUEST["orderby"]) || isset($_REQUEST["user"]) || isset($_REQUEST["keyword"]);
+$newsearch = !isset($_SESSION["items"]) || isset($_REQUEST["clear"]) || isset($_REQUEST["direction"]) || isset($_REQUEST["orderby"]) || isset($_REQUEST["user"]) || isset($_REQUEST["keyword"]);
 
 // defaults
 $direction = "ASC";
