@@ -44,7 +44,7 @@ class DepositInEdshareAction extends ItemAction {
 		}
 
 		// get list of collections we can deposit to
-		$servicedocxml = simplexml_load_string($_SESSION["diea_servicedocxml"]);
+		$servicedocxml = simplexml_load_string($_SESSION[SESSION_PREFIX . "diea_servicedocxml"]);
 		$collections = array();
 		foreach ($servicedocxml->workspace->collection as $collection) {
 			// skip if the collection doesn't accept zip files
@@ -172,7 +172,7 @@ class DepositInEdshareAction extends ItemAction {
 			CURLOPT_URL				=>	$_POST["collection"],
 			CURLOPT_POST			=>	true,
 			CURLOPT_HEADER			=>	true,
-			CURLOPT_USERPWD			=>	$_SESSION["diea_username"] . ":" . $_SESSION["diea_password"],
+			CURLOPT_USERPWD			=>	$_SESSION[SESSION_PREFIX . "diea_username"] . ":" . $_SESSION[SESSION_PREFIX . "diea_password"],
 			CURLOPT_RETURNTRANSFER	=>	true,
 			CURLOPT_POSTFIELDS		=>	simplexml_indented_string($ep3),
 			CURLOPT_HTTPHEADER		=>	array(
@@ -189,7 +189,7 @@ class DepositInEdshareAction extends ItemAction {
 
 		switch ($code) {
 			case 401:
-				unset($_SESSION["diea_username"], $_SESSION["diea_password"]);
+				unset($_SESSION[SESSION_PREFIX . "diea_username"], $_SESSION[SESSION_PREFIX . "diea_password"]);
 				$this->errors[] = "There was an authorization problem" . (isset($headers["X-Error-Code"]) ? ": " . $headers["X-Error-Code"] : "");
 				$this->getLogic();
 				return;
@@ -330,7 +330,7 @@ class DepositInEdshareAction extends ItemAction {
 
 	// return true if we have good login details
 	private function haveLogin() {
-		return isset($_SESSION["diea_username"]);
+		return isset($_SESSION[SESSION_PREFIX . "diea_username"]);
 	}
 
 	// give an HTML form to collect login details
@@ -394,15 +394,15 @@ class DepositInEdshareAction extends ItemAction {
 		switch ($code) {
 			case 401:
 				// bad username/password
-				unset($_SESSION["diea_username"], $_SESSION["diea_password"], $_SESSION["diea_servicedocxml"]);
+				unset($_SESSION[SESSION_PREFIX . "diea_username"], $_SESSION[SESSION_PREFIX . "diea_password"], $_SESSION[SESSION_PREFIX . "diea_servicedocxml"]);
 				$this->errors[] = "There was an authorization problem" . (isset($headers["X-Error-Code"]) ? ": " . $headers["X-Error-Code"] : "");
 				$this->getLogic();
 				return;
 			case 200:
 				// parse XML response
-				$_SESSION["diea_username"] = $_POST["diea_username"];
-				$_SESSION["diea_password"] = $_POST["diea_password"];
-				$_SESSION["diea_servicedocxml"] = $body;
+				$_SESSION[SESSION_PREFIX . "diea_username"] = $_POST["diea_username"];
+				$_SESSION[SESSION_PREFIX . "diea_password"] = $_POST["diea_password"];
+				$_SESSION[SESSION_PREFIX . "diea_servicedocxml"] = $body;
 
 				$this->getLogic();
 				return;

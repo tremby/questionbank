@@ -40,6 +40,10 @@ The options are constants found at the bottom of include/constants.php:
 		edit this to use a custom instance of QTIEngine
 	SITE_TITLE
 		edit this to use a custom site title (it defaults to Eqiat)
+	SESSION_PREFIX
+		this is the start of each session variable's name -- change it if you 
+		want to run multiple instances of Eqiat on the same domain but don't 
+		want them to share their item lists
 	DIEA_AVAILABLE
 		change this to true if you wish to use the "deposit in Edshare" action
 	DIEA_EDSHARE_HOST

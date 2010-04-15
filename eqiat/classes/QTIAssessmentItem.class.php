@@ -437,16 +437,16 @@ abstract class QTIAssessmentItem {
 
 	// store the item in session memory
 	public function sessionStore() {
-		if (!isset($_SESSION["items"]) || !is_array($_SESSION["items"]))
-			$_SESSION["items"] = array();
-		$_SESSION["items"][$this->getQTIID()] = $this;
+		if (!isset($_SESSION[SESSION_PREFIX . "items"]) || !is_array($_SESSION[SESSION_PREFIX . "items"]))
+			$_SESSION[SESSION_PREFIX . "items"] = array();
+		$_SESSION[SESSION_PREFIX . "items"][$this->getQTIID()] = $this;
 	}
 
 	// remove the item from session memory
 	public function sessionRemove() {
-		if (!isset($_SESSION["items"]) || !isset($_SESSION["items"][$this->getQTIID()]))
+		if (!isset($_SESSION[SESSION_PREFIX . "items"]) || !isset($_SESSION[SESSION_PREFIX . "items"][$this->getQTIID()]))
 			return;
-		unset($_SESSION["items"][$this->getQTIID()]);
+		unset($_SESSION[SESSION_PREFIX . "items"][$this->getQTIID()]);
 	}
 
 	// return true if the item is OK (valid QTI can be generated and there are 
@@ -520,18 +520,18 @@ abstract class QTIAssessmentItem {
 	// get a QTIAssessmentItem object from session memory given a QTIID string
 	// return false if it is not found
 	public static function fromQTIID($qtiid) {
-		if (!isset($_SESSION["items"]))
+		if (!isset($_SESSION[SESSION_PREFIX . "items"]))
 			return false;
-		if (!isset($_SESSION["items"][$qtiid]))
+		if (!isset($_SESSION[SESSION_PREFIX . "items"][$qtiid]))
 			return false;
-		return $_SESSION["items"][$qtiid];
+		return $_SESSION[SESSION_PREFIX . "items"][$qtiid];
 	}
 
 	// return an array of all items in session memory
 	public static function allItems() {
-		if (!isset($_SESSION["items"]))
+		if (!isset($_SESSION[SESSION_PREFIX . "items"]))
 			return array();
-		return $_SESSION["items"];
+		return $_SESSION[SESSION_PREFIX . "items"];
 	}
 }
 
