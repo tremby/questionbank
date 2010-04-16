@@ -149,4 +149,35 @@ function getitem($qtiid) {
 	return $item;
 }
 
+// turn a string of xhtml into html
+function xhtml_to_html($xhtml) {
+	$selfclosing = array(
+		"area",
+		"base",
+		"basefont",
+		"br",
+		"col",
+		"frame",
+		"hr",
+		"img",
+		"input",
+		"link",
+		"meta",
+		"param",
+	);
+
+	// HTML's self closing tags don't need to be closed
+	// (catch both <tag.../> and <tag...></tag>)
+	$html = preg_replace('%<(' . implode("|", $selfclosing) . ')\b([^>]*?)\s*(/>|>\s*</\1>)%i', '<\1\2>', $xhtml);
+
+	// other empty tags in the short style (eg <div/>) need to be opened and 
+	// closed
+	$html = preg_replace('%<(.+?)\b([^>]*?)\s*/>%', '<\1\2></\1>', $html);
+
+	// get rid of any xhtml namespace tags
+	$html = preg_replace('%\s+xmlns=(["\'])http://www.w3.org/1999/xhtml\1%i', '', $html);
+
+	return $html;
+}
+
 ?>
