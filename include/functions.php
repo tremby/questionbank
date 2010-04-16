@@ -180,4 +180,57 @@ function xhtml_to_html($xhtml) {
 	return $html;
 }
 
+// given the page SimpleXML element of a response from QTIEngine, extract the 
+// important bits of the header (javascript and stylesheet links) and return 
+// them as an HTML string to be put in the header
+function qtiengine_header_html(SimpleXMLElement $page) {
+	$headerextra = "";
+
+	// javascript
+	foreach ($page->html->head->script as $script) {
+		if (isset($script["src"]) && isset($script["type"]) && ((string) $script["type"] == "text/javascript" || (string) $script["type"] == "application/javascript")) {
+			// TODO: cater for inline scripts as well as included ones
+			ob_start();
+			?>
+			<script type="text/javascript" src="<?php echo (string) $script["src"]; ?>"></script>
+			<?php
+			$headerextra .= ob_get_clean();
+		}
+	}
+
+	// stylesheets
+	foreach ($page->html->head->link as $link) {
+		if (isset($link["rel"]) && (string) $link["rel"] == "stylesheet" && isset($link["href"]) && isset($link["type"]) && (string) $link["type"] == "text/css") {
+			// TODO: cater for inline styles as well as included ones
+			ob_start();
+			?>
+			<link rel="stylesheet" type="text/css"<?php if (isset($link["media"])) { ?> media="<?php echo (string) $link["media"]; ?>"<?php } ?> href="<?php echo (string) $link["href"]; ?>">
+			<?php
+			$headerextra .= ob_get_clean();
+		}
+	}
+
+	return $headerextra;
+}
+
+// given the page SimpleXML element of a response from QTIEngine, extract the 
+// div with id "body" and convert to HTML
+// the default QTIEngine XSL transformation has a div with everything we want in 
+// it with id "body" (it doesn't include the internal state etc)
+function qtiengine_bodydiv_html(SimpleXMLElement $page, $divid = "qtienginebodydiv") {
+	// php5's support for default namespace is useless so we have to define it 
+	// manually
+	$namespaces = $page->html->getNamespaces();
+	$defaultnamespace = $namespaces[""];
+	$page->registerXPathNamespace("n", $defaultnamespace);
+
+	$bodydivs = $page->xpath("//n:div[@id='body']");
+	if (count($bodydivs) != 1)
+		servererror("didn't get expected HTML output from QTIEngine");
+	$bodydiv = $bodydivs[0];
+	$bodydiv["id"] = $divid;
+
+	return xhtml_to_html(simplexml_indented_string($bodydiv));
+}
+
 ?>

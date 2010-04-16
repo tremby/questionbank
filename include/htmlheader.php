@@ -24,6 +24,7 @@ header("Content-Script-Type: text/javascript");
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/jquery.js"></script>
 	<script type="text/javascript" src="<?php echo SITEROOT_WEB; ?>include/questionbank.js.php"></script>
 	<link rel="stylesheet" href="<?php echo SITEROOT_WEB; ?>include/styles.css">
+	<?php if (isset($GLOBALS["headerextra"])) echo $GLOBALS["headerextra"]; ?>
 </head>
 <body>
 <div id="header">
