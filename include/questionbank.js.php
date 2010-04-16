@@ -14,21 +14,25 @@ include "constants.php";
 header("Content-Type: text/javascript");
 ?>
 
+// in case Prototype has been included by QTIEngine we set Jquery to $j rather 
+// than the usual $
+$j = jQuery;
+
 logout = function(e) {
 	e.preventDefault();
 	jQuery.ajax({
 		"cache": false,
 		"data": { "async": true },
 		"success": function() {
-			$("#logoutlink").parents("li:first").html("Logged out");
+			$j("#logoutlink").parents("li:first").html("Logged out");
 		},
 		"type": "POST",
 		"url": "<?php echo SITEROOT_WEB; ?>?page=logout"
 	});
 };
 
-$(document).ready(function() {
-	$("#logoutlink").click(logout);
+$j(document).ready(function() {
+	$j("#logoutlink").click(logout);
 });
 
 <?php
