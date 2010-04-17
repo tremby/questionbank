@@ -14,7 +14,7 @@ include "htmlheader.php";
 ?>
 
 <dl id="mainmenu">
-	<dt>Item list</a></dt>
+	<dt>Item list</dt>
 	<dd>
 		A filterable list of all items currently in <?php echo htmlspecialchars(SITE_TITLE); ?>
 		<ul>
