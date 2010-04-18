@@ -134,6 +134,12 @@ include "htmlheader.php";
 <?php if (empty($items)) { ?>
 	<p>No items were found</p>
 <?php } else { ?>
+	<ul>
+		<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=results">Play these results</a></li>
+		<?php if (!empty($where)) { ?>
+			<li><a href="<?php echo SITEROOT_WEB; ?>?page=itemList&amp;clear=true">Clear filters</a></li>
+		<?php } ?>
+	</ul>
 	<?php if (count($items) <= $perpage) { ?>
 		<p>Showing all results</p>
 	<?php } else { ?>
@@ -187,6 +193,11 @@ include "htmlheader.php";
 					</ul>
 				<?php } ?></td>
 				<td><ul>
+					<li>
+						<a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=single&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>">
+							Play
+						</a>
+					</li>
 					<li>
 						<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>&amp;clone=true">
 							Clone and edit
