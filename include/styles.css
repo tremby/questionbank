@@ -111,7 +111,7 @@ input[type=text].small, input[type=password].small {
 textarea {
 	width: 100%;
 }
-table {
+table.full {
 	width: 100%;
 }
 input[type=submit] {
@@ -126,6 +126,10 @@ h2 {
 	border-color: #ddd;
 }
 
+h3 {
+	margin-bottom: 0;
+}
+
 a {
 	text-decoration: none;
 }
@@ -137,15 +141,37 @@ a:hover {
 	background-color: #fdd;
 }
 
+.right {
+	float: right;
+}
+
 ul.pagination {
 	margin: 0;
 	padding: 0;
-	float: right;
 	list-style-type: none;
 	font-size: 80%;
 }
 ul.pagination li {
 	display: inline;
-	padding: 0 0 0 0.5em;
+	padding: 0;
 	margin: 0;
+}
+ul.pagination li + li {
+	padding-left: 0.5em;
+}
+
+#playitemstatus {
+	text-align: center;
+	width: 12em;
+	float: right;
+	margin: 0 0 0.5em 0.5em;
+	border: 1px solid #ccc;
+	background-color: #eee;
+	padding: 0.5em;
+}
+
+.score {
+	font-size: 300%;
+	font-weight: bold;
+	color: #444;
 }

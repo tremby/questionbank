@@ -145,7 +145,7 @@ include "htmlheader.php";
 		</p>
 	<?php } ?>
 	<?php ob_start(); ?>
-	<ul class="pagination">
+	<ul class="pagination right">
 		<?php if ($page > 2) { ?><li><a href="<?php echo Uri::construct(true)->addvars("p", 1)->geturi(true); ?>">First</a></li><?php } ?>
 		<?php if ($page > 1) { ?><li><a href="<?php echo Uri::construct(true)->addvars("p", $page - 1)->geturi(true); ?>">Previous</a></li><?php } ?>
 		<li>Page <?php echo $page; ?> of <?php echo $numpages; ?></li>
@@ -153,7 +153,7 @@ include "htmlheader.php";
 		<?php if ($page < $numpages - 1) { ?><li><a href="<?php echo Uri::construct(true)->addvars("p", $numpages)->geturi(true); ?>">Last</a></li><?php } ?>
 	</ul>
 	<?php $pagination = ob_get_flush(); ?>
-	<table>
+	<table class="full">
 		<tr>
 			<?php foreach (array("uploaded", "modified", "user", "title", "description") as $type) { ?>
 				<th<?php if ($orderby == $type) { ?> class="ordered"<?php } ?>>

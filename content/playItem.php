@@ -10,6 +10,58 @@ Licensed under the Creative Commons 'Attribution non-commercial share alike'
 licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
+// actions to set up a new item queue or move the position in the queue
+if (isset($_GET["action"])) switch ($_GET["action"]) {
+	case "results":
+		// set item queue to current search results
+		if (!isset($_SESSION["items"]) || empty($_SESSION["items"]))
+			badrequest("no search results");
+		$_SESSION["itemqueue"] = $_SESSION["items"];
+		$_SESSION["itemqueuepos"] = 0;
+		redirect(SITEROOT_WEB . "?page=playItem");
+	case "single":
+		// set item queue to the single specified item
+		if (!isset($_GET["qtiid"]))
+			badrequest("no QTI ID specified");
+		$_SESSION["itemqueue"] = array($_GET["qtiid"]);
+		$_SESSION["itemqueuepos"] = 0;
+		redirect(SITEROOT_WEB . "?page=playItem");
+	case "prev":
+		// move the item pointer back
+		if ($_SESSION["itemqueuepos"] == 0)
+			badrequest("already on the first item");
+		$_SESSION["itemqueuepos"]--;
+		redirect(SITEROOT_WEB . "?page=playItem");
+	case "next":
+		// move the item pointer on and check if we're finished
+		if (++$_SESSION["itemqueuepos"] >= count($_SESSION["itemqueue"])) {
+			$title = "Finished";
+			include "htmlheader.php";
+			?>
+			<h1><?php echo htmlspecialchars($title); ?></h1>
+			<?php if (count($_SESSION["itemqueue"]) == 1) { ?>
+				<p>You've finished the only item in the queue.</p>
+			<?php } else { ?>
+				<p>You've got to the end of the <?php echo count($_SESSION["itemqueue"]); ?> items in the queue.</p>
+			<?php } ?>
+			<p>What do you want to do now?</p>
+			<ul>
+				<li><a href="<?php echo SITEROOT_WEB; ?>">Go back to the main menu</a></li>
+				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=startover">Take <?php echo plural($_SESSION["itemqueue"], "these items", "this item"); ?> again</a></li>
+			</ul>
+			<?php
+			include "htmlfooter.php";
+			exit;
+		}
+		redirect(SITEROOT_WEB . "?page=playItem");
+	case "startover":
+		// reset the item pointer
+		$_SESSION["itemqueuepos"] = 0;
+		redirect(SITEROOT_WEB . "?page=playItem");
+	default:
+		badrequest("unrecognized action");
+}
+
 // URL to embed in QTIEngine XML
 $actionurl = SITEROOT_WEB . "?page=playItem";
 
@@ -29,53 +81,6 @@ if (isset($_POST["submit"])) {
 	if (!$item)
 		badrequest("queued item with identifier '" . $_SESSION["itemqueue"][$_SESSION["itemqueuepos"]] . "' not in the database");
 } else {
-	// decide what to do
-	$action = isset($_GET["action"]) ? $_GET["action"] : null;
-	switch ($action) {
-		case "results":
-			// set item queue to current search results
-			if (!isset($_SESSION["items"]) || empty($_SESSION["items"]))
-				badrequest("no search results");
-			$_SESSION["itemqueue"] = $_SESSION["items"];
-			$_SESSION["itemqueuepos"] = 0;
-			break;
-		case "single":
-			// set item queue to the single specified item
-			if (!isset($_GET["qtiid"]))
-				badrequest("no QTI ID specified");
-			$_SESSION["itemqueue"] = array($_GET["qtiid"]);
-			$_SESSION["itemqueuepos"] = 0;
-			break;
-		case "next":
-			// move the item pointer on and check if we're finished
-			if (++$_SESSION["itemqueuepos"] >= count($_SESSION["itemqueue"])) {
-				$title = "Finished";
-				include "htmlheader.php";
-				?>
-				<h1><?php echo htmlspecialchars($title); ?></h1>
-				<?php if (count($_SESSION["itemqueue"]) == 1) { ?>
-					<p>You've finished the only item in the queue.</p>
-				<?php } else { ?>
-					<p>You've got to the end of the <?php echo count($_SESSION["itemqueue"]); ?> items in the queue.</p>
-				<?php } ?>
-				<p>What do you want to do now?</p>
-				<ul>
-					<li><a href="<?php echo SITEROOT_WEB; ?>">Go back to the main menu</a></li>
-					<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=startover">Take <?php echo plural($_SESSION["itemqueue"], "these items", "this item"); ?> again</a></li>
-				</ul>
-				<?php
-				include "htmlfooter.php";
-				exit;
-			}
-			break;
-		case "startover":
-			// reset the item pointer
-			$_SESSION["itemqueuepos"] = 0;
-			break;
-		default:
-			badrequest("no action given");
-	}
-
 	// display a new item
 
 	// get the current item
@@ -160,6 +165,7 @@ if (isset($_POST["submit"])) {
 		// get rest of response and stop if HTTP response code is not a redirection
 		if ($httpcode != 301 && $httpcode != 302 || !array_key_exists("Location", $header)) {
 			if (isset($header["Transfer-Encoding"]) && $header["Transfer-Encoding"] == "chunked") {
+				// handle chunked transfer mode
 				while (!feof($sock)) {
 					// get number of bytes in next chunk
 					$bytes = hexdec(preg_replace('%^([0-9a-fA-F]+).*?$%', '\\1', fgets($sock)));
@@ -194,7 +200,7 @@ if (isset($_POST["submit"])) {
 		}
 
 		// redirect
-		$url = preg_replace('%;jsessionid=.*$%', ";jsessionid=" . $_SESSION["qtiengine_session"], $urlparts["path"]) . "?" . $urlparts["query"];
+		$url = $urlparts["path"] . "?" . $urlparts["query"];
 		$reqaction = "GET $url HTTP/1.1";
 
 		// delete POST related headers
@@ -219,14 +225,40 @@ $headerextra = qtiengine_header_html($xml->page);
 include "htmlheader.php";
 ?>
 <h2>Play items</h2>
-<h3>Item <?php echo $_SESSION["itemqueuepos"] + 1; ?> of <?php echo count($_SESSION["itemqueue"]); ?>: <?php echo htmlspecialchars($item["title"]); ?></h3>
+<div id="playitemstatus">
+	<ul class="pagination">
+		<?php if ($_SESSION["itemqueuepos"] > 0) { ?>
+			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=prev">Previous</a></li>
+		<?php } ?>
+		<li>Item <?php echo $_SESSION["itemqueuepos"] + 1; ?> of <?php echo count($_SESSION["itemqueue"]); ?></li>
+		<?php if ($_SESSION["itemqueuepos"] < count($_SESSION["itemqueue"]) - 1) { ?>
+			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=next">Next</a></li>
+		<?php } ?>
+	</ul>
+	<ul class="pagination">
+		<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=startover">Start over</a></li>
+	</ul>
+
+	<h3>Score</h3>
+	<div class="score">
+		<?php
+		$score = "-";
+		if (isset($_POST["submit"])) {
+			echo "<!-- Response and outcome variables XML:\n" . simplexml_indented_string($xml->vars) . "\n-->\n";
+			foreach ($xml->vars->OutcomeVars->param as $param) {
+				if ((string) $param["identifier"] == "SCORE") {
+					$score = (string) $param;
+					break;
+				}
+			}
+		}
+		echo $score;
+		?>
+	</div>
+</div>
+<h3><?php echo htmlspecialchars($item["title"]); ?></h3>
 
 <?php echo qtiengine_bodydiv_html($xml->page); ?>
-
-<?php if (isset($_POST["submit"])) { ?>
-	<h3>Outcome</h3>
-	<pre><?php echo htmlspecialchars(simplexml_indented_string($xml->vars)); ?></pre>
-<?php } ?>
 
 <?php
 include "htmlfooter.php";
