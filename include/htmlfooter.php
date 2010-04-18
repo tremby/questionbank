@@ -11,6 +11,7 @@ licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
 ?>
+	<div class="clearer"></div>
 </div>
 <div id="footer">
 	<a href="http://github.com/tremby/questionbank"><?php echo PROGRAMNAME; ?></a>

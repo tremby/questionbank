@@ -263,9 +263,23 @@ include "htmlheader.php";
 		echo $score;
 		?>
 	</div>
-</div>
-<h3><?php echo htmlspecialchars($item["title"]); ?></h3>
 
+	<h3>About this item</h3>
+	<ul id="aboutlist">
+		<li>Uploaded by <strong><?php echo htmlspecialchars($item["user"]); ?></strong> <?php echo friendlydate_html($item["uploaded"]); ?></li>
+		<li>
+			<?php if (is_null($item["modified"])) { ?>
+				First edition
+			<?php } else { ?>
+				Last edited <?php echo friendlydate_html($item["modified"]); ?>
+			<?php } ?>
+		</li>
+		<li>Description: <?php echo htmlspecialchars($item["description"]); ?></li>
+		<li>Keywords: <?php echo htmlspecialchars(implode(", ", $item["keywords"])); ?></li>
+	</ul>
+</div>
+
+<h3><?php echo htmlspecialchars($item["title"]); ?></h3>
 <?php echo qtiengine_bodydiv_html($xml->page); ?>
 
 <?php

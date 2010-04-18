@@ -183,3 +183,10 @@ ul.pagination li + li {
 #playitemstatus h3 {
 	background-color: transparent;
 }
+#aboutlist {
+	text-align: left;
+}
+
+.clearer {
+	clear: both;
+}
