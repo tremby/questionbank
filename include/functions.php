@@ -56,8 +56,8 @@ function db() {
 			rating INTEGER NOT NULL,
 			posted INTEGER NOT NULL
 		);
-		CREATE UNIQUE INDEX IF NOT EXISTS ratings_user_item ON ratings (user ASC, item ASC);
 		CREATE INDEX IF NOT EXISTS ratings_item ON ratings (item ASC);
+		CREATE INDEX IF NOT EXISTS ratings_posted ON ratings (posted ASC);
 
 		CREATE TABLE IF NOT EXISTS comments (
 			user TEXT NOT NULL,
