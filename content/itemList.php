@@ -76,7 +76,7 @@ if ($newsearch) {
 		);
 	}
 
-	// get items IDs from database and store in the session
+	// get item IDs from database and store in the session
 	$sql = "
 		SELECT items.identifier
 		FROM items
