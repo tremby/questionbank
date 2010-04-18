@@ -121,13 +121,18 @@ input[type=submit] {
 
 h2 {
 	background-color: #fff8f8;
+}
+
+h2, h3 {
 	border-style: solid none;
 	border-width: 1px;
 	border-color: #ddd;
 }
 
 h3 {
+	border-top-style: none;
 	margin-bottom: 0;
+	background-color: #fffafa;
 }
 
 a {
@@ -174,4 +179,7 @@ ul.pagination li + li {
 	font-size: 300%;
 	font-weight: bold;
 	color: #444;
+}
+#playitemstatus h3 {
+	background-color: transparent;
 }
