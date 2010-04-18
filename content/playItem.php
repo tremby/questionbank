@@ -26,6 +26,14 @@ if (isset($_GET["action"])) switch ($_GET["action"]) {
 		$_SESSION["itemqueue"] = array($_GET["qtiid"]);
 		$_SESSION["itemqueuepos"] = 0;
 		redirect(SITEROOT_WEB . "?page=playItem");
+	case "shuffle":
+		// set item queue to all items in the database in a random order
+		$_SESSION["itemqueue"] = array();
+		$result = db()->query("SELECT identifier FROM items ORDER BY RANDOM();");
+		while ($row = $result->fetchArray(SQLITE3_NUM))
+			$_SESSION["itemqueue"][] = $row[0];
+		$_SESSION["itemqueuepos"] = 0;
+		redirect(SITEROOT_WEB . "?page=playItem");
 	case "prev":
 		// move the item pointer back
 		if ($_SESSION["itemqueuepos"] == 0)

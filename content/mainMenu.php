@@ -37,6 +37,7 @@ include "htmlheader.php";
 			<?php if (isset($_SESSION["search"]) && count($_SESSION["items"]) > 0 && (!isset($_SESSION["itemqueue"]) || $_SESSION["items"] != $_SESSION["itemqueue"])) { ?>
 				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=results">Play the current search results</a> (<?php echo count($_SESSION["items"]); ?> item<?php echo plural($_SESSION["items"]); ?>)</li>
 			<?php } ?>
+			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=shuffle">Shuffle all items in <?php echo htmlspecialchars(SITE_TITLE); ?></a></li>
 		</ul>
 	</dd>
 </dl>
