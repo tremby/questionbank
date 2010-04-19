@@ -159,6 +159,45 @@ if (isset($_GET["action"])) {
 				$_SESSION["itemqueue"][] = $row[0];
 			$_SESSION["itemqueuepos"] = 0;
 			redirect(SITEROOT_WEB . "?page=playItem");
+		case "unrated":
+			// set item queue to all items in the database which haven't been 
+			// rated by anyone, from oldest to newest
+			$_SESSION["itemqueue"] = array();
+			$result = db()->query("
+				SELECT items.identifier
+				FROM items
+				LEFT JOIN ratings
+				ON items.identifier=ratings.item
+				AND ratings.posted > COALESCE(items.modified, items.uploaded)
+				GROUP BY ratings.item
+				HAVING COUNT(ratings.rating)=0
+				ORDER BY COALESCE(items.modified, items.uploaded) ASC
+			;");
+			while ($row = $result->fetchArray(SQLITE3_NUM))
+				$_SESSION["itemqueue"][] = $row[0];
+			$_SESSION["itemqueuepos"] = 0;
+			redirect(SITEROOT_WEB . "?page=playItem");
+		case "unratedbyuser":
+			// set item queue to all items in the database which haven't been 
+			// rated by anyone, from oldest to newest
+			if (!loggedin())
+				badrequest("you need to be logged in");
+			$_SESSION["itemqueue"] = array();
+			$result = db()->query("
+				SELECT items.identifier
+				FROM items
+				LEFT JOIN ratings
+				ON items.identifier=ratings.item
+				AND ratings.posted > COALESCE(items.modified, items.uploaded)
+				AND ratings.user='" . db()->escapeString(username()) . "'
+				GROUP BY ratings.item
+				HAVING COUNT(ratings.rating)=0
+				ORDER BY COALESCE(items.modified, items.uploaded) ASC
+			;");
+			while ($row = $result->fetchArray(SQLITE3_NUM))
+				$_SESSION["itemqueue"][] = $row[0];
+			$_SESSION["itemqueuepos"] = 0;
+			redirect(SITEROOT_WEB . "?page=playItem");
 		case "prev":
 			// move the item pointer back
 			if ($_SESSION["itemqueuepos"] == 0)

@@ -40,6 +40,10 @@ include "htmlheader.php";
 			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=shuffle">Shuffle all items in <?php echo htmlspecialchars(SITE_TITLE); ?></a></li>
 			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=newest">Play all items in <?php echo htmlspecialchars(SITE_TITLE); ?> from newest to oldest</a></li>
 			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=highestrated">Play all items in <?php echo htmlspecialchars(SITE_TITLE); ?> from highest rated to lowest</a></li>
+			<?php if (loggedin()) { ?>
+				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=unratedbyuser">Play all items in <?php echo htmlspecialchars(SITE_TITLE); ?> you haven't yet rated, oldest first</a></li>
+			<?php } ?>
+			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=unrated">Play all items in <?php echo htmlspecialchars(SITE_TITLE); ?> which haven't been rated by anyone, oldest first</a></li>
 		</ul>
 	</dd>
 </dl>
