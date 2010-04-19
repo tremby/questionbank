@@ -78,26 +78,26 @@ if (isset($_GET["action"])) {
 				badrequest("nothing to do");
 
 			db()->exec("BEGIN TRANSACTION;");
-			if (!is_null($rating)) {
-				db()->exec("
+			if (!is_null($rating))
+				if (!@db()->exec("
 					INSERT INTO ratings VALUES(
 						'" . db()->escapeString(username()) . "',
 						'" . db()->escapeString($item["identifier"]) . "',
 						$rating,
 						" . time() . "
 					)
-				;");
-			}
-			if (!is_null($comment)) {
-				db()->exec("
+				;"))
+					servererror("Sqlite3 error: " . db()->lastErrorMsg());
+			if (!is_null($comment))
+				if (!@db()->exec("
 					INSERT INTO comments VALUES (
 						'" . db()->escapeString(username()) . "',
 						'" . db()->escapeString($item["identifier"]) . "',
 						'" . db()->escapeString($comment) . "',
 						" . time() . "
 					)
-				;");
-			}
+				;"))
+					servererror("Sqlite3 error: " . db()->lastErrorMsg());
 			if (!db()->exec("COMMIT;"))
 				servererror("Sqlite3 error: " . db()->lastErrorMsg());
 
