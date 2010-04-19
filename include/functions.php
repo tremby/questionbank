@@ -147,12 +147,14 @@ function getitem($qtiid) {
 		$item["keywords"][] = $row[0];
 
 	// get rating (since last modification)
-	$item["rating"] = db()->querySingle("
-		SELECT AVG(rating)
+	$rating = db()->querySingle("
+		SELECT AVG(rating) AS rating, COUNT(rating) AS ratingcount
 		FROM ratings
 		WHERE item='" . db()->escapeString($qtiid) . "'
 		AND posted > " . max($item["uploaded"], is_null($item["modified"]) ? 0 : $item["modified"]) . "
-	;");
+	;", true);
+	$item["ratingcount"] = $rating["ratingcount"];
+	$item["rating"] = $rating["ratingcount"] > 0 ? $rating["rating"] : null;
 
 	// get comments
 	$item["comments"] = array();
