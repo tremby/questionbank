@@ -11,63 +11,67 @@ licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
 // actions to set up a new item queue or move the position in the queue
-if (isset($_GET["action"])) switch ($_GET["action"]) {
-	case "results":
-		// set item queue to current search results
-		if (!isset($_SESSION["items"]) || empty($_SESSION["items"]))
-			badrequest("no search results");
-		$_SESSION["itemqueue"] = $_SESSION["items"];
-		$_SESSION["itemqueuepos"] = 0;
-		redirect(SITEROOT_WEB . "?page=playItem");
-	case "single":
-		// set item queue to the single specified item
-		if (!isset($_GET["qtiid"]))
-			badrequest("no QTI ID specified");
-		$_SESSION["itemqueue"] = array($_GET["qtiid"]);
-		$_SESSION["itemqueuepos"] = 0;
-		redirect(SITEROOT_WEB . "?page=playItem");
-	case "shuffle":
-		// set item queue to all items in the database in a random order
-		$_SESSION["itemqueue"] = array();
-		$result = db()->query("SELECT identifier FROM items ORDER BY RANDOM();");
-		while ($row = $result->fetchArray(SQLITE3_NUM))
-			$_SESSION["itemqueue"][] = $row[0];
-		$_SESSION["itemqueuepos"] = 0;
-		redirect(SITEROOT_WEB . "?page=playItem");
-	case "prev":
-		// move the item pointer back
-		if ($_SESSION["itemqueuepos"] == 0)
-			badrequest("already on the first item");
-		$_SESSION["itemqueuepos"]--;
-		redirect(SITEROOT_WEB . "?page=playItem");
-	case "next":
-		// move the item pointer on and check if we're finished
-		if (++$_SESSION["itemqueuepos"] >= count($_SESSION["itemqueue"])) {
-			$title = "Finished";
-			include "htmlheader.php";
-			?>
-			<h1><?php echo htmlspecialchars($title); ?></h1>
-			<?php if (count($_SESSION["itemqueue"]) == 1) { ?>
-				<p>You've finished the only item in the queue.</p>
-			<?php } else { ?>
-				<p>You've got to the end of the <?php echo count($_SESSION["itemqueue"]); ?> items in the queue.</p>
-			<?php } ?>
-			<p>What do you want to do now?</p>
-			<ul>
-				<li><a href="<?php echo SITEROOT_WEB; ?>">Go back to the main menu</a></li>
-				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=startover">Take <?php echo plural($_SESSION["itemqueue"], "these items", "this item"); ?> again</a></li>
-			</ul>
-			<?php
-			include "htmlfooter.php";
-			exit;
-		}
-		redirect(SITEROOT_WEB . "?page=playItem");
-	case "startover":
-		// reset the item pointer
-		$_SESSION["itemqueuepos"] = 0;
-		redirect(SITEROOT_WEB . "?page=playItem");
-	default:
-		badrequest("unrecognized action");
+if (isset($_GET["action"])) {
+	if (!isset($_SESSION["itemqueue"]) && ($_GET["action"] == "prev" || $_GET["action"] == "next" || $_GET["action"] == "startover"))
+		badrequest("no items are in the queue");
+	switch ($_GET["action"]) {
+		case "results":
+			// set item queue to current search results
+			if (!isset($_SESSION["items"]) || empty($_SESSION["items"]))
+				badrequest("no search results");
+			$_SESSION["itemqueue"] = $_SESSION["items"];
+			$_SESSION["itemqueuepos"] = 0;
+			redirect(SITEROOT_WEB . "?page=playItem");
+		case "single":
+			// set item queue to the single specified item
+			if (!isset($_GET["qtiid"]))
+				badrequest("no QTI ID specified");
+			$_SESSION["itemqueue"] = array($_GET["qtiid"]);
+			$_SESSION["itemqueuepos"] = 0;
+			redirect(SITEROOT_WEB . "?page=playItem");
+		case "shuffle":
+			// set item queue to all items in the database in a random order
+			$_SESSION["itemqueue"] = array();
+			$result = db()->query("SELECT identifier FROM items ORDER BY RANDOM();");
+			while ($row = $result->fetchArray(SQLITE3_NUM))
+				$_SESSION["itemqueue"][] = $row[0];
+			$_SESSION["itemqueuepos"] = 0;
+			redirect(SITEROOT_WEB . "?page=playItem");
+		case "prev":
+			// move the item pointer back
+			if ($_SESSION["itemqueuepos"] == 0)
+				badrequest("already on the first item");
+			$_SESSION["itemqueuepos"]--;
+			redirect(SITEROOT_WEB . "?page=playItem");
+		case "next":
+			// move the item pointer on and check if we're finished
+			if (++$_SESSION["itemqueuepos"] >= count($_SESSION["itemqueue"])) {
+				$title = "Finished";
+				include "htmlheader.php";
+				?>
+				<h1><?php echo htmlspecialchars($title); ?></h1>
+				<?php if (count($_SESSION["itemqueue"]) == 1) { ?>
+					<p>You've finished the only item in the queue.</p>
+				<?php } else { ?>
+					<p>You've got to the end of the <?php echo count($_SESSION["itemqueue"]); ?> items in the queue.</p>
+				<?php } ?>
+				<p>What do you want to do now?</p>
+				<ul>
+					<li><a href="<?php echo SITEROOT_WEB; ?>">Go back to the main menu</a></li>
+					<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=startover">Take <?php echo plural($_SESSION["itemqueue"], "these items", "this item"); ?> again</a></li>
+				</ul>
+				<?php
+				include "htmlfooter.php";
+				exit;
+			}
+			redirect(SITEROOT_WEB . "?page=playItem");
+		case "startover":
+			// reset the item pointer
+			$_SESSION["itemqueuepos"] = 0;
+			redirect(SITEROOT_WEB . "?page=playItem");
+		default:
+			badrequest("unrecognized action");
+	}
 }
 
 // URL to embed in QTIEngine XML
