@@ -74,6 +74,9 @@ if (isset($_GET["action"])) {
 			if (is_null($rating) && (isset($_POST["justrate"]) || isset($_POST["rateandcomment"])))
 				badrequest("No rating given");
 
+			if (!is_null($rating) && $item["user"] == username())
+				badrequest("You can't rate your own item");
+
 			if (is_null($rating) && is_null($comment))
 				badrequest("nothing to do");
 
@@ -589,7 +592,9 @@ include "htmlheader.php";
 			<dt>Rating</dt>
 			<dd>
 				<?php $rating = itemrating($item["identifier"]); ?>
-				<?php if (!is_null($rating)) { ?>
+				<?php if ($item["user"] == username()) { ?>
+					You can't rate your own item
+				<?php } else if (!is_null($rating)) { ?>
 					You have already rated this item
 					<div class="stars block">
 						<div class="on" style="width: <?php echo ($on = 100 * $rating / 5); ?>%;"></div>
