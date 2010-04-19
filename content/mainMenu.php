@@ -45,6 +45,7 @@ include "htmlheader.php";
 			<?php } ?>
 			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=unrated">Play all items in <?php echo htmlspecialchars(SITE_TITLE); ?> which haven't been rated by anyone, oldest first</a></li>
 		</ul>
+		You can build other queues of items by searching the item list
 	</dd>
 </dl>
 
