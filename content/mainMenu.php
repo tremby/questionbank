@@ -16,7 +16,7 @@ include "htmlheader.php";
 <dl id="mainmenu">
 	<dt>Item list</dt>
 	<dd>
-		A filterable list of all items currently in <?php echo htmlspecialchars(SITE_TITLE); ?>
+		<p>A filterable list of all items currently in <?php echo htmlspecialchars(SITE_TITLE); ?></p>
 		<ul>
 			<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->addvars("clear", "true")->geturi(); ?>">All items</a> (or start a new search)</li>
 			<?php if (isset($_SESSION["search"])) { ?>
@@ -34,7 +34,7 @@ include "htmlheader.php";
 				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem">Return to current set of items</a> (<?php echo count($_SESSION["itemqueue"]); ?> item<?php echo plural($_SESSION["itemqueue"]); ?>)</li>
 			</ul>
 		<?php } ?>
-		Play all items...
+		<p>Play all items...</p>
 		<ul>
 			<?php if (isset($_SESSION["search"]) && count($_SESSION["items"]) > 0 && (!isset($_SESSION["itemqueue"]) || $_SESSION["items"] != $_SESSION["itemqueue"])) { ?>
 				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=results">in the current search results</a> (<?php echo count($_SESSION["items"]); ?> item<?php echo plural($_SESSION["items"]); ?>)</li>
@@ -50,7 +50,7 @@ include "htmlheader.php";
 				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=notbyuser">you didn't upload</a></li>
 			<?php } ?>
 		</ul>
-		You can build other queues of items by searching the item list
+		<p>You can build other queues of items by searching the item list</p>
 	</dd>
 </dl>
 

@@ -593,9 +593,9 @@ include "htmlheader.php";
 			<dd>
 				<?php $rating = itemrating($item["identifier"]); ?>
 				<?php if ($item["user"] == username()) { ?>
-					You can't rate your own item
+					<p>You can't rate your own item</p>
 				<?php } else if (!is_null($rating)) { ?>
-					You have already rated this item
+					<p>You have already rated this item</p>
 					<div class="stars block">
 						<div class="on" style="width: <?php echo ($on = 100 * $rating / 5); ?>%;"></div>
 						<div class="off" style="width: <?php echo 100 - $on; ?>%;"></div>
