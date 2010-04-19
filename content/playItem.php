@@ -198,6 +198,17 @@ if (isset($_GET["action"])) {
 				$_SESSION["itemqueue"][] = $row[0];
 			$_SESSION["itemqueuepos"] = 0;
 			redirect(SITEROOT_WEB . "?page=playItem");
+		case "notbyuser":
+			// set item queue to all items in the database not uploaded by the 
+			// current user
+			if (!loggedin())
+				badrequest("you need to be logged in");
+			$_SESSION["itemqueue"] = array();
+			$result = db()->query("SELECT identifier FROM items WHERE user!='" . db()->escapeString(username()) . "' ORDER BY COALESCE(modified, uploaded) DESC;");
+			while ($row = $result->fetchArray(SQLITE3_NUM))
+				$_SESSION["itemqueue"][] = $row[0];
+			$_SESSION["itemqueuepos"] = 0;
+			redirect(SITEROOT_WEB . "?page=playItem");
 		case "prev":
 			// move the item pointer back
 			if ($_SESSION["itemqueuepos"] == 0)

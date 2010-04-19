@@ -44,6 +44,9 @@ include "htmlheader.php";
 				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=unratedbyuser">Play all items in <?php echo htmlspecialchars(SITE_TITLE); ?> you haven't yet rated, oldest first</a></li>
 			<?php } ?>
 			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=unrated">Play all items in <?php echo htmlspecialchars(SITE_TITLE); ?> which haven't been rated by anyone, oldest first</a></li>
+			<?php if (loggedin()) { ?>
+				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=notbyuser">Play all items in <?php echo htmlspecialchars(SITE_TITLE); ?> which weren't uploaded by you</a></li>
+			<?php } ?>
 		</ul>
 		You can build other queues of items by searching the item list
 	</dd>
