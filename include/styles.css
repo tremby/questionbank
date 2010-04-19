@@ -115,9 +115,14 @@ input[type=text].small, input[type=password].small {
 textarea {
 	width: 100%;
 }
+#qtienginebodydiv input, #qtienginebodydiv textarea {
+	width: auto;
+}
+
 table.full {
 	width: 100%;
 }
+
 input[type=submit] {
 	font-weight: bold;
 	padding: 0.3em 0.5em;
