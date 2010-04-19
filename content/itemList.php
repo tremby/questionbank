@@ -159,7 +159,7 @@ include "htmlheader.php";
 		<?php if ($page < $numpages - 1) { ?><li><a href="<?php echo Uri::construct(true)->addvars("p", $numpages)->geturi(true); ?>">Last</a></li><?php } ?>
 	</ul>
 	<?php $pagination = ob_get_flush(); ?>
-	<table class="full">
+	<table class="full smalltext">
 		<tr>
 			<?php foreach (array("uploaded", "modified", "user", "title", "description") as $type) { ?>
 				<th<?php if ($orderby == $type) { ?> class="ordered"<?php } ?>>

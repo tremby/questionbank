@@ -239,3 +239,7 @@ ul#comments .commentmetadata {
 	color: #666;
 	margin: 0;
 }
+
+.smalltext {
+	font-size: 90%;
+}
