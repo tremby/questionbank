@@ -74,6 +74,9 @@ if (isset($_GET["action"])) {
 	}
 }
 
+if (!isset($_SESSION["itemqueue"]))
+	badrequest("item queue is empty");
+
 // URL to embed in QTIEngine XML
 $actionurl = SITEROOT_WEB . "?page=playItem";
 
