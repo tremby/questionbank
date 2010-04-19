@@ -41,6 +41,7 @@ if ($newsearch) {
 			case "user":
 			case "title":
 			case "description":
+			case "rating":
 				$orderbysql = $_REQUEST["orderby"];
 				$orderby = $_REQUEST["orderby"];
 				break;
@@ -78,7 +79,17 @@ if ($newsearch) {
 
 	// get item IDs from database and store in the session
 	$sql = "
-		SELECT items.identifier
+		SELECT
+			items.identifier,
+			COALESCE(
+				(
+					SELECT AVG(rating)
+					FROM ratings
+					WHERE item=items.identifier
+					AND posted > COALESCE(items.modified, items.uploaded)
+				),
+				0
+			) AS rating
 		FROM items
 		LEFT JOIN keywords ON items.identifier=keywords.item
 		" . (empty($where) ? "" : "WHERE " . implode(" AND ", $where)) . "
@@ -161,7 +172,7 @@ include "htmlheader.php";
 	<?php $pagination = ob_get_flush(); ?>
 	<table class="full smalltext">
 		<tr>
-			<?php foreach (array("uploaded", "modified", "user", "title", "description") as $type) { ?>
+			<?php foreach (array("uploaded", "modified", "user", "title", "description", "rating") as $type) { ?>
 				<th<?php if ($orderby == $type) { ?> class="ordered"<?php } ?>>
 					<a href="<?php echo Uri::construct(true)->removevars("clear")->addvars(array(
 						"orderby" => $type,
@@ -181,6 +192,19 @@ include "htmlheader.php";
 				<td><a href="<?php echo SITEROOT_WEB; ?>?page=itemList&amp;user=<?php echo urlencode($item["user"]); ?>"><?php echo htmlspecialchars($item["user"]); ?></a></td>
 				<td><?php echo htmlspecialchars($item["title"]); ?></td>
 				<td><?php echo htmlspecialchars($item["description"]); ?></td>
+				<td>
+					<?php if ($item["ratingcount"] > 0) { ?>
+						<div class="stars">
+							<div class="on" style="width: <?php echo ($on = 100 * $item["rating"] / 5); ?>%;"></div>
+							<div class="off" style="width: <?php echo 100 - $on; ?>%;"></div>
+						</div>
+						<div class="smallfaded">
+							From <?php echo count($item["ratingcount"]); ?> rating<?php echo plural($item["ratingcount"]); ?>
+						</div>
+					<?php } else { ?>
+						Not yet rated
+					<?php } ?>
+				</td>
 				<td><?php if (!empty($item["keywords"])) { ?>
 					<ul class="keywords">
 						<?php foreach ($item["keywords"] as $itemkeyword) { ?>
@@ -235,6 +259,7 @@ include "htmlheader.php";
 					"user" => "User",
 					"title" => "Title",
 					"description" => "Description",
+					"rating" => "Rating",
 					"random" => "Random",
 				) as $k => $v) { ?>
 					<option value="<?php echo htmlspecialchars($k); ?>"<?php if ($orderby == $k) { ?> selected="selected"<?php } ?>><?php echo htmlspecialchars($v); ?></option>

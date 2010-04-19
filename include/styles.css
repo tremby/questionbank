@@ -243,3 +243,7 @@ ul#comments .commentmetadata {
 .smalltext {
 	font-size: 90%;
 }
+.smallfaded {
+	font-size: 80%;
+	color: #888;
+}
