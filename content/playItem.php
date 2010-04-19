@@ -140,6 +140,25 @@ if (isset($_GET["action"])) {
 				$_SESSION["itemqueue"][] = $row[0];
 			$_SESSION["itemqueuepos"] = 0;
 			redirect(SITEROOT_WEB . "?page=playItem");
+		case "highestrated":
+			// set item queue to all items in the database from highest rated to 
+			// lowest
+			$_SESSION["itemqueue"] = array();
+			$result = db()->query("
+				SELECT
+					items.identifier,
+					AVG(ratings.rating) AS avgrating
+				FROM items
+				LEFT JOIN ratings
+				ON items.identifier=ratings.item
+				AND ratings.posted > COALESCE(items.modified, items.uploaded)
+				GROUP BY ratings.item
+				ORDER BY avgrating DESC
+			;");
+			while ($row = $result->fetchArray(SQLITE3_NUM))
+				$_SESSION["itemqueue"][] = $row[0];
+			$_SESSION["itemqueuepos"] = 0;
+			redirect(SITEROOT_WEB . "?page=playItem");
 		case "prev":
 			// move the item pointer back
 			if ($_SESSION["itemqueuepos"] == 0)
