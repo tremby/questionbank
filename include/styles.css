@@ -183,7 +183,7 @@ ul.pagination li + li {
 #playitemstatus h3 {
 	background-color: transparent;
 }
-#aboutlist {
+#playitemstatus ul {
 	text-align: left;
 }
 
@@ -246,4 +246,8 @@ ul#comments .commentmetadata {
 .smallfaded {
 	font-size: 80%;
 	color: #888;
+}
+
+.centre {
+	text-align: center !important;
 }

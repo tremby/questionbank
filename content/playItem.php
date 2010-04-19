@@ -484,14 +484,14 @@ include "htmlheader.php";
 ?>
 <h2>Play items</h2>
 <div id="playitemstatus">
-	<ul class="pagination">
+	<ul class="pagination centre">
 		<?php if ($_SESSION["itemqueuepos"] > 0) { ?>
 			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=prev">Previous</a></li>
 		<?php } ?>
 		<li>Item <?php echo $_SESSION["itemqueuepos"] + 1; ?> of <?php echo count($_SESSION["itemqueue"]); ?></li>
 		<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=next"><?php echo $_SESSION["itemqueuepos"] < count($_SESSION["itemqueue"]) - 1 ? "Next" : "Finish"; ?></a></li>
 	</ul>
-	<ul class="pagination">
+	<ul class="pagination centre">
 		<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=startover">Start over</a></li>
 	</ul>
 
@@ -537,6 +537,26 @@ include "htmlheader.php";
 			<?php } ?>
 		</li>
 	</ul>
+
+	<h3>Actions</h3>
+	<?php if (!loggedin()) { ?>
+		<p class="smallfaded">If you were to <a href="<?php echo SITEROOT_WEB; ?>?page=login">log in</a> you could clone and edit this item or, if it's yours, update it</p>
+	<?php } else { ?>
+		<ul>
+			<li>
+				<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>&amp;clone=true">
+					Clone and edit
+				</a>
+			</li>
+			<?php if ($item["user"] == username()) { ?>
+				<li>
+					<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>">
+						Edit
+					</a>
+				</li>
+			<?php } ?>
+		</ul>
+	<?php } ?>
 </div>
 
 <h3><?php echo htmlspecialchars($item["title"]); ?></h3>
