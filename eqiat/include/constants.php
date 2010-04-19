@@ -48,7 +48,7 @@ define("QTIENGINE_HOST", "qtiengine.qtitools.org");
 define("SITE_TITLE", PROGRAMNAME);
 
 // session variable name prefix
-define("SESSION_PREFIX", PROGRAMNAME . "_");
+define("SESSION_PREFIX", "qb_eqiat_");
 
 // use the "deposit in Edshare" action
 define("DIEA_AVAILABLE", false);

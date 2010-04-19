@@ -34,6 +34,9 @@ define("SITEROOT_WEB", "/" . substr(SITEROOT_LOCAL, strlen($document_root)));
 // SITEROOT_WEB
 // 	/eqiat/ (or / if not running in a subdirectory)
 
+// this needs to be the same as Eqiat's session variable name prefix
+define("SESSION_PREFIX", "qb_eqiat_");
+
 // configuration----------------------------------------------------------------
 
 // QTIEngine host -- these should fit together like this to form a working URL:
