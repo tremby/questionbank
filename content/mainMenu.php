@@ -38,6 +38,7 @@ include "htmlheader.php";
 				<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=results">Play the current search results</a> (<?php echo count($_SESSION["items"]); ?> item<?php echo plural($_SESSION["items"]); ?>)</li>
 			<?php } ?>
 			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=shuffle">Shuffle all items in <?php echo htmlspecialchars(SITE_TITLE); ?></a></li>
+			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=newest">Play all items in <?php echo htmlspecialchars(SITE_TITLE); ?> from newest to oldest</a></li>
 		</ul>
 	</dd>
 </dl>
