@@ -165,6 +165,24 @@ function getitem($qtiid) {
 	return $item;
 }
 
+// return the current user's rating of a given item
+function itemrating($qtiid) {
+	if (!loggedin() || !itemexists($qtiid))
+		return false;
+
+	$item = getitem($qtiid);
+	$result = db()->query("
+		SELECT rating
+		FROM ratings
+		WHERE item='" . db()->escapeString($qtiid) . "'
+		AND posted > " . max($item["uploaded"], is_null($item["modified"]) ? 0 : $item["modified"]) . "
+		AND user='" . db()->escapeString(username()) . "'
+	;");
+	if ($row = $result->fetchArray(SQLITE3_NUM))
+		return $row[0];
+	return null;
+}
+
 // turn a string of xhtml into html
 function xhtml_to_html($xhtml) {
 	$selfclosing = array(
