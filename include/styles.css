@@ -167,7 +167,7 @@ ul.pagination li + li {
 
 #playitemstatus {
 	text-align: center;
-	width: 12em;
+	width: 25%;
 	float: right;
 	margin: 0 0 0.5em 0.5em;
 	border: 1px solid #ccc;
@@ -217,4 +217,25 @@ ul.pagination li + li {
 
 .hidden {
 	display: none;
+}
+
+textarea#comment {
+	width: 70%;
+}
+
+.block {
+	display: block;
+}
+
+ul#comments {
+	list-style-type: none;
+	font-size: 90%;
+}
+ul#comments li + li {
+	border-top: 1px solid #ddd;
+}
+ul#comments .commentmetadata {
+	font-size: 90%;
+	color: #666;
+	margin: 0;
 }

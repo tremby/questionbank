@@ -16,13 +16,13 @@ function rendercomment($comment) {
 	?>
 	<li>
 		<div class="commentmetadata">
-			<p>Posted <?php echo friendlydate_html($comment["posted"]); ?> by <strong><?php echo htmlspecialchars($comment["user"]); ?></strong></p>
 			<?php if (!is_null($comment["rating"])) { ?>
-				<div class="stars">
+				<div class="stars right">
 					<div class="on" style="width: <?php echo ($on = 100 * $comment["rating"] / 5); ?>%;"></div>
 					<div class="off" style="width: <?php echo 100 - $on; ?>%;"></div>
 				</div>
 			<?php } ?>
+			<p>Posted <?php echo friendlydate_html($comment["posted"]); ?> by <strong><?php echo htmlspecialchars($comment["user"]); ?></strong></p>
 		</div>
 		<p><?php echo nl2br(htmlspecialchars($comment["comment"])); ?></p>
 	</li>
@@ -493,7 +493,7 @@ include "htmlheader.php";
 						<li><a id="getcommentslink" href="#">View existing comments</a></li>
 					<?php } ?>
 				</ul>
-				<textarea id="comment" name="comment"></textarea>
+				<div><textarea id="comment" name="comment"></textarea></div>
 				<input type="submit" id="justcomment" name="justcomment" value="Just comment">
 			</dd>
 
@@ -502,7 +502,7 @@ include "htmlheader.php";
 				<?php $rating = itemrating($item["identifier"]); ?>
 				<?php if (!is_null($rating)) { ?>
 					You have already rated this item
-					<div class="stars">
+					<div class="stars block">
 						<div class="on" style="width: <?php echo ($on = 100 * $rating / 5); ?>%;"></div>
 						<div class="off" style="width: <?php echo 100 - $on; ?>%;"></div>
 					</div>
