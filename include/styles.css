@@ -190,3 +190,31 @@ ul.pagination li + li {
 .clearer {
 	clear: both;
 }
+
+.stars {
+	position: relative;
+	display: inline-block;
+	width: 80px;
+	height: 16px;
+}
+.stars .off, .stars .on {
+	position: absolute;
+	height: 100%;
+	background-image: url(../images/star_transorange_16.png);
+	background-repeat: repeat-x;
+}
+.stars .off {
+	background-position: right top;
+	right: 0;
+}
+.stars .on {
+	background-position: left bottom;
+	left: 0;
+}
+.stars.settable {
+	cursor: pointer;
+}
+
+.hidden {
+	display: none;
+}

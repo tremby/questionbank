@@ -158,7 +158,17 @@ function getitem($qtiid) {
 
 	// get comments
 	$item["comments"] = array();
-	$result = db()->query("SELECT user, comment, posted FROM comments WHERE item='" . db()->escapeString($qtiid) . "' ORDER BY posted ASC;");
+	$result = db()->query("
+		SELECT
+			comments.user AS user,
+			comments.comment AS comment,
+			comments.posted AS posted,
+			ratings.rating AS rating
+		FROM comments
+		LEFT JOIN ratings ON comments.user=ratings.user AND comments.item=ratings.item AND comments.posted=ratings.posted
+		WHERE comments.item='" . db()->escapeString($qtiid) . "'
+		ORDER BY posted ASC;
+	");
 	while ($row = $result->fetchArray(SQLITE3_ASSOC))
 		$item["comments"][] = $row;
 

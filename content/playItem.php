@@ -10,11 +10,106 @@ Licensed under the Creative Commons 'Attribution non-commercial share alike'
 licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
+// render a comment
+function rendercomment($comment) {
+	ob_start();
+	?>
+	<li>
+		<div class="commentmetadata">
+			<p>Posted <?php echo friendlydate_html($comment["posted"]); ?> by <strong><?php echo htmlspecialchars($comment["user"]); ?></strong></p>
+			<?php if (!is_null($comment["rating"])) { ?>
+				<div class="stars">
+					<div class="on" style="width: <?php echo ($on = 100 * $comment["rating"] / 5); ?>%;"></div>
+					<div class="off" style="width: <?php echo 100 - $on; ?>%;"></div>
+				</div>
+			<?php } ?>
+		</div>
+		<p><?php echo nl2br(htmlspecialchars($comment["comment"])); ?></p>
+	</li>
+	<?php
+	return ob_get_clean();
+}
+
 // actions to set up a new item queue or move the position in the queue
 if (isset($_GET["action"])) {
-	if (!isset($_SESSION["itemqueue"]) && ($_GET["action"] == "prev" || $_GET["action"] == "next" || $_GET["action"] == "startover"))
+	if (!isset($_SESSION["itemqueue"]) && ($_GET["action"] == "prev" || $_GET["action"] == "next" || $_GET["action"] == "startover" || $_GET["action"] == "comment" || $_GET["action"] == "getcomments"))
 		badrequest("no items are in the queue");
 	switch ($_GET["action"]) {
+		case "getcomments":
+			// return HTML list of comments
+			$item = getitem($_SESSION["itemqueue"][$_SESSION["itemqueuepos"]]);
+			$html = "";
+			foreach ($item["comments"] as $comment)
+				$html .= rendercomment($comment);
+			ok(json_encode(array("html" => $html)), "application/json");
+		case "comment":
+			// handle post of rating or comment data
+			if (!loggedin())
+				forbidden();
+
+			if (!isset($_POST["justcomment"]) && !isset($_POST["justrate"]) && !isset($_POST["rateandcomment"]))
+				badrequest("didn't get an expected submit action");
+
+			$item = getitem($_SESSION["itemqueue"][$_SESSION["itemqueuepos"]]);
+			$comment = null;
+			if (isset($_POST["comment"])) {
+				$comment = trim($_POST["comment"]);
+				if (empty($comment))
+					$comment = null;
+			}
+			$rating = null;
+			if (isset($_POST["rating"])) {
+				$oldrating = itemrating($item["identifier"]);
+				if (!is_null($oldrating))
+					badrequest("You have already rated this item since it was last modified");
+				if (!is_numeric($_POST["rating"]))
+					badrequest("rating must be numeric");
+				$rating = intval($_POST["rating"]);
+				if ($rating < 0 || $rating > 5)
+					badrequest("rating must be an integer from 0 to 5");
+			}
+
+			if (is_null($comment) && (isset($_POST["justcomment"]) || isset($_POST["rateandcomment"])))
+				badrequest("No comment given");
+			if (is_null($rating) && (isset($_POST["justrate"]) || isset($_POST["rateandcomment"])))
+				badrequest("No rating given");
+
+			if (is_null($rating) && is_null($comment))
+				badrequest("nothing to do");
+
+			db()->exec("BEGIN TRANSACTION;");
+			if (!is_null($rating)) {
+				db()->exec("
+					INSERT INTO ratings VALUES(
+						'" . db()->escapeString(username()) . "',
+						'" . db()->escapeString($item["identifier"]) . "',
+						$rating,
+						" . time() . "
+					)
+				;");
+			}
+			if (!is_null($comment)) {
+				db()->exec("
+					INSERT INTO comments VALUES (
+						'" . db()->escapeString(username()) . "',
+						'" . db()->escapeString($item["identifier"]) . "',
+						'" . db()->escapeString($comment) . "',
+						" . time() . "
+					)
+				;");
+			}
+			if (!db()->exec("COMMIT;"))
+				servererror("Sqlite3 error: " . db()->lastErrorMsg());
+
+			if (is_null($comment))
+				ok();
+
+			ok(json_encode(array("html" => rendercomment(array(
+				"posted"	=>	time(),
+				"user"		=>	username(),
+				"rating"	=>	$rating,
+				"comment"	=>	$comment,
+			)))), "application/json");
 		case "results":
 			// set item queue to current search results
 			if (!isset($_SESSION["items"]) || empty($_SESSION["items"]))
@@ -244,7 +339,78 @@ if (isset($_POST["submit"])) {
 // parse response
 $xml = new SimpleXMLElement($response) or servererror("couldn't parse XML response");
 
-$headerextra = qtiengine_header_html($xml->page);
+ob_start();
+?>
+<script type="text/javascript">
+	$j(document).ready(function() {
+		$j("#getcommentslink").click(function(e) {
+			e.preventDefault();
+			$j.ajax({
+				type: "GET",
+				cache: false,
+				dataType: "json",
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.responseText);
+				},
+				success: function(data, textStatus) {
+					$j("#comments").html(data.html);
+				},
+				url: "<?php echo SITEROOT_WEB; ?>?page=playItem&action=getcomments"
+			});
+		});
+		$j("#justcomment").click(function(e) {
+			e.preventDefault();
+			$j.ajax({
+				type: "POST",
+				cache: false,
+				dataType: "json",
+				data: { "justcomment": true, "comment": $j("#comment").val() },
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.responseText);
+				},
+				success: function(data, textStatus) {
+					$j("#comments").append(data.html);
+					$j("#comment").val("");
+				},
+				url: "<?php echo SITEROOT_WEB; ?>?page=playItem&action=comment"
+			});
+		});
+		$j("#rateandcomment").click(function(e) {
+			e.preventDefault();
+			$j.ajax({
+				type: "POST",
+				cache: false,
+				dataType: "json",
+				data: { "rateandcomment": true, "comment": $j("#comment").val(), "rating": $j("#rating").val() },
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.responseText);
+				},
+				success: function(data, textStatus) {
+					$j("#comments").append(data.html);
+				},
+				url: "<?php echo SITEROOT_WEB; ?>?page=playItem&action=comment"
+			});
+		});
+		$j("#justrate").click(function(e) {
+			e.preventDefault();
+			$j.ajax({
+				type: "POST",
+				cache: false,
+				dataType: "text",
+				data: { "justrate": true, "rating": $j("#rating").val() },
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.responseText);
+				},
+				success: function(data, textStatus) {
+					alert("Your rating was recorded");
+				},
+				url: "<?php echo SITEROOT_WEB; ?>?page=playItem&action=comment"
+			});
+		});
+	});
+</script>
+<?php
+$headerextra = qtiengine_header_html($xml->page) . ob_get_clean();
 include "htmlheader.php";
 ?>
 <h2>Play items</h2>
@@ -254,9 +420,7 @@ include "htmlheader.php";
 			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=prev">Previous</a></li>
 		<?php } ?>
 		<li>Item <?php echo $_SESSION["itemqueuepos"] + 1; ?> of <?php echo count($_SESSION["itemqueue"]); ?></li>
-		<?php if ($_SESSION["itemqueuepos"] < count($_SESSION["itemqueue"]) - 1) { ?>
-			<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=next">Next</a></li>
-		<?php } ?>
+		<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=next"><?php echo $_SESSION["itemqueuepos"] < count($_SESSION["itemqueue"]) - 1 ? "Next" : "Finish"; ?></a></li>
 	</ul>
 	<ul class="pagination">
 		<li><a href="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=startover">Start over</a></li>
@@ -281,6 +445,7 @@ include "htmlheader.php";
 
 	<h3>About this item</h3>
 	<ul id="aboutlist">
+		<li class="hidden">Identifier: <span id="qtiid"><?php echo htmlspecialchars($item["identifier"]); ?></span></li>
 		<li>Uploaded by <strong><?php echo htmlspecialchars($item["user"]); ?></strong> <?php echo friendlydate_html($item["uploaded"]); ?></li>
 		<li>
 			<?php if (is_null($item["modified"])) { ?>
@@ -291,17 +456,72 @@ include "htmlheader.php";
 		</li>
 		<li>Description: <?php echo htmlspecialchars($item["description"]); ?></li>
 		<li>Keywords: <?php echo htmlspecialchars(implode(", ", $item["keywords"])); ?></li>
+		<li>
+			<?php if ($item["ratingcount"] > 0) { ?>
+				Rating (rated <?php echo $item["ratingcount"]; ?> time<?php echo plural($item["ratingcount"]); ?>):
+				<div class="stars">
+					<div class="on" style="width: <?php echo ($on = 100 * $item["rating"] / 5); ?>%;"></div>
+					<div class="off" style="width: <?php echo 100 - $on; ?>%;"></div>
+				</div>
+			<?php } else { ?>
+				Not yet rated
+			<?php } ?>
+		</li>
 	</ul>
 </div>
 
 <h3><?php echo htmlspecialchars($item["title"]); ?></h3>
 <?php echo qtiengine_bodydiv_html($xml->page); ?>
 
-<?php
-include "htmlfooter.php";
-exit;
+<h3>Comment and rate</h3>
+<?php if (!loggedin()) { ?>
+	<p>You need to be logged in to rate or comment on this item</p>
+	<p>There <?php echo plural($item["comments"], "are", "is"); ?> <?php echo count($item["comments"]); ?> comment<?php echo plural($item["comments"]); ?> on this item</p>
+	<ul id="comments">
+		<?php if (count($item["comments"]) > 0) { ?>
+			<li><a id="getcommentslink" href="#">View existing comments</a></li>
+		<?php } ?>
+	</ul>
+<?php } else { ?>
+	<form action="<?php echo SITEROOT_WEB; ?>?page=playItem&amp;action=comment" method="post">
+		<dl>
+			<dt>Comment</dt>
+			<dd>
+				<p>There <?php echo plural($item["comments"], "are", "is"); ?> <?php echo count($item["comments"]); ?> comment<?php echo plural($item["comments"]); ?> on this item</p>
+				<ul id="comments">
+					<?php if (count($item["comments"]) > 0) { ?>
+						<li><a id="getcommentslink" href="#">View existing comments</a></li>
+					<?php } ?>
+				</ul>
+				<textarea id="comment" name="comment"></textarea>
+				<input type="submit" id="justcomment" name="justcomment" value="Just comment">
+			</dd>
 
-include "htmlheader.php";
-echo qtiengine_bodydiv_html($xml->page);
+			<dt>Rating</dt>
+			<dd>
+				<?php $rating = itemrating($item["identifier"]); ?>
+				<?php if (!is_null($rating)) { ?>
+					You have already rated this item
+					<div class="stars">
+						<div class="on" style="width: <?php echo ($on = 100 * $rating / 5); ?>%;"></div>
+						<div class="off" style="width: <?php echo 100 - $on; ?>%;"></div>
+					</div>
+				<?php } else { ?>
+					<div class="stars settable">
+						<div class="on" style="width: 0%;"></div>
+						<div class="off" style="width: 100%;"></div>
+						<input type="hidden" class="rating" name="rating" id="rating" value="0">
+					</div>
+					<div>
+						<input type="submit" id="justrate" name="justrate" value="Rate this item">
+						<input type="submit" id="rateandcomment" name="rateandcomment" value="Rate and comment">
+					</div>
+				<?php } ?>
+			</dd>
+		</dl>
+	</form>
+<?php } ?>
+
+<?php
 include "htmlfooter.php";
 ?>
