@@ -146,6 +146,20 @@ function getitem($qtiid) {
 	while ($row = $result->fetchArray(SQLITE3_NUM))
 		$item["keywords"][] = $row[0];
 
+	// get rating (since last modification)
+	$item["rating"] = db()->querySingle("
+		SELECT AVG(rating)
+		FROM ratings
+		WHERE item='" . db()->escapeString($qtiid) . "'
+		AND posted > " . max($item["uploaded"], is_null($item["modified"]) ? 0 : $item["modified"]) . "
+	;");
+
+	// get comments
+	$item["comments"] = array();
+	$result = db()->query("SELECT user, comment, posted FROM comments WHERE item='" . db()->escapeString($qtiid) . "' ORDER BY posted ASC;");
+	while ($row = $result->fetchArray(SQLITE3_ASSOC))
+		$item["comments"][] = $row;
+
 	return $item;
 }
 
