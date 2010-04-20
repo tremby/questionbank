@@ -22,7 +22,7 @@ function rendercomment($comment) {
 					<div class="off" style="width: <?php echo 100 - $on; ?>%;"></div>
 				</div>
 			<?php } ?>
-			<p>Posted <?php echo friendlydate_html($comment["posted"]); ?> by <strong><?php echo htmlspecialchars($comment["user"]); ?></strong></p>
+			<p>Posted <?php echo friendlydate_html($comment["posted"]); ?> by <?php if ($comment["userdeleted"]) { ?>deleted user <?php } ?><strong><?php echo htmlspecialchars($comment["user"]); ?></strong></p>
 		</div>
 		<p><?php echo nl2br(htmlspecialchars($comment["comment"])); ?></p>
 	</li>
@@ -108,10 +108,11 @@ if (isset($_GET["action"])) {
 				ok();
 
 			ok(json_encode(array("html" => rendercomment(array(
-				"posted"	=>	time(),
-				"user"		=>	username(),
-				"rating"	=>	$rating,
-				"comment"	=>	$comment,
+				"posted"		=>	time(),
+				"user"			=>	username(),
+				"rating"		=>	$rating,
+				"comment"		=>	$comment,
+				"userdeleted"	=>	0,
 			)))), "application/json");
 		case "results":
 			// set item queue to current search results

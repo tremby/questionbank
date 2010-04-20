@@ -23,8 +23,12 @@ if (isset($_REQUEST["action"])) {
 		case "delete":
 			if ($_REQUEST["user"] == username())
 				badrequest("you can't delete yourself");
-			db()->exec("DELETE FROM users WHERE username='" . db()->escapeString($_REQUEST["user"]) . "';");
+			db()->exec("UPDATE users SET deleted=1 WHERE username='" . db()->escapeString($_REQUEST["user"]) . "';");
 			$message = "User <strong>" . htmlspecialchars($_REQUEST["user"]) . "</strong> has been deleted";
+			break;
+		case "undelete":
+			db()->exec("UPDATE users SET deleted=0 WHERE username='" . db()->escapeString($_REQUEST["user"]) . "';");
+			$message = "User <strong>" . htmlspecialchars($_REQUEST["user"]) . "</strong> has been undeleted";
 			break;
 		case "grant":
 			db()->exec("UPDATE users SET privileges=1 WHERE username='" . db()->escapeString($_REQUEST["user"]) . "';");
@@ -47,6 +51,7 @@ $result = db()->query("
 		users.username AS username,
 		users.registered AS registered,
 		users.privileges AS privileges,
+		users.deleted AS deleted,
 		COALESCE(items.cnt, 0) AS itemcount,
 		COALESCE(ratings.cnt, 0) AS ratingcount,
 		COALESCE(comments.cnt, 0) AS commentcount
@@ -89,21 +94,27 @@ include "htmlheader.php";
 	</div>
 <?php } ?>
 
+<p>From this table you can grant and revoke privileges and delete and undelete 
+users. Deleting a user does not delete that user's ratings, items or comments 
+and the user can later be undeleted.</p>
+
 <table class="full">
 	<tr>
 		<th>Username</th>
 		<th>Registered</th>
 		<th>Privileged</th>
+		<th>Deleted</th>
 		<th>Items</th>
 		<th>Ratings</th>
 		<th>Comments</th>
 		<th>Actions</th>
 	</tr>
 	<?php foreach ($users as $k => $user) { ?>
-		<tr class="row<?php echo $k % 2; ?>">
+		<tr class="row<?php echo $k % 2; ?><?php if ($user["deleted"]) { ?> deleted<?php } ?><?php if ($user["privileges"]) { ?> privileged<?php } ?>">
 			<td><?php echo htmlspecialchars($user["username"]); ?></td>
 			<td><?php echo friendlydate_html($user["registered"]); ?></td>
 			<td><?php echo $user["privileges"] ? "yes" : "no"; ?></td>
+			<td><?php echo $user["deleted"] ? "yes" : "no"; ?></td>
 			<td><?php echo $user["itemcount"]; ?></td>
 			<td><?php echo $user["ratingcount"]; ?></td>
 			<td><?php echo $user["commentcount"]; ?></td>
@@ -114,7 +125,9 @@ include "htmlheader.php";
 					<?php } else if ($user["username"] != username() || privilegedusers() > 1) { ?>
 						<li><a <?php if ($user["username"] == username()) { ?>class="confirmrevokeself" <?php } ?>href="<?php echo SITEROOT_WEB; ?>?page=users&amp;action=revoke&amp;user=<?php echo urlencode($user["username"]); ?>">Revoke privileges</a></li>
 					<?php } ?>
-					<?php if ($user["username"] != username()) { ?>
+					<?php if (userdeleted($user["username"])) { ?>
+						<li><a href="<?php echo SITEROOT_WEB; ?>?page=users&amp;action=undelete&amp;user=<?php echo urlencode($user["username"]); ?>">Undelete</a></li>
+					<?php } else if ($user["username"] != username()) { ?>
 						<li><a class="confirmdelete" href="<?php echo SITEROOT_WEB; ?>?page=users&amp;action=delete&amp;user=<?php echo urlencode($user["username"]); ?>">Delete</a></li>
 					<?php } ?>
 				</ul>

@@ -271,3 +271,10 @@ ul#comments .commentmetadata {
 .messagebox > h2:first-child {
 	margin-top: 0;
 }
+
+tr.privileged {
+	background-color: #def;
+}
+tr.deleted {
+	background-color: #fdd;
+}

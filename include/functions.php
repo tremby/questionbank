@@ -48,7 +48,8 @@ function db() {
 			username TEXT PRIMARY KEY ASC NOT NULL,
 			passwordhash TEXT NOT NULL,
 			registered INTEGER NOT NULL,
-			privileges INTEGER NOT NULL DEFAULT 0
+			privileges INTEGER NOT NULL DEFAULT 0,
+			deleted INTEGER NOT NULL DEFAULT 0
 		);
 
 		CREATE TABLE IF NOT EXISTS ratings (
@@ -74,14 +75,23 @@ function db() {
 }
 
 // return true if a user exists in the database
+// if checking a password, deleted users do not exist (therefore a deleted user 
+// can't log in)
+// otherwise, deleted users do exist (therefore a new user can't register with a 
+// previously used username)
 function userexists($username, $password = null, $ishash = false) {
 	if (!is_null($password) && !$ishash)
 		$password = md5($password);
 	$query = "SELECT COUNT(*) FROM users WHERE username LIKE '" . db()->escapeString($username) . "'";
 	if (!is_null($password))
-		$query .= " AND passwordhash='" . db()->escapeString($password) . "'";
+		$query .= " AND passwordhash='" . db()->escapeString($password) . "' AND deleted=0";
 
 	return db()->querySingle($query) === 1;
+}
+
+// return true if a user exists but has been deleted
+function userdeleted($username) {
+	return (boolean) db()->querySingle("SELECT COUNT(*) FROM users WHERE username LIKE '" . db()->escapeString($username) . "' AND deleted=1;");
 }
 
 // return true if the user (named or current) has raised privileges
@@ -183,9 +193,11 @@ function getitem($qtiid) {
 			comments.user AS user,
 			comments.comment AS comment,
 			comments.posted AS posted,
-			ratings.rating AS rating
+			ratings.rating AS rating,
+			users.deleted AS userdeleted
 		FROM comments
 		LEFT JOIN ratings ON comments.user=ratings.user AND comments.item=ratings.item AND comments.posted=ratings.posted
+		LEFT JOIN users ON comments.user=users.username
 		WHERE comments.item='" . db()->escapeString($qtiid) . "'
 		ORDER BY posted ASC;
 	");

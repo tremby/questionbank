@@ -56,7 +56,8 @@ if (isset($_POST["register"])) {
 			'" . db()->escapeString($_POST["username"]) . "',
 			'" . db()->escapeString(md5($_POST["password"])) . "',
 			" . time() . ",
-			$privileges
+			$privileges,
+			0
 		);");
 		db()->exec("COMMIT;");
 
