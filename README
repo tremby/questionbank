@@ -42,6 +42,9 @@ db subdirectory. The simplest way to do that with Apache (providing the
 AllowOverride directive allows it) is to run a command such as
 	echo "deny from all" >db/.htaccess
 
+After installing you should register as a Question Bank user -- the first user 
+to register is given raised privileges.
+
 CONFIGURATION
 
 The options are constants found at the bottom of include/constants.php:
@@ -52,7 +55,61 @@ The options are constants found at the bottom of include/constants.php:
 
 USAGE
 
-todo: write this
+At the top of the Question Bank screen are links to the authoring tool (Eqiat), 
+to log in or out and to this help text. When not on the main menu there is also 
+a link back to the main menu.
+
+Logging in allows a user to save items from the authoring tool to Question Bank 
+and also to rate and comment on items. There is a link to register from the log 
+in page.
+
+On the main menu are links to the authoring tool, various views of the item list 
+and various ways to start playing items. If the current user has raised 
+privileges there is also a link to administer users.
+
+The authoring tool is a stock instance of Eqiat except for a link back to 
+Question Bank and an action allowing an item to be saved to Question Bank. See 
+Eqiat's README file or its "help" link for further details. Saving an item to 
+Question Bank requires the user to be logged in.
+
+The item list can be searched by using the form at the bottom and an existing 
+view can be reordered by clicking on the column titles. Actions for each item 
+are shown on that item's row and a "play these results" link is available above 
+the results. Clicking this queues up all search results and takes the user to 
+the play items page. Users do not need to be logged in to list and play items.
+
+Any user (even those who are not logged in) can click "clone and edit" on an 
+item. This copies the item, just changing its identifier and puts it in the 
+authoring tool. The item can then be modified and (if the user logs in) saved 
+back to Question Bank. A cloned item will not replace the original.
+
+An item's owner (the user who saved it to Question Bank) has two extra options: 
+edit and delete (users with raised privileges also have the latter). Clicking 
+"edit" puts the item in the authoring tool without changing its identifier. If 
+this item is then modified and saved back to Question Bank it will replace the 
+original. When this happens a comment is automatically added to the item saying 
+that it was updated and ratings are reset (though old ratings are still visible 
+in corresponding comments).
+
+When playing items navigation is available in a box on the right hand side along 
+with the score associated with the previous response. Other information about 
+the item is also shown in this box and any available actions.
+
+When logged in, below the item is the commenting and rating area. The number of 
+comments is displayed here with a link to show them. When clicked the comments 
+will appear along with corresponding ratings. A comment can be added by typing 
+it in the box. As long as the item wasn't uploaded by the current user the item 
+can also be rated from 0 to 5. Such ratings are averaged and shown with the 
+item's other information. Only ratings submitted since the item was last 
+modified count towards the average shown.
+
+Users with raised privileges have an extra page which lists all registered users 
+and some related information such as whether or not they are privileged and the 
+number of items they own. Actions appear here when appropriate to grant 
+privileges, revoke privileges, delete the user and undelete the user. A user who 
+is deleted is not totally removed from the system -- that user's comments and 
+ratings remain. The user can not log in while deleted and their username on 
+comments is prefixed with "deleted user".
 
 BUGS
 
