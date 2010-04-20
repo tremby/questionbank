@@ -29,6 +29,10 @@ include "htmlheader.php";
 <?php } ?>
 
 <dl id="mainmenu">
+	<dt><a href="<?php echo SITEROOT_WEB; ?>eqiat">Authoring tool</a></dt>
+	<dd>Visit the authoring tool, Eqiat, to make items and deposit them in
+	<?php echo htmlspecialchars(SITE_TITLE); ?></dd>
+
 	<dt>Item list</dt>
 	<dd>
 		<?php if (db()->querySingle("SELECT COUNT(*) FROM items;") == 0) { ?>
