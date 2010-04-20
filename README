@@ -38,7 +38,9 @@ to the following:
 where www-data is a group of which the user running PHP is a member.
 
 You may also want to configure your web server not to serve anything within the 
-db subdirectory.
+db subdirectory. The simplest way to do that with Apache (providing the 
+AllowOverride directive allows it) is to run a command such as
+	echo "deny from all" >db/.htaccess
 
 CONFIGURATION
 
