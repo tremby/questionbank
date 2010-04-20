@@ -291,7 +291,7 @@ include "htmlheader.php";
 		</dd>
 
 		<dt><label for="perpage">Results per page</label></dt>
-		<dd><input type="text small" name="perpage" id="perpage" size="4" value="<?php echo $perpage; ?>"></dd>
+		<dd><input type="text" class="small" name="perpage" id="perpage" size="4" value="<?php echo $perpage; ?>"></dd>
 
 		<dt></dt>
 		<dd>

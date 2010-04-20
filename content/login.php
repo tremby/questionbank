@@ -78,10 +78,10 @@ include "htmlheader.php";
 <form action="<?php echo isset($_SESSION["nextpage"]) ? $_SESSION["nextpage"] : SITEROOT_WEB . "?page=login"; ?>" method="post">
 	<dl>
 		<dt><label for="username">Username</label></dt>
-		<dd><input type="text" width="32" name="username" id="username"<?php if (isset($_POST["username"])) { ?> value="<?php echo htmlspecialchars($_POST["username"]); ?>"<?php } ?>></dd>
+		<dd><input type="text" size="32" name="username" id="username"<?php if (isset($_POST["username"])) { ?> value="<?php echo htmlspecialchars($_POST["username"]); ?>"<?php } ?>></dd>
 
 		<dt><label for="password">Password</label></dt>
-		<dd><input type="password" width="32" name="password" id="password"></dd>
+		<dd><input type="password" size="32" name="password" id="password"></dd>
 
 		<dt></dt>
 		<dd><input type="submit" name="login" value="Log in"></dd>
