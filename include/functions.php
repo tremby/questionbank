@@ -98,6 +98,11 @@ function userhasprivileges($user = null) {
 	return (boolean) db()->querySingle("SELECT privileges FROM users WHERE username='" . db()->escapeString($user) . "';");
 }
 
+// return a count of privileged users
+function privilegedusers() {
+	return db()->querySingle("SELECT COUNT(*) FROM users WHERE privileges=1;");
+}
+
 // attempt to log in
 function login($username, $password, $ishash = false) {
 	if (userexists($username, $password, $ishash)) {

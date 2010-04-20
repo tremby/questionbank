@@ -80,6 +80,11 @@ include "htmlheader.php";
 			<p>You can build other queues of items by searching the item list</p>
 		<?php } ?>
 	</dd>
+
+	<?php if (userhasprivileges()) { ?>
+		<dt><a href="<?php echo SITEROOT_WEB; ?>?page=users">Administer users</a></dt>
+		<dd>Grant or revoke raised privileges</dd>
+	<?php } ?>
 </dl>
 
 <?php include "htmlfooter.php"; ?>
