@@ -14,7 +14,7 @@ include "htmlheader.php";
 ?>
 
 <?php if (db()->querySingle("SELECT COUNT(*) FROM users;") == 0) { ?>
-	<div class="boxout">
+	<div class="messagebox">
 		<h2>No users exist</h2>
 		<p>You've probably just installed
 		<?php echo htmlspecialchars(PROGRAMNAME); ?>

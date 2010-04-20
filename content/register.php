@@ -86,7 +86,7 @@ include "htmlheader.php";
 ?>
 
 <?php if (db()->querySingle("SELECT COUNT(*) FROM users;") == 0) { ?>
-	<div class="boxout">
+	<div class="messagebox">
 		<h2>No users exist</h2>
 		<p>The first user to register will have raised privileges. If that's you 
 		there will be a message to say so. If something goes wrong delete the 
