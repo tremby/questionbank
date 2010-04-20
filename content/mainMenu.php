@@ -40,12 +40,12 @@ include "htmlheader.php";
 		<?php } else { ?>
 			<p>A filterable list of all items currently in <?php echo htmlspecialchars(SITE_TITLE); ?></p>
 			<ul>
-				<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->addvars("clear", "true")->geturi(); ?>">All items</a> (or start a new search)</li>
+				<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->addvars("clear", "true")->geturi(true); ?>">All items</a> (or start a new search)</li>
 				<?php if (isset($_SESSION["search"])) { ?>
-					<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->geturi(); ?>">Previous search results</a>
+					<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->geturi(true); ?>">Previous search results</a>
 				<?php } ?>
 				<?php if (loggedin()) { ?>
-					<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->addvars("user", username())->geturi(); ?>">Your items</a>
+					<li><a href="<?php echo Uri::construct(SITEROOT_WEB . "?page=itemList", true)->addvars("user", username())->geturi(true); ?>">Your items</a>
 				<?php } ?>
 			</ul>
 		<?php } ?>
