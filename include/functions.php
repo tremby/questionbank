@@ -47,7 +47,8 @@ function db() {
 		CREATE TABLE IF NOT EXISTS users (
 			username TEXT PRIMARY KEY ASC NOT NULL,
 			passwordhash TEXT NOT NULL,
-			registered INTEGER NOT NULL
+			registered INTEGER NOT NULL,
+			privileges INTEGER NOT NULL DEFAULT 0
 		);
 
 		CREATE TABLE IF NOT EXISTS ratings (
@@ -74,13 +75,27 @@ function db() {
 
 // return true if a user exists in the database
 function userexists($username, $password = null, $ishash = false) {
-	if (!$ishash)
+	if (!is_null($password) && !$ishash)
 		$password = md5($password);
 	$query = "SELECT COUNT(*) FROM users WHERE username LIKE '" . db()->escapeString($username) . "'";
 	if (!is_null($password))
 		$query .= " AND passwordhash='" . db()->escapeString($password) . "'";
 
 	return db()->querySingle($query) === 1;
+}
+
+// return true if the user (named or current) has raised privileges
+function userhasprivileges($user = null) {
+	if (is_null($user)) {
+		if (!loggedin())
+			return false;
+		$user = username();
+	}
+	if (!userexists($user)) {
+		echo "user doesn't exist";
+		return false;
+	}
+	return (boolean) db()->querySingle("SELECT privileges FROM users WHERE username='" . db()->escapeString($user) . "';");
 }
 
 // attempt to log in

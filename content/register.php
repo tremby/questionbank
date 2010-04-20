@@ -48,11 +48,15 @@ if (isset($_POST["register"])) {
 	else if (!isset($_POST["password"]) || empty($_POST["password"]))
 		$errors[] = "You need to specify a password";
 
+	// grant privileges if this is the first user
+	$privileges = db()->querySingle("SELECT COUNT(*) FROM users;") == 0 ? 1 : 0;
+
 	if (empty($errors)) {
 		db()->exec("INSERT INTO users VALUES (
 			'" . db()->escapeString($_POST["username"]) . "',
 			'" . db()->escapeString(md5($_POST["password"])) . "',
-			" . time() . "
+			" . time() . ",
+			$privileges
 		);");
 		db()->exec("COMMIT;");
 
@@ -65,6 +69,9 @@ if (isset($_POST["register"])) {
 		<p>You have successfully registered as <strong><?php echo htmlspecialchars($_POST["username"]); ?></strong>. 
 		You've been logged in and can now go ahead and deposit, rate and comment 
 		on items.</p>
+		<?php if (userhasprivileges()) { ?>
+			<p><strong>You have raised privileges.</strong></p>
+		<?php } ?>
 		<?php
 		include "htmlfooter.php";
 		exit;
@@ -77,6 +84,16 @@ if (isset($_POST["register"])) {
 $title = "Register";
 include "htmlheader.php";
 ?>
+
+<?php if (db()->querySingle("SELECT COUNT(*) FROM users;") == 0) { ?>
+	<div class="boxout">
+		<h2>No users exist</h2>
+		<p>The first user to register will have raised privileges. If that's you 
+		there will be a message to say so. If something goes wrong delete the 
+		database file and try again.</p>
+	</div>
+<?php } ?>
+
 <h2><?php echo htmlspecialchars($title); ?></h2>
 <p>Use the form below to register so you can deposit, rate and comment on questions</p>
 

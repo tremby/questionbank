@@ -260,3 +260,14 @@ ul#comments .commentmetadata {
 .centre {
 	text-align: center !important;
 }
+
+.messagebox {
+	padding: 1em;
+	margin: 1em auto;
+	width: 70%;
+	border: 1px solid #ddd;
+}
+
+.messagebox > h2:first-child {
+	margin-top: 0;
+}

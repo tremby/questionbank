@@ -13,6 +13,21 @@ licence -- see the LICENCE file for more details
 include "htmlheader.php";
 ?>
 
+<?php if (db()->querySingle("SELECT COUNT(*) FROM users;") == 0) { ?>
+	<div class="boxout">
+		<h2>No users exist</h2>
+		<p>You've probably just installed
+		<?php echo htmlspecialchars(PROGRAMNAME); ?>
+		and there aren't yet any users. You should register an account now since 
+		the first user to register is the first administrator and has raised 
+		privileges – the abilities to delete items and grant raised privileges 
+		to other users.</p>
+		<ul>
+			<li><a href="<?php echo SITEROOT_WEB; ?>?page=register">Register</a></li>
+		</ul>
+	</div>
+<?php } ?>
+
 <dl id="mainmenu">
 	<dt>Item list</dt>
 	<dd>
