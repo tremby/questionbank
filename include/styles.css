@@ -20,6 +20,9 @@ html, body {
 p {
 	margin: 0.3em 0;
 }
+p + p {
+	margin-top: 1em;
+}
 
 .disabled {
 	color: gray;
