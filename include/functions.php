@@ -293,6 +293,7 @@ function qtiengine_header_html(SimpleXMLElement $page) {
 // div with id "body" and convert to HTML
 // the default QTIEngine XSL transformation has a div with everything we want in 
 // it with id "body" (it doesn't include the internal state etc)
+// also replace h2 tags with h3 and strip hr tags
 function qtiengine_bodydiv_html(SimpleXMLElement $page, $divid = "qtienginebodydiv") {
 	// php5's support for default namespace is useless so we have to define it 
 	// manually
@@ -306,7 +307,7 @@ function qtiengine_bodydiv_html(SimpleXMLElement $page, $divid = "qtienginebodyd
 	$bodydiv = $bodydivs[0];
 	$bodydiv["id"] = $divid;
 
-	return xhtml_to_html(simplexml_indented_string($bodydiv));
+	return preg_replace(array('%<(/?)h2\b%', '%<hr.*?>%'), array('<\1h3', ''), xhtml_to_html(simplexml_indented_string($bodydiv)));
 }
 
 function callstack($html = true) {
