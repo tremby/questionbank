@@ -137,6 +137,18 @@ $numpages = ceil(count($items) / $perpage);
 if (!empty($items) && count($items) <= ($page - 1) * $perpage)
 	badrequest("Not enough search results for this page to exist");
 
+ob_start();
+?>
+<script type="text/javascript">
+	$j(document).ready(function() {
+		$j(".confirmdeleteitem").click(function() {
+			if (!confirm("Are you sure you want to delete this item?"))
+				return false;
+		});
+	});
+</script>
+<?php
+$headerextra = ob_get_clean();
 $title = "Item list";
 include "htmlheader.php";
 ?>
@@ -231,6 +243,13 @@ include "htmlheader.php";
 						<li>
 							<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>">
 								Edit
+							</a>
+						</li>
+					<?php } ?>
+					<?php if ($item["user"] == username() || userhasprivileges()) { ?>
+						<li>
+							<a class="confirmdeleteitem" href="<?php echo SITEROOT_WEB; ?>?page=deleteItem&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>">
+								Delete
 							</a>
 						</li>
 					<?php } ?>
