@@ -277,4 +277,23 @@ function qtiengine_bodydiv_html(SimpleXMLElement $page, $divid = "qtienginebodyd
 	return xhtml_to_html(simplexml_indented_string($bodydiv));
 }
 
+function callstack($html = true) {
+	$bt = debug_backtrace();
+
+	// lose the call to this function
+	array_shift($bt);
+
+	echo "backtrace:\n";
+	if ($html) echo "<ul>";
+	foreach ($bt as $call) {
+		if ($html) echo "<li>";
+		echo $call["file"] . ":" . $call["line"] . " calls " . $call["function"] . "(" . implode(", ", $call["args"]) . ")";
+		if ($html)
+			echo "</li>";
+		else
+			echo "\n";
+	}
+	if ($html) echo "</ul>";
+}
+
 ?>
