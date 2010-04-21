@@ -183,7 +183,21 @@ function xml_remove_wrapper_element($xml) {
 
 // get non-interaction XML from a QTI itemBody node (that is, the stimulus)
 function qti_get_stimulus(SimpleXMLElement $ib) {
-	$itemBodyIgnore = array(
+	$stimulus = simplexml_load_string('<stimulus xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"/>', null);
+	foreach ($ib->children() as $child) {
+		if (containsQTIInteraction($child))
+			continue;
+
+		// doesn't contain a QTI interaction so it counts as stimulus
+		simplexml_append($stimulus, $child);
+	}
+
+	return xml_remove_wrapper_element($stimulus->asXML());
+}
+
+// return true if the given SimpleXML element contains a QTI interaction
+function containsQTIInteraction(SimpleXMLElement $xml) {
+	$qtiInteractions = array(
 		// subclasses of block:
 		"customInteraction", "positionObjectStage",
 		// subclasses of blockInteraction, which is an abstract subclass of 
@@ -199,14 +213,19 @@ function qti_get_stimulus(SimpleXMLElement $ib) {
 		"selectPointInteraction",
 	);
 
-	$stimulus = simplexml_load_string('<stimulus xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"/>', null);
-	foreach ($ib->children() as $child) {
-		if (in_array($child->getName(), $itemBodyIgnore))
-			continue;
-		simplexml_append($stimulus, $child);
+	// if this element is an interaction return true
+	if (in_array($xml->getName(), $qtiInteractions))
+		return true;
+
+	// if any children contain interactions return true
+	foreach ($xml->children() as $child) {
+		if (containsQTIInteraction($child))
+			return true;
 	}
 
-	return xml_remove_wrapper_element($stimulus->asXML());
+	// this isn't an interaction and there are no interactions in children so 
+	// return false
+	return false;
 }
 
 // get array of items, one of each type
