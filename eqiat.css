@@ -36,6 +36,10 @@ licence -- see the LICENCE file for more details
 	margin-left: 1em;
 }
 
+.eqiat-emi ol.emioptions {
+	list-style-type: upper-alpha;
+}
+
 /*
  * Display question matrix items as tables with true and false to the right of 
  * the question
