@@ -215,9 +215,13 @@ class QTIQuestionMatrix extends QTIAssessmentItem {
 				simplexml_append($ib, $stimulus);
 		}
 
+		// div with class eqiat-qm
+		$d = $ib->addChild("div");
+		$d->addAttribute("class", "eqiat-qm");
+
 		// questions
 		for ($q = 0; array_key_exists("question_{$q}_prompt", $this->data); $q++) {
-			$ci = $ib->addChild("choiceInteraction");
+			$ci = $d->addChild("choiceInteraction");
 			$ci->addAttribute("maxChoices", "1");
 			$ci->addAttribute("shuffle", "false");
 			$ci->addAttribute("responseIdentifier", "RESPONSE_question_$q");

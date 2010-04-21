@@ -599,8 +599,12 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 				simplexml_append($ib, $stimulus);
 		}
 
+		// div with class eqiat-mcr
+		$d = $ib->addChild("div");
+		$d->addAttribute("class", "eqiat-mcr");
+
 		// choices
-		$ci = $ib->addChild("choiceInteraction");
+		$ci = $d->addChild("choiceInteraction");
 		$ci->addAttribute("responseIdentifier", "RESPONSE");
 		$ci->addAttribute("shuffle", isset($this->data["shuffle"]) ? "true" : "false");
 		if ($this->itemType() == "multipleChoice")
