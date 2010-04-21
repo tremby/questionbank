@@ -449,16 +449,13 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 
 		// check the stimulus for the options and collect them
 		$options = array();
-		foreach ($xml->itemBody->table as $table) {
-			if (!isset($table["class"]) || (string) $table["class"] != "emioptions")
+		foreach ($xml->itemBody->ol as $ol) {
+			if (!isset($ol["class"]) || (string) $ol["class"] != "emioptions")
 				continue;
-			if (count($table->tbody) != 1 || count($table->tbody->tr) < 2)
+			if (count($ol->li) < 2)
 				return 0;
-			foreach ($table->tbody->tr as $row) {
-				if (count($row->td) != 1)
-					return 0;
-				$options[] = (string) $row->td;
-			}
+			foreach ($ol->li as $listitem)
+				$options[] = (string) $listitem;
 			break;
 		}
 		if (empty($options))
