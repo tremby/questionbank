@@ -20,8 +20,13 @@ if (isset($_POST["uploaditem"])) {
 	if ($output !== false) {
 		list($xml, $metadata) = $output;
 		$ai = xmltoqtiobject($xml, $errors, $warnings, $messages, $metadata, isset($_POST["newidentifier"]));
-		if ($ai !== false)
+		if ($ai !== false) {
+			// save the item in session data
+			$ai->sessionStore();
+
+			// redirect to the main menu with the new item highlighted
 			redirect(SITEROOT_WEB . "#item_" . $ai->getQTIID());
+		}
 	}
 }
 

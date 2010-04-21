@@ -790,8 +790,21 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 			"stimulus"	=>	qti_get_stimulus($xml->itemBody),
 		);
 
+		// check for a div with the item class name
+		$itembodycontainer = null;
+		foreach ($xml->itemBody->div as $div) {
+			if (!isset($div["class"]) || (string) $div["class"] != "eqiat-mcr")
+				continue;
+			// get elements from here
+			$itembodycontainer = $div;
+			break;
+		}
+		// if there was none, get elements from itemBody
+		if (is_null($itembodycontainer))
+			$itembodycontainer = $xml->itemBody;
+
 		// there is one choiceInteraction
-		if (count($xml->itemBody->choiceInteraction) != 1)
+		if (count($itembodycontainer->choiceInteraction) != 1)
 			return 0;
 
 		// there is one responseDeclaration
@@ -806,7 +819,7 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 		// multiple choice must have maxchoices 1 and one correct response value
 		if ($this->itemType() == "multipleChoice") {
-			if (!isset($xml->itemBody->choiceInteraction["maxChoices"]) || (string) $xml->itemBody->choiceInteraction["maxChoices"] != "1")
+			if (!isset($itembodycontainer->choiceInteraction["maxChoices"]) || (string) $itembodycontainer->choiceInteraction["maxChoices"] != "1")
 				return 0;
 			if (!isset($xml->responseDeclaration->correctResponse))
 				return 0;
@@ -815,18 +828,18 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 		}
 
 		// get shuffle value
-		$shuffle = isset($xml->itemBody->choiceInteraction["shuffle"]) && (string) $xml->itemBody->choiceInteraction["shuffle"] == "true";
+		$shuffle = isset($itembodycontainer->choiceInteraction["shuffle"]) && (string) $itembodycontainer->choiceInteraction["shuffle"] == "true";
 		if ($shuffle)
 			$data["shuffle"] = "on";
 
 		// there is at least one option
-		if (count($xml->itemBody->choiceInteraction->simpleChoice) == 0)
+		if (count($itembodycontainer->choiceInteraction->simpleChoice) == 0)
 			return 0;
 
 		// collect options and their identifiers
 		$o = 0;
 		$options = array();
-		foreach ($xml->itemBody->choiceInteraction->simpleChoice as $sc) {
+		foreach ($itembodycontainer->choiceInteraction->simpleChoice as $sc) {
 			$options[] = (string) $sc["identifier"];
 			$data["option_{$o}_optiontext"] = (string) $sc;
 
@@ -853,12 +866,12 @@ abstract class QTIMultipleChoiceResponse extends QTIAssessmentItem {
 
 		// get max and min choices
 		if ($this->itemType() == "multipleResponse") {
-			$data["maxchoices"] = isset($xml->itemBody->choiceInteraction["maxChoices"]) ? (string) $xml->itemBody->choiceInteraction["maxChoices"] : "0";
-			$data["minchoices"] = isset($xml->itemBody->choiceInteraction["minChoices"]) ? (string) $xml->itemBody->choiceInteraction["minChoices"] : "0";
+			$data["maxchoices"] = isset($itembodycontainer->choiceInteraction["maxChoices"]) ? (string) $itembodycontainer->choiceInteraction["maxChoices"] : "0";
+			$data["minchoices"] = isset($itembodycontainer->choiceInteraction["minChoices"]) ? (string) $itembodycontainer->choiceInteraction["minChoices"] : "0";
 		}
 
 		// get prompt
-		$data["prompt"] = (string) $xml->itemBody->choiceInteraction->prompt;
+		$data["prompt"] = (string) $itembodycontainer->choiceInteraction->prompt;
 
 		// not checking this properly at all but if modalFeedback elements exist 
 		// which look about right, use them for feedback
