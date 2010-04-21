@@ -346,15 +346,19 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 				simplexml_append($ib, $stimulus);
 		}
 
+		// div with class eqiat-emi
+		$d = $ib->addChild("div");
+		$d->addAttribute("class", "eqiat-emi");
+
 		// list the options
 		$options = "";
 		for ($o = 0; array_key_exists("option_{$o}_optiontext", $this->data); $o++)
 			$options .= "<tr><th>" . chr(ord("A") + $o) . "</th><td>" . xmlspecialchars($this->data["option_{$o}_optiontext"]) . "</td></tr>";
-		simplexml_append($ib, simplexml_load_string('<table class="emioptions"><tbody>' . $options . '</tbody></table>'));
+		simplexml_append($d, simplexml_load_string('<table class="emioptions"><tbody>' . $options . '</tbody></table>'));
 
 		// questions
 		for ($q = 0; array_key_exists("question_{$q}_prompt", $this->data); $q++) {
-			$ci = $ib->addChild("choiceInteraction");
+			$ci = $d->addChild("choiceInteraction");
 			$ci->addAttribute("maxChoices", "0");
 			$ci->addAttribute("minChoices", "0");
 			$ci->addAttribute("shuffle", "false");

@@ -13,7 +13,11 @@ licence -- see the LICENCE file for more details
 
 // program
 define("PROGRAMNAME", "Eqiat");
-define("VERSION", "0.5");
+define("VERSION", "0.6~git");
+
+// URL of demo server with trailing slash (this is used in the stylesheet URL of 
+// the produced items)
+define("DEMO_URL", "http://gauss.ecs.soton.ac.uk/eqiat/");
 
 // filesystem path to the eqiat root directory -- one level above this file, 
 // ending in a trailing slash

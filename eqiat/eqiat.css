@@ -1,0 +1,67 @@
+/*
+ * Eqiat
+ * Easy QTI Item Authoring Tool
+ */
+
+/*------------------------------------------------------------------------------
+(c) 2010 JISC-funded EASiHE project, University of Southampton
+Licensed under the Creative Commons 'Attribution non-commercial share alike' 
+licence -- see the LICENCE file for more details
+------------------------------------------------------------------------------*/
+
+/*
+ * Display EMI items with horizontal options
+ * This overrides QTIEngine's normal table display of simpleInteractions
+ */
+.eqiat-emi table.choice_interaction {
+	display: block;
+}
+.eqiat-emi table.choice_interaction tbody {
+	display: block;
+}
+.eqiat-emi tr.prompt {
+	display: block;
+	margin-top: 1em;
+}
+.eqiat-emi tr.prompt td {
+	display: inline;
+}
+.eqiat-emi tr.choice_interaction {
+	display: inline;
+}
+.eqiat-emi tr.choice_interaction td {
+	display: inline;
+}
+.eqiat-emi tr.choice_interaction td.choice_interaction {
+	margin-left: 1em;
+}
+
+/*
+ * Display question matrix items as tables with true and false to the right of 
+ * the question
+ * This overrides QTIEngine's normal table display of simpleInteractions
+ */
+.eqiat-qm {
+	display: table;
+}
+.eqiat-qm table.choice_interaction {
+	display: table-row;
+}
+.eqiat-qm table.choice_interaction tbody {
+	display: block;
+}
+.eqiat-qm tr.prompt {
+	display: table-cell;
+	vertical-align: top;
+	padding-right: 1em;
+}
+.eqiat-qm tr.prompt td {
+	display: inline;
+}
+.eqiat-qm tr.choice_interaction {
+	display: table-cell;
+	padding: 0 0.5em;
+}
+.eqiat-qm tr.choice_interaction td {
+	display: inline;
+}

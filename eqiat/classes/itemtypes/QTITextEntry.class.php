@@ -434,8 +434,12 @@ class QTITextEntry extends QTIAssessmentItem {
 				simplexml_append($ib, $stimulus);
 		}
 
+		// div with class eqiat-te
+		$d = $ib->addChild("div");
+		$d->addAttribute("class", "eqiat-te");
+
 		// body text
-		$bt = $ib->addChild("div");
+		$bt = $d->addChild("div");
 		$bt->addAttribute("class", "textentrytextbody");
 		$text = xmlspecialchars($this->data["textbody"]);
 		$text = preg_replace('%\n\n+%', "</p><p>", $text);

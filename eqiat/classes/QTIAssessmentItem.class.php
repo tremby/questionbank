@@ -478,6 +478,11 @@ abstract class QTIAssessmentItem {
 		if (isset($this->data["title"]))
 			$ai->addAttribute("title", $this->data["title"]);
 
+		$s = $ai->addChild("stylesheet");
+		$s->addAttribute("href", DEMO_URL . "eqiat.css");
+		$s->addAttribute("type", "text/css");
+		$s->addAttribute("title", "Eqiat item styles, designed to override QTIEngine's output where appropriate");
+
 		return $ai;
 	}
 
