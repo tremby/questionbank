@@ -49,10 +49,10 @@ licence -- see the LICENCE file for more details
 	display: table;
 }
 .eqiat-qm table.choice_interaction {
-	display: table-row;
+	display: table-row-group;
 }
 .eqiat-qm table.choice_interaction tbody {
-	display: block;
+	display: table-row;
 }
 .eqiat-qm tr.prompt {
 	display: table-cell;
