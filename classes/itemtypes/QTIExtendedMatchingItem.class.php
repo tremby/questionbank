@@ -432,8 +432,21 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			"title"		=>	(string) $xml["title"],
 		);
 
+		// check for a div with the item class name
+		$itembodycontainer = null;
+		foreach ($xml->itemBody->div as $div) {
+			if (!isset($div["class"]) || (string) $div["class"] != "eqiat-emi")
+				continue;
+			// get elements from here
+			$itembodycontainer = $div;
+			break;
+		}
+		// if there was none, get elements from itemBody
+		if (is_null($itembodycontainer))
+			$itembodycontainer = $xml->itemBody;
+
 		// count the choiceInteractions
-		$questioncount = count($xml->itemBody->choiceInteraction);
+		$questioncount = count($itembodycontainer->choiceInteraction);
 
 		// no good if there are no questions
 		if ($questioncount == 0)
@@ -449,7 +462,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 
 		// check the stimulus for the options and collect them
 		$options = array();
-		foreach ($xml->itemBody->ol as $ol) {
+		foreach ($itembodycontainer->ol as $ol) {
 			if (!isset($ol["class"]) || (string) $ol["class"] != "emioptions")
 				continue;
 			if (count($ol->li) < 2)
@@ -464,18 +477,18 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 			$data["option_{$k}_optiontext"] = $option;
 
 		// get stimulus, first removing the options table
-		foreach ($xml->itemBody->children() as $child) {
+		foreach ($itembodycontainer->children() as $child) {
 			if ($child->getName() == "table" && isset($child["class"]) && (string) $child["class"] == "emioptions") {
 				$dom = dom_import_simplexml($child);
 				$dom->parentNode->removeChild($dom);
 				break;
 			}
 		}
-		$data["stimulus"] = qti_get_stimulus($xml->itemBody);
+		$data["stimulus"] = qti_get_stimulus($itembodycontainer);
 
 		// ensure some stuff for each question
 		$q = 0;
-		foreach ($xml->itemBody->choiceInteraction as $ci) {
+		foreach ($itembodycontainer->choiceInteraction as $ci) {
 			// questions are multiple response so fail if maxChoices is 1. don't 
 			// care about minChoices
 			if ((string) $ci["maxChoices"] == "1")

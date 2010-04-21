@@ -518,9 +518,22 @@ class QTITextEntry extends QTIAssessmentItem {
 			"title"		=>	(string) $xml["title"],
 		);
 
+		// check for a div with the item class name
+		$itembodycontainer = null;
+		foreach ($xml->itemBody->div as $div) {
+			if (!isset($div["class"]) || (string) $div["class"] != "eqiat-te")
+				continue;
+			// get elements from here
+			$itembodycontainer = $div;
+			break;
+		}
+		// if there was none, get elements from itemBody
+		if (is_null($itembodycontainer))
+			$itembodycontainer = $xml->itemBody;
+
 		// get the text body and remove it from the tree
 		$tb = null;
-		foreach ($xml->itemBody->children() as $child) {
+		foreach ($itembodycontainer->children() as $child) {
 			if ($child->getName() == "div" && isset($child["class"]) && (string) $child["class"] == "textentrytextbody") {
 				$tb = dom_import_simplexml($child);
 				$tb->parentNode->removeChild($tb);
@@ -593,7 +606,7 @@ class QTITextEntry extends QTIAssessmentItem {
 			return 0;
 
 		// get stimulus
-		$data["stimulus"] = qti_get_stimulus($xml->itemBody);
+		$data["stimulus"] = qti_get_stimulus($itembodycontainer);
 
 		// add responses and their scores to data
 		$g = 0;
