@@ -173,6 +173,7 @@ if (isset($_GET["action"])) {
 				LEFT JOIN ratings
 				ON items.identifier=ratings.item
 				AND ratings.posted > COALESCE(items.modified, items.uploaded)
+				" . (loggedin() ? "WHERE items.user != '" . db()->escapeString(username()) . "'" : "") . "
 				GROUP BY ratings.item
 				HAVING COUNT(ratings.rating)=0
 				ORDER BY COALESCE(items.modified, items.uploaded) ASC
@@ -194,6 +195,7 @@ if (isset($_GET["action"])) {
 				ON items.identifier=ratings.item
 				AND ratings.posted > COALESCE(items.modified, items.uploaded)
 				AND ratings.user='" . db()->escapeString(username()) . "'
+				" . (loggedin() ? "WHERE items.user != '" . db()->escapeString(username()) . "'" : "") . "
 				GROUP BY ratings.item
 				HAVING COUNT(ratings.rating)=0
 				ORDER BY COALESCE(items.modified, items.uploaded) ASC
