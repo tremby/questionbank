@@ -430,6 +430,7 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 		$data = array(
 			"itemtype"	=>	$this->itemType(),
 			"title"		=>	(string) $xml["title"],
+			"stimulus"	=>	qti_get_stimulus($xml->itemBody),
 		);
 
 		// check for a div with the item class name
@@ -492,16 +493,6 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 		// add options to data
 		foreach ($options as $k => $option)
 			$data["option_{$k}_optiontext"] = $option;
-
-		// get stimulus, first removing the options table
-		foreach ($itembodycontainer->children() as $child) {
-			if ($child->getName() == "table" && isset($child["class"]) && (string) $child["class"] == "emioptions") {
-				$dom = dom_import_simplexml($child);
-				$dom->parentNode->removeChild($dom);
-				break;
-			}
-		}
-		$data["stimulus"] = qti_get_stimulus($itembodycontainer);
 
 		// ensure some stuff for each question
 		$q = 0;
