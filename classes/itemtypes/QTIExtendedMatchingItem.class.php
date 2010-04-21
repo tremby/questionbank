@@ -471,6 +471,21 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 				$options[] = (string) $listitem;
 			break;
 		}
+		if (empty($options)) {
+			// check for table for backwards compatibility
+			foreach ($itembodycontainer->table as $table) {
+				if (!isset($table["class"]) || (string) $table["class"] != "emioptions")
+					continue;
+				if (count($table->tbody) != 1 || count($table->tbody->tr) < 2)
+					return 0;
+				foreach ($table->tbody->tr as $row) {
+					if (count($row->td) != 1)
+						return 0;
+					$options[] = (string) $row->td;
+				}
+				break;
+			}
+		}
 		if (empty($options))
 			return 0;
 
