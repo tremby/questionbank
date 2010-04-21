@@ -198,16 +198,17 @@ function qti_get_stimulus(SimpleXMLElement $ib) {
 // return true if the given SimpleXML element contains a QTI interaction
 function containsQTIInteraction(SimpleXMLElement $xml) {
 	$qtiInteractions = array(
-		// subclasses of block:
-		"customInteraction", "positionObjectStage",
-		// subclasses of blockInteraction, which is an abstract subclass of 
-		// block:
+		// subclasses of interaction:
+		"customInteraction", "positionObjectInteraction",
+		// subclasses of blockInteraction
 		"associateInteraction", "choiceInteraction", "drawingInteraction", 
-		"extendedTextInteraction", "gapMatchInteraction", 
-		"hottextInteraction", "matchInteraction", "mediaInteraction", 
-		"orderInteraction", "sliderInteraction", "uploadInteraction",
-		// subclasses of graphicInteraction, which is an abstract subclass 
-		// of blockInteraction:
+		"extendedTextInteraction", "gapMatchInteraction", "hottextInteraction", 
+		"matchInteraction", "mediaInteraction", "orderInteraction", 
+		"sliderInteraction", "uploadInteraction",
+		// subclasses of subclasses of inlineInteraction:
+		"endAttemptInteraction", "inlineChoiceInteraction", 
+		"textEntryInteraction",
+		// subclasses of graphicInteraction
 		"graphicAssociateInteraction", "graphicGapMatchInteraction", 
 		"graphicOrderInteraction", "hotspotInteraction", 
 		"selectPointInteraction",

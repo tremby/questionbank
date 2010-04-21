@@ -516,6 +516,7 @@ class QTITextEntry extends QTIAssessmentItem {
 		$data = array(
 			"itemtype"	=>	$this->itemType(),
 			"title"		=>	(string) $xml["title"],
+			"stimulus"	=>	qti_get_stimulus($xml->itemBody),
 		);
 
 		// check for a div with the item class name
@@ -604,9 +605,6 @@ class QTITextEntry extends QTIAssessmentItem {
 		// fail if there are no gaps
 		if (count($gaps) == 0)
 			return 0;
-
-		// get stimulus
-		$data["stimulus"] = qti_get_stimulus($itembodycontainer);
 
 		// add responses and their scores to data
 		$g = 0;
