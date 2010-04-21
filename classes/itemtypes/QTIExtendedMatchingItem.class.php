@@ -471,6 +471,8 @@ class QTIExtendedMatchingItem extends QTIAssessmentItem {
 				$options[] = (string) $listitem;
 			break;
 		}
+		if (empty($options))
+			return 0;
 
 		// add options to data
 		foreach ($options as $k => $option)
