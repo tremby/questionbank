@@ -294,6 +294,8 @@ function qtiengine_header_html(SimpleXMLElement $page) {
 // the default QTIEngine XSL transformation has a div with everything we want in 
 // it with id "body" (it doesn't include the internal state etc)
 // also replace h2 tags with h3 and strip hr tags
+// also add [] to the end of the name attributes of checkboxes if it's not 
+// already there so that PHP receives them back properly when posted
 function qtiengine_bodydiv_html(SimpleXMLElement $page, $divid = "qtienginebodydiv") {
 	// php5's support for default namespace is useless so we have to define it 
 	// manually
@@ -307,7 +309,11 @@ function qtiengine_bodydiv_html(SimpleXMLElement $page, $divid = "qtienginebodyd
 	$bodydiv = $bodydivs[0];
 	$bodydiv["id"] = $divid;
 
-	return preg_replace(array('%<(/?)h2\b%', '%<hr.*?>%'), array('<\1h3', ''), xhtml_to_html(simplexml_indented_string($bodydiv)));
+	foreach ($page->xpath("//n:input[@type='checkbox']") as $checkbox)
+		if (!preg_match('%\]$%', (string) $checkbox["name"]))
+			$checkbox["name"] = (string) $checkbox["name"] . "[]";
+
+	return preg_replace(array('%<(/?)h2\b%', '%<hr\b.*?>%'), array('<\1h3', ''), xhtml_to_html(simplexml_indented_string($bodydiv)));
 }
 
 function callstack($html = true) {

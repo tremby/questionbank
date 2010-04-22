@@ -268,12 +268,19 @@ if (!$item)
 else {
 	// if QTIEngine form submitted post onwards to QTIEngine and display its output
 	if (isset($_POST["submit"])) {
+		// build request string
+		$multipart = new HttpRequestBodyMultipart();
+		$multipart->addpart("actionUrl", $actionurl);
+		$multipart->addfromarray($_POST);
+		$request =  $multipart->requeststring();
+
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
 			CURLOPT_URL				=>	"http://" . QTIENGINE_HOST . ":" . QTIENGINE_PORT . QTIENGINE_PATH . "rest/playItem/0;jsessionid=" . $_SESSION["qtiengine_session"],
 			CURLOPT_POST			=>	true,
 			CURLOPT_RETURNTRANSFER	=>	true,
-			CURLOPT_POSTFIELDS		=>	array_merge(array("actionUrl" => $actionurl), $_POST),
+			CURLOPT_HTTPHEADER		=>	array("Content-Type: multipart/form-data; boundary=" . $multipart->boundary()),
+			CURLOPT_POSTFIELDS		=>	$multipart->requeststring(),
 		));
 		$response = curl_exec($curl);
 	} else {
@@ -286,31 +293,17 @@ else {
 		// 5.2.4 is still common at the time of writing (it's in Ubuntu 8.04 LTS) so we 
 		// can't use curl here.
 
-		// boundary -- see http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html
-		while (true) {
-			$boundary = "----------------------------" . uniqid();
-			if (strpos($item["xml"], $boundary) === false)
-				break;
-		}
-
-		// request
-		$request =	"--$boundary\r\n";
-		$request .=	"Content-Disposition: form-data; name=\"actionUrl\"\r\n";
-		$request .=	"\r\n";
-		$request .=	"$actionurl\r\n";
-		$request .=	"--$boundary\r\n";
-		$request .=	"Content-Disposition: form-data; name=\"uploadedContent\"; filename=\"qb_" . $item["identifier"] . ".xml\"\r\n";
-		$request .=	"Content-Type: application/xml\r\n";
-		$request .=	"\r\n";
-		$request .=	$item["xml"];
-		$request .=	"\r\n--$boundary--\r\n\r\n";
+		$multipart = new HttpRequestBodyMultipart();
+		$multipart->addpart("actionUrl", $actionurl);
+		$multipart->addpart("uploadedContent", $item["xml"], "application/xml", "qb_" . $item["identifier"] . ".xml");
+		$request = $multipart->requeststring();
 
 		// headers
 		$reqheader = array(
 			"Host"				=>	QTIENGINE_HOST,
 			"Accept"			=>	"*/*",
 			"Content-Length"	=>	strlen($request),
-			"Content-Type"		=>	"multipart/form-data; boundary=$boundary",
+			"Content-Type"		=>	"multipart/form-data; boundary=" . $multipart->boundary(),
 			"User-Agent"		=>	PROGRAMNAME . "/" . VERSION,
 		);
 		$url = QTIENGINE_PATH . "rest/upload";
