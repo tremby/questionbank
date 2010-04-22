@@ -544,15 +544,13 @@ include "htmlheader.php";
 		</ul>
 
 		<h3>Actions</h3>
-		<?php if (!loggedin()) { ?>
-			<p class="smallfaded">If you were to <a href="<?php echo SITEROOT_WEB; ?>?page=login">log in</a> you could clone and edit this item or, if it's yours, update it</p>
-		<?php } else { ?>
-			<ul>
-				<li>
-					<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>&amp;clone=true">
-						Clone and edit
-					</a>
-				</li>
+		<ul>
+			<li>
+				<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>&amp;clone=true">
+					Clone and edit
+				</a>
+			</li>
+			<?php if (loggedin()) { ?>
 				<?php if ($item["user"] == username()) { ?>
 					<li>
 						<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>">
@@ -567,8 +565,10 @@ include "htmlheader.php";
 						</a>
 					</li>
 				<?php } ?>
-			</ul>
-		<?php } ?>
+			<?php } else { ?>
+				<p class="smallfaded">If you were to <a href="<?php echo SITEROOT_WEB; ?>?page=login">log in</a> you might have further options</p>
+			<?php } ?>
+		</ul>
 	<?php } ?>
 </div>
 
