@@ -272,14 +272,17 @@ else {
 		$multipart = new HttpRequestBodyMultipart();
 		$multipart->addpart("actionUrl", $actionurl);
 		$multipart->addfromarray($_POST);
-		$request =  $multipart->requeststring();
+		$request = $multipart->requeststring();
 
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
 			CURLOPT_URL				=>	"http://" . QTIENGINE_HOST . ":" . QTIENGINE_PORT . QTIENGINE_PATH . "rest/playItem/0;jsessionid=" . $_SESSION["qtiengine_session"],
 			CURLOPT_POST			=>	true,
 			CURLOPT_RETURNTRANSFER	=>	true,
-			CURLOPT_HTTPHEADER		=>	array("Content-Type: multipart/form-data; boundary=" . $multipart->boundary()),
+			CURLOPT_HTTPHEADER		=>	array(
+				"Content-Type: multipart/form-data; boundary=" . $multipart->boundary(),
+				"Expect: ",
+			),
 			CURLOPT_POSTFIELDS		=>	$multipart->requeststring(),
 		));
 		$response = curl_exec($curl);
@@ -287,119 +290,34 @@ else {
 		// display a new item
 
 		// upload the QTI to QTIEngine
-		// Doing this manually rather than using curl because until PHP 5.2.7 (SVN 
-		// r269951 to be specific) there is a bug (http://bugs.php.net/bug.php?id=46696) 
-		// which breaks the feature needed to submit the uploaded file's mimetype. PHP 
-		// 5.2.4 is still common at the time of writing (it's in Ubuntu 8.04 LTS) so we 
-		// can't use curl here.
 
+		// build request string
 		$multipart = new HttpRequestBodyMultipart();
 		$multipart->addpart("actionUrl", $actionurl);
 		$multipart->addpart("uploadedContent", $item["xml"], "application/xml", "qb_" . $item["identifier"] . ".xml");
-		$request = $multipart->requeststring();
 
-		// headers
-		$reqheader = array(
-			"Host"				=>	QTIENGINE_HOST,
-			"Accept"			=>	"*/*",
-			"Content-Length"	=>	strlen($request),
-			"Content-Type"		=>	"multipart/form-data; boundary=" . $multipart->boundary(),
-			"User-Agent"		=>	PROGRAMNAME . "/" . VERSION,
-		);
-		$url = QTIENGINE_PATH . "rest/upload";
-		$reqaction = "POST $url HTTP/1.1";
+		// set up curl handle to upload it
+		$curl = curl_init();
+		curl_setopt_array($curl, array(
+			CURLOPT_URL				=>	"http://" . QTIENGINE_HOST . ":" . QTIENGINE_PORT . QTIENGINE_PATH . "rest/upload",
+			CURLOPT_POST			=>	true,
+			CURLOPT_RETURNTRANSFER	=>	true,
+			CURLOPT_HTTPHEADER		=>	array(
+				"Content-Type: multipart/form-data; boundary=" . $multipart->boundary(),
+				"Expect: ",
+			),
+			CURLOPT_POSTFIELDS		=>	$multipart->requeststring(),
+			CURLOPT_FOLLOWLOCATION	=>	true,
+			CURLOPT_USERAGENT		=>	PROGRAMNAME . "/" . VERSION,
+		));
 
-		// make requests and follow location headers
-		$error = null;
-		while (true) {
-			// open socket
-			$sock = fsockopen(QTIENGINE_HOST, QTIENGINE_PORT, $errno, $errstr, 30);
-			if (!$sock)
-				servererror("Couldn't connect to QTIEngine (" . QTIENGINE_HOST . ":" . QTIENGINE_PORT . ")");
+		// upload it -- curl will follow the location headers and return the 
+		// final response
+		$response = curl_exec($curl);
 
-			// send data
-			$reqheaderstrings = array();
-			foreach ($reqheader as $key => $value)
-				$reqheaderstrings[] = "$key: $value";
-			fputs($sock, $reqaction . "\r\n" . implode("\r\n", $reqheaderstrings) . "\r\n\r\n" . $request);
-			fflush($sock);
-
-			// receive headers
-			$header = array();
-			$httpcode = null;
-			while (!feof($sock) && ($line = fgets($sock)) != "\r\n") {
-				if (is_null($httpcode) && preg_match('%^HTTP/[^\s]*\s+\d+%', $line))
-					$httpcode = intval(preg_replace('%^HTTP/[^\s]*\s+(\d+).*$%', '\1', $line));
-				else {
-					$parts = explode(":", $line, 2);
-					$header[trim($parts[0])] = trim($parts[1]);
-				}
-			}
-
-			// get the session id from the Set-Cookie header
-			if (isset($header["Set-Cookie"])) {
-				$cookieparts = explode(";", $header["Set-Cookie"]);
-				list($name, $value) = explode("=", $cookieparts[0]);
-				if ($name == "JSESSIONID")
-					$_SESSION["qtiengine_session"] = $value;
-			}
-
-			$response = "";
-
-			// get rest of response and stop if HTTP response code is not a redirection
-			if ($httpcode != 301 && $httpcode != 302 || !array_key_exists("Location", $header)) {
-				if (isset($header["Transfer-Encoding"]) && $header["Transfer-Encoding"] == "chunked") {
-					// handle chunked transfer mode
-					while (!feof($sock)) {
-						// get number of bytes in next chunk
-						$bytes = hexdec(preg_replace('%^([0-9a-fA-F]+).*?$%', '\\1', fgets($sock)));
-						if ($bytes == 0) // zero-length chunk means it's the end
-							break;
-
-						// get data until we have enough bytes
-						$chunk = "";
-						while (strlen($chunk) < $bytes)
-							$chunk .= fgets($sock, $bytes);
-
-						// add data to response
-						$response .= $chunk;
-					}
-				} else
-					while (!feof($sock))
-						$response .= fgets($sock);
-				fclose($sock);
-				break;
-			}
-
-			// it was a redirection
-
-			// close the socket
-			fclose($sock);
-
-			// check its URL is valid
-			$urlparts = parse_url($header["Location"]);
-			if (!isset($urlparts)) {
-				$error = "Hit a malformed Location header pointing to '" . $header["Location"] . "'";
-				break;
-			}
-
-			// redirect
-			$url = $urlparts["path"] . "?" . $urlparts["query"];
-			$reqaction = "GET $url HTTP/1.1";
-
-			// delete POST related headers
-			if (isset($reqheader["Content-Length"])) {
-				unset($reqheader["Content-Length"]);
-				unset($reqheader["Content-Type"]);
-			}
-
-			// clear the request data
-			$request = "";
-
-			// loop...
-		}
-		if (!is_null($error))
-			servererror($error);
+		// get jsessionid from last URL we were directed to
+		$responseinfo = curl_getinfo($curl);
+		$_SESSION["qtiengine_session"] = preg_replace('%.*;jsessionid=([0-9A-F]+)\?.*%', '\1', $responseinfo["url"]);
 	}
 
 	// parse response
