@@ -30,6 +30,8 @@ class PreviewAssessmentItemAction extends ItemAction {
 		// needed to submit the uploaded file's mimetype. PHP 5.2.4 is still 
 		// common at the time of writing (it's in Ubuntu 8.04 LTS) so we can't 
 		// use curl here.
+		// Could build the multipart/form-data ourselves but that still leaves 
+		// the issue that we don't want to follow the last redirect.
 
 		// boundary -- see 
 		// http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html
