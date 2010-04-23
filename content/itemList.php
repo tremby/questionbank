@@ -14,7 +14,7 @@ licence -- see the LICENCE file for more details
 $newsearch = !isset($_SESSION["items"]) || isset($_REQUEST["clear"]) || isset($_REQUEST["direction"]) || isset($_REQUEST["orderby"]) || isset($_REQUEST["user"]) || isset($_REQUEST["keyword"]);
 
 // defaults
-$direction = "ASC";
+$direction = "DESC";
 
 // default sort is by modified or uploaded date
 $orderby = "modified";
@@ -29,6 +29,8 @@ if ($newsearch) {
 	if (isset($_REQUEST["clear"]))
 		unset($_SESSION["search"]);
 	else {
+		$direction = "ASC";
+
 		// get ordering settings from request vars
 
 		// override sort direction
@@ -53,7 +55,7 @@ if ($newsearch) {
 
 		// if order not set in request vars and we're ordering by date, show 
 		// newest first
-		if (!isset($_REQUEST["direction"]) || empty($_REQUEST["direction"]) && (!isset($_REQUEST["orderby"]) || empty($_REQUEST["orderby"]) || $_REQUEST["orderby"] == "modified" || $_REQUEST["orderby"] == "uploaded"))
+		if ((!isset($_REQUEST["direction"]) || empty($_REQUEST["direction"])) && (!isset($_REQUEST["orderby"]) || empty($_REQUEST["orderby"]) || $_REQUEST["orderby"] == "modified" || $_REQUEST["orderby"] == "uploaded"))
 			$direction = "DESC";
 
 		// filter by user and keyword
