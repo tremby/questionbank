@@ -103,10 +103,26 @@ function showmessages($messages, $title = "Message", $class = null) {
 }
 
 // validate a string of QTI XML or SimpleXML element
+// only accepts assessmentItems
 // $errors, $warnings and $messages should be arrays
 function validateQTI($xml, &$errors, &$warnings, &$messages) {
-	if ($xml instanceof SimpleXMLElement)
-		$xml = $xml->asXML();
+	if ($xml instanceof SimpleXMLElement) {
+		$sxml = $xml;
+		$xml = $sxml->asXML();
+	} else {
+		// check it's valid XML
+		$sxml = simplexml_load_string($xml);
+		if ($sxml === false) {
+			$errors[] = "What was supposed to be a QTI file is not valid XML";
+			return false;
+		}
+	}
+
+	// make sure it's an assessment item
+	if ($sxml->getName() != "assessmentItem") {
+		$errors[] = "Not a QTI assessment item";
+		return false;
+	}
 
 	$pipes = null;
 	$validate = proc_open("./run.sh", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, dirname(dirname(__FILE__)) . "/validate");
@@ -531,24 +547,14 @@ function handleupload(&$errors, &$warnings, &$messages) {
 // take xml and optionally a metadata array and try and put it all in a QTI 
 // object or return false, populating $errors etc
 function xmltoqtiobject($xml, &$errors, &$warnings, &$messages, $metadata = array(), $newidentifier = false) {
-	// make sure it's valid XML
-	$xml = simplexml_load_string($xml);
-	if ($xml === false) {
-		$errors[] = "What was supposed to be a QTI file is not valid XML";
-		return false;
-	}
-
-	// make sure it's an assessment item
-	if ($xml->getName() != "assessmentItem") {
-		$errors[] = "Didn't find a QTI assessment item";
-		return false;
-	}
-
 	// make sure it's valid QTI
 	if (!validateQTI($xml, $errors, $warnings, $messages)) {
 		$errors[] = "The assessment item found is not valid QTI";
 		return false;
 	}
+
+	// load to SimpleXML object
+	$xml = simplexml_load_string($xml);
 
 	// test against supported item types
 	$items = item_types();
