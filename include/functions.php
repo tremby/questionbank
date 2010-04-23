@@ -335,4 +335,102 @@ function callstack($html = true) {
 	if ($html) echo "</ul>";
 }
 
+// put an item in the database
+// doesn't check who the owner is
+// updates it or uploads it depending on whether it was already there.
+// arguments:
+//	QTIAssessmentItem object
+//	or string XML and metadata array
+//	or SimpleXML object and metadata array
+function deposititem() {
+	$args = func_get_args();
+
+	// collect data
+	switch (count($args)) {
+		case 1:
+			if (!($args[0] instanceof QTIAssessmentItem))
+				throw new Exception("with one argument, expected QTIAssessmentItem");
+			$identifier = $args[0]->getQTIID();
+			$title = $args[0]->data("title");
+			$description = $args[0]->data("description");
+			$xml = $args[0]->getQTIIndentedString();
+			$keywords = $args[0]->getKeywords();
+			break;
+		case 2:
+			if ($args[0] instanceof SimpleXMLElement) {
+				$sxml = $args[0];
+				$xml = simplexml_indented_string($args[0]);
+			} else if (is_string($args[0])) {
+				$sxml = simplexml_load_string($args[0]);
+				$xml = $args[0];
+			} else
+				throw new Exception("With two arguments expected SimpleXML element or XML string as first");
+
+			$identifier = (string) $sxml["identifier"];
+			$title = (string) $sxml["title"];
+
+			if (!is_array($args[1]))
+				throw new Exception("With two arguments expected metadata array as second");
+
+			$description = $args[1]["description"];
+			$keywords = $args[1]["keywords"];
+			break;
+		default:
+			throw new Exception("expected one or two arguments");
+	}
+
+	db()->exec("BEGIN TRANSACTION;");
+
+	// update or insert
+	if (itemexists($identifier)) {
+		// update item
+		db()->exec("
+			DELETE FROM keywords WHERE item='" . db()->escapeString($identifier) . "';
+			UPDATE items SET
+				modified=" . time() . ",
+				title='" . db()->escapeString($title) . "',
+				description='" . db()->escapeString($description) . "',
+				xml='" . db()->escapeString($xml) . "'
+			WHERE identifier='" . db()->escapeString($identifier) . "';
+		");
+
+		// add a comment to the item to show it has been updated
+		db()->exec("
+			INSERT INTO comments VALUES (
+				'" . db()->escapeString(username()) . "',
+				'" . db()->escapeString($identifier) . "',
+				'" . db()->escapeString("Automatic comment: this item has been updated") . "',
+				" . time() . "
+			);
+		");
+	} else {
+		// new item -- insert it
+		db()->exec("
+			INSERT INTO items VALUES (
+				'" . db()->escapeString($identifier) . "',
+				" . time() . ",
+				NULL,
+				'" . db()->escapeString(username()) . "',
+				'" . db()->escapeString($title) . "',
+				'" . db()->escapeString($description) . "',
+				'" . db()->escapeString($xml) . "'
+			);
+		");
+	}
+
+	// add keywords
+	foreach ($keywords as $keyword) {
+		db()->exec("
+			INSERT INTO keywords VALUES (
+				'" . db()->escapeString($identifier) . "',
+				'" . db()->escapeString($keyword) . "'
+			);
+		");
+	}
+
+	// commit changes
+	db()->exec("COMMIT;");
+}
+
+
 ?>
