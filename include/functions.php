@@ -372,8 +372,8 @@ function deposititem() {
 			if (!is_array($args[1]))
 				throw new Exception("With two arguments expected metadata array as second");
 
-			$description = $args[1]["description"];
-			$keywords = $args[1]["keywords"];
+			$description = isset($args[1]["description"]) ? $args[1]["description"] : "";
+			$keywords = isset($args[1]["keywords"]) ? $args[1]["keywords"] : array();
 			break;
 		default:
 			throw new Exception("expected one or two arguments");
@@ -432,5 +432,14 @@ function deposititem() {
 	db()->exec("COMMIT;");
 }
 
+// return true if the given QTI (SimpleXML or string) was authored in Eqiat
+function authoredineqiat($xml) {
+	if (!($xml instanceof SimpleXMLElement))
+		$xml = simplexml_load_string($xml);
+	if (!$xml)
+		return false;
+
+	return isset($xml["toolName"]) && (string) $xml["toolName"] == "Eqiat";
+}
 
 ?>

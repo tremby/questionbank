@@ -63,9 +63,9 @@ Logging in allows a user to save items from the authoring tool to Question Bank
 and also to rate and comment on items. There is a link to register from the log 
 in page.
 
-On the main menu are links to the authoring tool, various views of the item list 
-and various ways to start playing items. If the current user has raised 
-privileges there is also a link to administer users.
+On the main menu are links to the authoring tool, various views of the item 
+list, various ways to start playing items and a link to upload an item. If the 
+current user has raised privileges there is also a link to administer users.
 
 The authoring tool is a stock instance of Eqiat except for a link back to 
 Question Bank and an action allowing an item to be saved to Question Bank. See 
@@ -102,6 +102,11 @@ it in the box. As long as the item wasn't uploaded by the current user the item
 can also be rated from 0 to 5. Such ratings are averaged and shown with the 
 item's other information. Only ratings submitted since the item was last 
 modified count towards the average shown.
+
+Existing items can be uploaded from the upload item page. If the item was not 
+authored in Eqiat (and so Eqiat may not be able to import it) a warning will be 
+shown after it is uploaded and also next to "edit" links for this item 
+elsewhere.
 
 Users with raised privileges have an extra page which lists all registered users 
 and some related information such as whether or not they are privileged and the 

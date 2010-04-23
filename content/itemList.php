@@ -240,12 +240,18 @@ include "htmlheader.php";
 						<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>&amp;clone=true">
 							Clone and edit
 						</a>
+						<?php if (!authoredineqiat($item["xml"])) { ?>
+							<img src="<?php echo SITEROOT_WEB; ?>images/error.png" width="16" height="16" alt="warning sign" title="Item was not authored in Eqiat and so may not be editable">
+						<?php } ?>
 					</li>
 					<?php if ($item["user"] == username()) { ?>
 						<li>
 							<a href="<?php echo SITEROOT_WEB; ?>?page=toEqiat&amp;qtiid=<?php echo htmlspecialchars($item["identifier"]); ?>">
 								Edit
 							</a>
+							<?php if (!authoredineqiat($item["xml"])) { ?>
+								<img src="<?php echo SITEROOT_WEB; ?>images/error.png" width="16" height="16" alt="warning sign" title="Item was not authored in Eqiat and so may not be editable">
+							<?php } ?>
 						</li>
 					<?php } ?>
 					<?php if ($item["user"] == username() || userhasprivileges()) { ?>

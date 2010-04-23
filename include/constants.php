@@ -34,6 +34,10 @@ define("SITEROOT_WEB", "/" . substr(SITEROOT_LOCAL, strlen($document_root)));
 // SITEROOT_WEB
 // 	/eqiat/ (or / if not running in a subdirectory)
 
+// namespaces
+define("NS_IMSQTI", "http://www.imsglobal.org/xsd/imsqti_v2p1");
+define("NS_IMSMD", "http://www.imsglobal.org/xsd/imsmd_v1p2");
+
 // this needs to be the same as Eqiat's session variable name prefix
 define("SESSION_PREFIX", "qb_eqiat_");
 

@@ -81,6 +81,9 @@ include "htmlheader.php";
 		<?php } ?>
 	</dd>
 
+	<dt><a href="<?php echo SITEROOT_WEB; ?>?page=uploadItem">Upload an item</a></dt>
+	<dd>Upload a QTI assessment item directly to <?php echo htmlspecialchars(SITE_TITLE); ?></dd>
+
 	<?php if (userhasprivileges()) { ?>
 		<dt><a href="<?php echo SITEROOT_WEB; ?>?page=users">Administer users</a></dt>
 		<dd>Grant or revoke raised privileges</dd>
