@@ -13,7 +13,7 @@ licence -- see the LICENCE file for more details
 
 // program
 define("PROGRAMNAME", "Eqiat");
-define("VERSION", "0.6~git");
+define("VERSION", "0.6");
 
 // URL of demo server with trailing slash (this is used in the stylesheet URL of 
 // the produced items)

@@ -7,7 +7,6 @@ licence -- see the LICENCE file for more details
 ------------------------------------------------------------------------------*/
 
 import java.io.*;
-import java.util.List;
 
 import org.qtitools.qti.node.item.AssessmentItem;
 import org.qtitools.qti.validation.ValidationResult;
