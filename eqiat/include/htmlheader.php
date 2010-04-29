@@ -32,6 +32,9 @@ header("Content-Script-Type: text/javascript");
 		</script>
 	<?php } ?>
 	<link rel="stylesheet" href="<?php echo SITEROOT_WEB; ?>include/styles.css">
+	<!--[if IE 6]>
+		<link rel="stylesheet" href="<?php echo SITEROOT_WEB; ?>include/styles.ie6.css">
+	<![endif]-->
 	<?php if (isset($GLOBALS["headercss"])) { ?>
 		<style type="text/css">
 			<?php echo $GLOBALS["headercss"]; ?>
