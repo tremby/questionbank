@@ -308,7 +308,7 @@ else {
 			),
 			CURLOPT_POSTFIELDS		=>	$multipart->requeststring(),
 			CURLOPT_FOLLOWLOCATION	=>	true,
-			CURLOPT_USERAGENT		=>	PROGRAMNAME . "/" . VERSION,
+			CURLOPT_USERAGENT		=>	PROGRAMNAME . "/" . VERSION, // QTIEngine gives a null pointer exception in this case if a User-Agent header isn't given!
 		));
 
 		// upload it -- curl will follow the location headers and return the 
