@@ -12,6 +12,7 @@ REQUIREMENTS
 -	Web server such as Apache or Lighttpd
 -	PHP 5 (tested on PHP 5.2.4)
 -	The Sqlite3 module for PHP
+-	The cURL module for PHP
 -	An instance of QTIEngine with Rest support (that is, at least revision 2447) 
 	to call (the demonstration version at qtiengine.qtitools.org is used by 
 	default)
